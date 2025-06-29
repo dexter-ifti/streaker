@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Settings, Calendar, Edit2, Save, X } from 'lucide-react';
+import { User, Settings, Calendar, Edit2, Save, X, Shield, Award, TrendingUp, Target } from 'lucide-react';
 import { useAuth } from '../utils/auth';
 import { useUser, useAllActivities, useUpdateUser, useChangePassword } from '../hooks/useQueries';
 import Header from '../components/Header';
@@ -15,11 +15,8 @@ interface Activity {
 
 const Profile: React.FC = () => {
     const { authUser } = useAuth();
-    // console.log(authUser?.token);
     const { data: profileData, isLoading: profileLoading, error: profileError } = useUser(authUser?.token ?? '');
-    // console.log(profileData);
     const { data: activities = [], isLoading: activitiesLoading } = useAllActivities(authUser?.token ?? '', 1, 0);
-    // console.log(activities.activities);
     const updateUserMutation = useUpdateUser();
     const changePasswordMutation = useChangePassword();
     const [isEditing, setIsEditing] = useState(false);
@@ -45,6 +42,7 @@ const Profile: React.FC = () => {
             [name]: value,
         });
     };
+
     React.useEffect(() => {
         if (isEditing && profileData) {
             setFormData({
@@ -54,6 +52,7 @@ const Profile: React.FC = () => {
             });
         }
     }, [isEditing, profileData]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!authUser) return;
@@ -67,13 +66,13 @@ const Profile: React.FC = () => {
                 profileData: formData
             })
             setIsEditing(false);
-            setSuccessMessage('Profile updated successfully!');
+            setSuccessMessage('Profile updated successfully! ✨');
+            toast.success('Profile updated successfully! ✨');
 
-            // Clear success message after 3 seconds
             setTimeout(() => {
                 setSuccessMessage('');
             }, 3000);
-        } catch (err : any) {
+        } catch (err: any) {
             setError(err.response?.data?.message || 'An error occurred while updating profile');
             toast.error(err.response?.data?.message || 'An error occurred while updating profile');
         }
@@ -96,13 +95,13 @@ const Profile: React.FC = () => {
                 newPassword: passwordData.newPassword
             });
             setShowPasswordModal(false);
-            setSuccessMessage('Password changed successfully!');
+            setSuccessMessage('Password changed successfully! 🔒');
+            toast.success('Password changed successfully! 🔒');
 
-            // Clear success message after 3 seconds
             setTimeout(() => {
                 setSuccessMessage('');
             }, 3000);
-        } catch (err : any) {
+        } catch (err: any) {
             setError(err.response?.data?.message || 'An error occurred while changing password');
             toast.error(err.response?.data?.message || 'An error occurred while changing password');
         }
@@ -111,11 +110,14 @@ const Profile: React.FC = () => {
 
     if (profileError) {
         return (
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
                 <Header />
                 <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4">
-                        <h2 className="text-lg font-medium mb-2">Error Loading Profile</h2>
+                    <div className="bg-red-900/50 border border-red-500/50 text-red-200 rounded-2xl p-6 backdrop-blur-sm">
+                        <h2 className="text-xl font-semibold mb-2 flex items-center">
+                            <X className="w-6 h-6 mr-2" />
+                            Error Loading Profile
+                        </h2>
                         <p>{profileError.message}</p>
                     </div>
                 </main>
@@ -126,11 +128,14 @@ const Profile: React.FC = () => {
 
     if (profileLoading || activitiesLoading) {
         return (
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
                 <Header />
                 <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div className="flex justify-center items-center h-64">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                        <div className="text-center space-y-4">
+                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+                            <p className="text-gray-400 animate-pulse">Loading your profile...</p>
+                        </div>
                     </div>
                 </main>
                 <Footer />
@@ -139,29 +144,52 @@ const Profile: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+            {/* Background Effects */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-1000" />
+            </div>
+
             <Header />
-            {/* <div>{profileData}</div> */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-gray-700/50 animate-fade-in-up">
                     {/* Profile Header */}
-                    <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-6 sm:px-6 sm:py-8">
-                        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-                            <div className="bg-white rounded-full p-2 shadow-md">
-                                <User size={64} className="text-blue-600" />
+                    <div className="relative bg-gradient-to-r from-blue-600/20 to-purple-600/20 px-6 py-8 sm:px-8 sm:py-12">
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10" />
+                        <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                            <div className="relative">
+                                <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-4 shadow-2xl">
+                                    <User size={64} className="text-white" />
+                                </div>
+                                <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-2">
+                                    <Award className="w-4 h-4 text-white" />
+                                </div>
                             </div>
-                            <div className="text-center sm:text-left">
-                                <h1 className="text-2xl font-bold text-white">{profileData?.name}</h1>
-                                <p className="text-blue-100">@{profileData?.username}</p>
-                                <div className="mt-2 flex flex-wrap justify-center sm:justify-start gap-4">
-                                    <div className="bg-white/20 rounded-full px-3 py-1 text-sm text-white">
-                                        <span className="font-semibold">{profileData?.current_streak}</span> Day Streak
+                            <div className="text-center sm:text-left flex-1">
+                                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">{profileData?.name}</h1>
+                                <p className="text-blue-300 text-lg mb-4">@{profileData?.username}</p>
+                                <div className="flex flex-wrap justify-center sm:justify-start gap-4">
+                                    <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
+                                        <div className="flex items-center gap-2 text-orange-400">
+                                            <TrendingUp className="w-5 h-5" />
+                                            <span className="font-semibold">{profileData?.current_streak}</span>
+                                            <span className="text-sm">Day Streak</span>
+                                        </div>
                                     </div>
-                                    <div className="bg-white/20 rounded-full px-3 py-1 text-sm text-white">
-                                        <span className="font-semibold">{profileData?.longest_streak}</span> Best Streak
+                                    <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
+                                        <div className="flex items-center gap-2 text-purple-400">
+                                            <Award className="w-5 h-5" />
+                                            <span className="font-semibold">{profileData?.longest_streak}</span>
+                                            <span className="text-sm">Best Streak</span>
+                                        </div>
                                     </div>
-                                    <div className="bg-white/20 rounded-full px-3 py-1 text-sm text-white">
-                                        <span className="font-semibold">{activities.activities.length ?? 0}</span> Activities
+                                    <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
+                                        <div className="flex items-center gap-2 text-green-400">
+                                            <Target className="w-5 h-5" />
+                                            <span className="font-semibold">{activities.activities?.length ?? 0}</span>
+                                            <span className="text-sm">Activities</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -169,57 +197,63 @@ const Profile: React.FC = () => {
                     </div>
 
                     {/* Tab Navigation */}
-                    <div className="border-b">
+                    <div className="border-b border-gray-700/50">
                         <div className="flex">
                             <button
-                                className={`px-4 py-3 text-sm font-medium flex items-center gap-2 ${activeTab === 'profile'
-                                    ? 'border-b-2 border-blue-500 text-blue-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                className={`px-6 py-4 text-lg font-medium flex items-center gap-3 transition-all duration-200 ${activeTab === 'profile'
+                                    ? 'border-b-2 border-blue-500 text-blue-400 bg-blue-500/10'
+                                    : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/30'
                                     }`}
                                 onClick={() => setActiveTab('profile')}
                             >
-                                <Settings size={18} />
+                                <Settings size={20} />
                                 <span>Profile Settings</span>
                             </button>
                             <button
-                                className={`px-4 py-3 text-sm font-medium flex items-center gap-2 ${activeTab === 'activities'
-                                    ? 'border-b-2 border-blue-500 text-blue-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                className={`px-6 py-4 text-lg font-medium flex items-center gap-3 transition-all duration-200 ${activeTab === 'activities'
+                                    ? 'border-b-2 border-blue-500 text-blue-400 bg-blue-500/10'
+                                    : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/30'
                                     }`}
                                 onClick={() => setActiveTab('activities')}
                             >
-                                <Calendar size={18} />
+                                <Calendar size={20} />
                                 <span>Activity History</span>
                             </button>
                         </div>
                     </div>
 
                     {/* Content Area */}
-                    <div className="p-4 sm:p-6">
+                    <div className="p-6 sm:p-8">
                         {/* Success Message */}
                         {successMessage && (
-                            <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-lg">
-                                {successMessage}
+                            <div className="mb-6 p-4 bg-green-900/50 border border-green-500/50 text-green-200 rounded-xl backdrop-blur-sm animate-fade-in-up">
+                                <div className="flex items-center">
+                                    <Award className="w-5 h-5 mr-3" />
+                                    {successMessage}
+                                </div>
                             </div>
                         )}
 
                         {/* Error Message */}
                         {error && (
-                            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">
-                                {error}
+                            <div className="mb-6 p-4 bg-red-900/50 border border-red-500/50 text-red-200 rounded-xl backdrop-blur-sm animate-fade-in-up">
+                                <div className="flex items-center">
+                                    <X className="w-5 h-5 mr-3" />
+                                    {error}
+                                </div>
                             </div>
                         )}
 
                         {activeTab === 'profile' ? (
-                            <div>
-                                <div className="flex justify-between items-center mb-6">
-                                    <h2 className="text-xl font-semibold text-gray-800">Profile Information</h2>
+                            <div className="space-y-8">
+                                <div className="flex justify-between items-center">
+                                    <h2 className="text-2xl font-bold text-white">Profile Information</h2>
                                     {!isEditing ? (
                                         <button
                                             onClick={() => setIsEditing(true)}
-                                            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
+                                            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl text-white transition-all duration-300 transform hover:scale-105"
                                         >
-                                            <Edit2 size={16} />
+                                            <Edit2 size={18} />
                                             <span>Edit Profile</span>
                                         </button>
                                     ) : (
@@ -232,19 +266,19 @@ const Profile: React.FC = () => {
                                                     email: profileData?.email || '',
                                                 });
                                             }}
-                                            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
+                                            className="flex items-center gap-2 px-6 py-3 bg-gray-600 hover:bg-gray-500 rounded-xl text-white transition-all duration-300"
                                         >
-                                            <X size={16} />
+                                            <X size={18} />
                                             <span>Cancel</span>
                                         </button>
                                     )}
                                 </div>
 
                                 {isEditing ? (
-                                    <form onSubmit={handleSubmit}>
+                                    <form onSubmit={handleSubmit} className="space-y-6">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
-                                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                                                <label htmlFor="name" className="block text-lg font-medium text-gray-300 mb-2">
                                                     Full Name
                                                 </label>
                                                 <input
@@ -253,12 +287,12 @@ const Profile: React.FC = () => {
                                                     name="name"
                                                     value={formData.name}
                                                     onChange={handleInputChange}
-                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                    className="w-full px-4 py-3 border border-gray-600 rounded-xl bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                                     required
                                                 />
                                             </div>
                                             <div>
-                                                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                                                <label htmlFor="username" className="block text-lg font-medium text-gray-300 mb-2">
                                                     Username
                                                 </label>
                                                 <input
@@ -267,12 +301,12 @@ const Profile: React.FC = () => {
                                                     name="username"
                                                     value={formData.username}
                                                     onChange={handleInputChange}
-                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                    className="w-full px-4 py-3 border border-gray-600 rounded-xl bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                                     required
                                                 />
                                             </div>
-                                            <div>
-                                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                                            <div className="md:col-span-2">
+                                                <label htmlFor="email" className="block text-lg font-medium text-gray-300 mb-2">
                                                     Email Address
                                                 </label>
                                                 <input
@@ -281,69 +315,86 @@ const Profile: React.FC = () => {
                                                     name="email"
                                                     value={formData.email}
                                                     onChange={handleInputChange}
-                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                    className="w-full px-4 py-3 border border-gray-600 rounded-xl bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                                     required
                                                 />
                                             </div>
                                         </div>
-                                        <div className="mt-6">
+                                        <div>
                                             <button
                                                 type="submit"
-                                                className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                                                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-xl transition-all duration-300 transform hover:scale-105"
                                             >
-                                                <Save size={18} />
+                                                <Save size={20} />
                                                 <span>Save Changes</span>
                                             </button>
                                         </div>
                                     </form>
                                 ) : (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <h3 className="text-sm font-medium text-gray-500 mb-1">Full Name</h3>
-                                            <p className="text-gray-900">{profileData?.name}</p>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="space-y-6">
+                                            <div className="bg-gray-700/30 p-6 rounded-xl border border-gray-600/50">
+                                                <h3 className="text-lg font-medium text-gray-300 mb-2">Full Name</h3>
+                                                <p className="text-xl text-white">{profileData?.name}</p>
+                                            </div>
+                                            <div className="bg-gray-700/30 p-6 rounded-xl border border-gray-600/50">
+                                                <h3 className="text-lg font-medium text-gray-300 mb-2">Username</h3>
+                                                <p className="text-xl text-white">@{profileData?.username}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="text-sm font-medium text-gray-500 mb-1">Username</h3>
-                                            <p className="text-gray-900">@{profileData?.username}</p>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-sm font-medium text-gray-500 mb-1">Email Address</h3>
-                                            <p className="text-gray-900">{profileData?.email}</p>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-sm font-medium text-gray-500 mb-1">Member Since</h3>
-                                            <p className="text-gray-900">
-                                                {profileData?.createdAt
-                                                    ? new Date(profileData.createdAt).toLocaleDateString('en-US', {
-                                                        year: 'numeric',
-                                                        month: 'long',
-                                                        day: 'numeric',
-                                                    })
-                                                    : 'N/A'}
-                                            </p>
+                                        <div className="space-y-6">
+                                            <div className="bg-gray-700/30 p-6 rounded-xl border border-gray-600/50">
+                                                <h3 className="text-lg font-medium text-gray-300 mb-2">Email Address</h3>
+                                                <p className="text-xl text-white">{profileData?.email}</p>
+                                            </div>
+                                            <div className="bg-gray-700/30 p-6 rounded-xl border border-gray-600/50">
+                                                <h3 className="text-lg font-medium text-gray-300 mb-2">Member Since</h3>
+                                                <p className="text-xl text-white">
+                                                    {profileData?.createdAt
+                                                        ? new Date(profileData.createdAt).toLocaleDateString('en-US', {
+                                                            year: 'numeric',
+                                                            month: 'long',
+                                                            day: 'numeric',
+                                                        })
+                                                        : 'N/A'}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="mt-8 pt-6 border-t">
-                                    <h2 className="text-xl font-semibold text-gray-800 mb-4">Account Statistics</h2>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                        <div className="bg-gray-50 p-4 rounded-lg">
-                                            <h3 className="text-sm font-medium text-gray-500 mb-1">Current Streak</h3>
-                                            <p className="text-2xl font-bold text-orange-500">{profileData?.current_streak} days</p>
+                                {/* Statistics Section */}
+                                <div className="mt-12">
+                                    <h2 className="text-2xl font-bold text-white mb-6">Your Statistics</h2>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                        <div className="bg-gradient-to-br from-orange-500/20 to-red-500/20 p-6 rounded-xl border border-orange-500/30">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <h3 className="text-lg font-medium text-orange-300">Current Streak</h3>
+                                                <TrendingUp className="w-6 h-6 text-orange-400" />
+                                            </div>
+                                            <p className="text-3xl font-bold text-orange-400">{profileData?.current_streak} days</p>
                                         </div>
-                                        <div className="bg-gray-50 p-4 rounded-lg">
-                                            <h3 className="text-sm font-medium text-gray-500 mb-1">Longest Streak</h3>
-                                            <p className="text-2xl font-bold text-purple-600">{profileData?.longest_streak} days</p>
+                                        <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 p-6 rounded-xl border border-purple-500/30">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <h3 className="text-lg font-medium text-purple-300">Longest Streak</h3>
+                                                <Award className="w-6 h-6 text-purple-400" />
+                                            </div>
+                                            <p className="text-3xl font-bold text-purple-400">{profileData?.longest_streak} days</p>
                                         </div>
-                                        <div className="bg-gray-50 p-4 rounded-lg">
-                                            <h3 className="text-sm font-medium text-gray-500 mb-1">Total Activities</h3>
-                                            <p className="text-2xl font-bold text-blue-600">{activities.activities.length ?? 0}</p>
+                                        <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 p-6 rounded-xl border border-blue-500/30">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <h3 className="text-lg font-medium text-blue-300">Total Activities</h3>
+                                                <Target className="w-6 h-6 text-blue-400" />
+                                            </div>
+                                            <p className="text-3xl font-bold text-blue-400">{activities.activities?.length ?? 0}</p>
                                         </div>
-                                        <div className="bg-gray-50 p-4 rounded-lg">
-                                            <h3 className="text-sm font-medium text-gray-500 mb-1">Completion Rate</h3>
-                                            <p className="text-2xl font-bold text-green-600">
-                                                {activities.activities.length > 0
+                                        <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 p-6 rounded-xl border border-green-500/30">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <h3 className="text-lg font-medium text-green-300">Success Rate</h3>
+                                                <TrendingUp className="w-6 h-6 text-green-400" />
+                                            </div>
+                                            <p className="text-3xl font-bold text-green-400">
+                                                {activities.activities?.length > 0
                                                     ? Math.round(((profileData?.current_streak ?? 0) / activities.activities.length) * 100) + '%'
                                                     : '0%'}
                                             </p>
@@ -351,78 +402,77 @@ const Profile: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="mt-8 pt-6 border-t">
-                                    <h2 className="text-xl font-semibold text-red-600 mb-4">Danger Zone</h2>
-                                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                                        <h3 className="text-lg font-medium text-red-800 mb-2">Change Password</h3>
-                                        <p className="text-red-600 mb-4">Make sure to use a strong password that you haven't used before.</p>
-                                        <button
-                                            onClick={() => setShowPasswordModal(true)}
-                                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-                                        >
-                                            Change Password
-                                        </button>
+                                {/* Security Section */}
+                                <div className="mt-12 p-6 bg-red-900/20 border border-red-500/30 rounded-xl">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <Shield className="w-6 h-6 text-red-400" />
+                                        <h2 className="text-xl font-bold text-red-300">Security Settings</h2>
                                     </div>
+                                    <p className="text-red-200 mb-6">Keep your account secure by updating your password regularly.</p>
+                                    <button
+                                        onClick={() => setShowPasswordModal(true)}
+                                        className="px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-all duration-300 transform hover:scale-105"
+                                    >
+                                        Change Password
+                                    </button>
                                 </div>
 
                                 {/* Password Change Modal */}
                                 {showPasswordModal && (
-                                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                                        <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                                            <h2 className="text-xl font-semibold mb-4">Change Password</h2>
-                                            <form onSubmit={handlePasswordChange}>
-                                                <div className="space-y-4">
-                                                    <div>
-                                                        <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                                                            Current Password
-                                                        </label>
-                                                        <input
-                                                            type="password"
-                                                            id="currentPassword"
-                                                            value={passwordData.currentPassword}
-                                                            onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
-                                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                            required
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                                                            New Password
-                                                        </label>
-                                                        <input
-                                                            type="password"
-                                                            id="newPassword"
-                                                            value={passwordData.newPassword}
-                                                            onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                            required
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                                                            Confirm New Password
-                                                        </label>
-                                                        <input
-                                                            type="password"
-                                                            id="confirmPassword"
-                                                            value={passwordData.confirmPassword}
-                                                            onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-                                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                            required
-                                                        />
-                                                    </div>
+                                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                                        <div className="bg-gray-800 rounded-2xl p-8 max-w-md w-full border border-gray-700 shadow-2xl">
+                                            <h2 className="text-2xl font-bold text-white mb-6">Change Password</h2>
+                                            <form onSubmit={handlePasswordChange} className="space-y-4">
+                                                <div>
+                                                    <label htmlFor="currentPassword" className="block text-lg font-medium text-gray-300 mb-2">
+                                                        Current Password
+                                                    </label>
+                                                    <input
+                                                        type="password"
+                                                        id="currentPassword"
+                                                        value={passwordData.currentPassword}
+                                                        onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                                                        className="w-full px-4 py-3 border border-gray-600 rounded-xl bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        required
+                                                    />
                                                 </div>
-                                                <div className="mt-6 flex justify-end gap-3">
+                                                <div>
+                                                    <label htmlFor="newPassword" className="block text-lg font-medium text-gray-300 mb-2">
+                                                        New Password
+                                                    </label>
+                                                    <input
+                                                        type="password"
+                                                        id="newPassword"
+                                                        value={passwordData.newPassword}
+                                                        onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                                                        className="w-full px-4 py-3 border border-gray-600 rounded-xl bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label htmlFor="confirmPassword" className="block text-lg font-medium text-gray-300 mb-2">
+                                                        Confirm New Password
+                                                    </label>
+                                                    <input
+                                                        type="password"
+                                                        id="confirmPassword"
+                                                        value={passwordData.confirmPassword}
+                                                        onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                                                        className="w-full px-4 py-3 border border-gray-600 rounded-xl bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="flex justify-end gap-4 mt-8">
                                                     <button
                                                         type="button"
                                                         onClick={() => setShowPasswordModal(false)}
-                                                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+                                                        className="px-6 py-3 bg-gray-600 hover:bg-gray-500 text-white rounded-xl transition-colors"
                                                     >
                                                         Cancel
                                                     </button>
                                                     <button
                                                         type="submit"
-                                                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                                                        className="px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-colors"
                                                     >
                                                         Change Password
                                                     </button>
@@ -434,34 +484,40 @@ const Profile: React.FC = () => {
                             </div>
                         ) : (
                             <div>
-                                <h2 className="text-xl font-semibold text-gray-800 mb-6">Activity History</h2>
+                                <h2 className="text-2xl font-bold text-white mb-8">Activity History</h2>
 
-
-
-                                {/* Activity List */}
                                 <div className="space-y-4">
                                     {Array.isArray(activities.activities) && activities.activities.length === 0 ? (
-                                        <div className="text-center py-12 bg-gray-50 rounded-lg">
-                                            <p className="text-gray-500">No activities recorded yet.</p>
+                                        <div className="text-center py-16 bg-gray-700/30 rounded-2xl border border-gray-600/50">
+                                            <Calendar className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                                            <p className="text-xl text-gray-400">No activities recorded yet.</p>
+                                            <p className="text-gray-500 mt-2">Start your journey by adding your first activity!</p>
                                         </div>
                                     ) : (
-                                        Array.isArray(activities.activities) && activities.activities.map((activity: Activity) => (
-                                            <div key={activity.id} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                                                    <div>
-                                                        <ul className="list-disc pl-4">
-                                                            {Array.isArray(activity.description) &&  activity.description.map((desc: string, index: number) => (
-                                                                <li key={index} className="text-gray-700">{desc}</li>
+                                        Array.isArray(activities.activities) && activities.activities.map((activity: Activity, index: number) => (
+                                            <div key={activity.id} className={`p-6 border border-gray-600/50 rounded-xl hover:bg-gray-700/30 transition-all duration-300 animate-fade-in-up`} style={{ animationDelay: `${index * 100}ms` }}>
+                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                                    <div className="flex-1">
+                                                        <ul className="space-y-2">
+                                                            {Array.isArray(activity.description) && activity.description.map((desc: string, index: number) => (
+                                                                <li key={index} className="flex items-start gap-3 text-gray-300">
+                                                                    <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0" />
+                                                                    <span className="text-lg">{desc}</span>
+                                                                </li>
                                                             ))}
                                                         </ul>
                                                     </div>
-                                                    <div className="text-sm text-gray-500">
-                                                        {new Date(activity.date).toLocaleDateString('en-US', {
-                                                            weekday: 'long',
-                                                            year: 'numeric',
-                                                            month: 'long',
-                                                            day: 'numeric',
-                                                        })}
+                                                    <div className="text-right">
+                                                        <div className="text-lg font-medium text-blue-400">
+                                                            {new Date(activity.date).toLocaleDateString('en-US', {
+                                                                weekday: 'short',
+                                                                month: 'short',
+                                                                day: 'numeric',
+                                                            })}
+                                                        </div>
+                                                        <div className="text-sm text-gray-500">
+                                                            {new Date(activity.date).getFullYear()}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
