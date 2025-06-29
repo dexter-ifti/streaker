@@ -26,36 +26,67 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
- const client = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
 createRoot(document.getElementById('root')!).render(
-  <GoogleOAuthProvider clientId={client}>
   <StrictMode>
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <Router>
-          <Routes>
-            <Route path='/' element={<Landing />} />
-            <Route path='/login' element={<Login />} />
-            <Route path='/register' element={<Register />} />
-            <Route path='/home' element={<App />} />
-            <Route path='/user' element={<Profile />} />
-            <Route path="/feedback" element={<FeedbackView />} />
-          </Routes>
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme='dark'
-          />
-        </Router>
-      </QueryClientProvider>
-    </AuthProvider>
+    {clientId ? (
+      <GoogleOAuthProvider clientId={clientId}>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <Router>
+              <Routes>
+                <Route path='/' element={<Landing />} />
+                <Route path='/login' element={<Login />} />
+                <Route path='/register' element={<Register />} />
+                <Route path='/home' element={<App />} />
+                <Route path='/user' element={<Profile />} />
+                <Route path="/feedback" element={<FeedbackView />} />
+              </Routes>
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme='dark'
+              />
+            </Router>
+          </QueryClientProvider>
+        </AuthProvider>
+      </GoogleOAuthProvider>
+    ) : (
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <Router>
+            <Routes>
+              <Route path='/' element={<Landing />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/register' element={<Register />} />
+              <Route path='/home' element={<App />} />
+              <Route path='/user' element={<Profile />} />
+              <Route path="/feedback" element={<FeedbackView />} />
+            </Routes>
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme='dark'
+            />
+          </Router>
+        </QueryClientProvider>
+      </AuthProvider>
+    )}
   </StrictMode>
-  </GoogleOAuthProvider>
 );
