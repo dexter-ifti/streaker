@@ -28,7 +28,6 @@ function App() {
     isLoading: activitiesLoading
   } = useActivities(authUser?.token ?? '', currentPage, activitiesPerPage);
 
-
   const addActivityMutation = useAddActivity();
 
   const loading = streakLoading || longestStreakLoading || activitiesLoading || allActivitiesLoading;
@@ -45,11 +44,11 @@ function App() {
           token: authUser.token,
           description
         });
-        
-        toast.success('Activity added successfully!');
+
+        toast.success('🎉 Activity added! Keep the streak going!');
       } catch (error) {
         console.error('Error submitting activity:', error);
-        toast.error('An error occurred while adding the activity. Please try again later.');
+        toast.error('Oops! Something went wrong. Please try again.');
       } finally {
         setIsSubmitting(false);
       }
@@ -93,37 +92,50 @@ function App() {
   }, [allActivities]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      {/* Background Effects */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-1000" />
+      </div>
+
       <Header />
       <InstallPrompt />
-      
+
       {authUser?.user.name && <WelcomeMessage userName={authUser.user.name} />}
 
-      <main className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="relative px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <LoadingSpinner />
+            <div className="text-center space-y-4">
+              <LoadingSpinner />
+              <p className="text-gray-400 animate-pulse">Loading your progress...</p>
+            </div>
           </div>
         ) : (
-          <div className="max-w-7xl mx-auto space-y-6">
-            <ActivityHistoryCard
-              longestStreak={longestStreak}
-              currentStreak={streak}
-              heatmapData={heatmapData}
-            />
-            
-            <ActivitySection
-              activities={activities}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onSubmit={handleActivitySubmit}
-              onPreviousPage={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              onNextPage={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-            />
+          <div className="max-w-7xl mx-auto space-y-8">
+            <div className="animate-fade-in-up">
+              <ActivityHistoryCard
+                longestStreak={longestStreak}
+                currentStreak={streak}
+                heatmapData={heatmapData}
+              />
+            </div>
+
+            <div className="animate-fade-in-up delay-200">
+              <ActivitySection
+                activities={activities}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onSubmit={handleActivitySubmit}
+                onPreviousPage={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                onNextPage={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              />
+            </div>
           </div>
         )}
       </main>
-      
+
       <Footer />
       {isSubmitting && <LoadingOverlay />}
     </div>
