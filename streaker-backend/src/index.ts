@@ -22,6 +22,10 @@ app.route('/api/activity', activityRouter)
 app.route('/api/users', userRouter);
 app.route('/api/feedback', feedbackRouter);
 
+app.get('/health', (c) => {
+	return c.json({ message : "Server is running fine"})
+	});
+
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html >
