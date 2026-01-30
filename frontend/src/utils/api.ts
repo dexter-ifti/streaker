@@ -136,6 +136,34 @@ const addActivity = async (token: string, description: string) => {
     return response;
 }
 
+const editActivityItem = async (token: string, activityId: string, index: number, description: string) => {
+    try {
+        const response = await activity_api.put(`/activities/${activityId}/items/${index}`, {
+            description: description,
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Edit activity');
+    }
+}
+
+const deleteActivityItem = async (token: string, activityId: string, index: number) => {
+    try {
+        const response = await activity_api.delete(`/activities/${activityId}/items/${index}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Delete activity');
+    }
+}
 
 // dummy 
 
@@ -213,16 +241,18 @@ const fetchUserInfo = async (accessToken: string): Promise<GoogleUserInfo> => {
         return userInfo;
     };
 
-export { 
-    registerUser, 
-    loginUser, 
-    fetchStreaks, 
-    fetchLongestStreak, 
-    fetchActivities, 
-    fetchAllActivities, 
-    addActivity, 
-    fetchUserProfile, 
-    updateUserProfile, 
+export {
+    registerUser,
+    loginUser,
+    fetchStreaks,
+    fetchLongestStreak,
+    fetchActivities,
+    fetchAllActivities,
+    addActivity,
+    editActivityItem,
+    deleteActivityItem,
+    fetchUserProfile,
+    updateUserProfile,
     changePassword,
     fetchUserInfo
 };

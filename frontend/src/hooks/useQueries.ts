@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchStreaks, fetchLongestStreak, fetchAllActivities, addActivity, fetchUserProfile, updateUserProfile, changePassword } from '../utils/api'
+import { fetchStreaks, fetchLongestStreak, fetchAllActivities, addActivity, editActivityItem, deleteActivityItem, fetchUserProfile, updateUserProfile, changePassword } from '../utils/api'
 import { Activity } from '@ifti_taha/streaker-common';
 import { useAuth } from '../utils/auth';
 
@@ -189,6 +189,36 @@ export function useAddActivity() {
         queryClient.setQueryData([queryKeys.allActivities], context.previousAllActivities);
       }
     },
+    onSuccess: () => {
+      // Invalidate and refetch relevant queries
+      queryClient.invalidateQueries({ queryKey: [queryKeys.activities] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.allActivities] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.streaks] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.longestStreak] });
+    }
+  });
+}
+
+export function useUpdateActivityItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ token, activityId, index, description }: { token: string, activityId: string, index: number, description: string }) =>
+      editActivityItem(token, activityId, index, description),
+    onSuccess: () => {
+      // Invalidate and refetch relevant queries
+      queryClient.invalidateQueries({ queryKey: [queryKeys.activities] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.allActivities] });
+    }
+  });
+}
+
+export function useDeleteActivityItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ token, activityId, index }: { token: string, activityId: string, index: number }) =>
+      deleteActivityItem(token, activityId, index),
     onSuccess: () => {
       // Invalidate and refetch relevant queries
       queryClient.invalidateQueries({ queryKey: [queryKeys.activities] });
