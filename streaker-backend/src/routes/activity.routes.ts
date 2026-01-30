@@ -83,3 +83,13 @@ activityRouter.delete('/activities/:id/items/:index', (c) => {
     const activityController = new ActivityController(activityService);
     return activityController.deleteActivity(c);
 })
+
+// PATCH api/activity/activities/:id/items/:index/toggle - Toggle activity completion
+activityRouter.patch('/activities/:id/items/:index/toggle', (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env?.DATABASE_URL
+    }).$extends(withAccelerate());
+    const activityService = new ActivityService(prisma);
+    const activityController = new ActivityController(activityService);
+    return activityController.toggleComplete(c);
+})
