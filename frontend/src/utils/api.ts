@@ -165,6 +165,19 @@ const deleteActivityItem = async (token: string, activityId: string, index: numb
     }
 }
 
+const toggleActivityComplete = async (token: string, activityId: string, index: number) => {
+    try {
+        const response = await activity_api.patch(`/activities/${activityId}/items/${index}/toggle`, {}, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Toggle activity completion');
+    }
+}
+
 // dummy 
 
 // Fetch user profile
@@ -251,6 +264,7 @@ export {
     addActivity,
     editActivityItem,
     deleteActivityItem,
+    toggleActivityComplete,
     fetchUserProfile,
     updateUserProfile,
     changePassword,

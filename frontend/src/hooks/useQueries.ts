@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchStreaks, fetchLongestStreak, fetchAllActivities, addActivity, editActivityItem, deleteActivityItem, fetchUserProfile, updateUserProfile, changePassword } from '../utils/api'
+import { fetchStreaks, fetchLongestStreak, fetchAllActivities, addActivity, editActivityItem, deleteActivityItem, toggleActivityComplete, fetchUserProfile, updateUserProfile, changePassword } from '../utils/api'
 import { Activity } from '@ifti_taha/streaker-common';
 import { useAuth } from '../utils/auth';
 
@@ -225,6 +225,20 @@ export function useDeleteActivityItem() {
       queryClient.invalidateQueries({ queryKey: [queryKeys.allActivities] });
       queryClient.invalidateQueries({ queryKey: [queryKeys.streaks] });
       queryClient.invalidateQueries({ queryKey: [queryKeys.longestStreak] });
+    }
+  });
+}
+
+export function useToggleActivityComplete() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ token, activityId, index }: { token: string, activityId: string, index: number }) =>
+      toggleActivityComplete(token, activityId, index),
+    onSuccess: () => {
+      // Invalidate and refetch relevant queries
+      queryClient.invalidateQueries({ queryKey: [queryKeys.activities] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.allActivities] });
     }
   });
 }

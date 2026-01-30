@@ -1,6 +1,6 @@
 import { Plus, Calendar } from 'lucide-react';
 import { ActivityForm, ActivityList } from '.';
-import { useDeleteActivityItem, useUpdateActivityItem } from '../hooks/useQueries';
+import { useDeleteActivityItem, useUpdateActivityItem, useToggleActivityComplete } from '../hooks/useQueries';
 import { useAuth } from '../utils/auth';
 import { toast } from 'react-toastify';
 
@@ -24,6 +24,7 @@ export const ActivitySection = ({
   const { authUser } = useAuth();
   const deleteActivityMutation = useDeleteActivityItem();
   const updateActivityMutation = useUpdateActivityItem();
+  const toggleCompleteMutation = useToggleActivityComplete();
 
   const handleDeleteActivityItem = async (activityId: string, index: number) => {
     if (!authUser?.token) {
@@ -71,6 +72,24 @@ export const ActivitySection = ({
     }
   };
 
+  const handleToggleComplete = async (activityId: string, index: number) => {
+    if (!authUser?.token) {
+      toast.error('Authentication required');
+      return;
+    }
+
+    try {
+      await toggleCompleteMutation.mutateAsync({
+        token: authUser.token,
+        activityId,
+        index
+      });
+    } catch (error) {
+      console.error('Error toggling activity completion:', error);
+      toast.error('Failed to update activity status. Please try again later.');
+    }
+  };
+
   return (
     <div className="bg-gray-800/50 backdrop-blur-xl p-6 sm:p-8 rounded-2xl shadow-2xl border border-gray-700/50">
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 flex items-center gap-3 text-white">
@@ -93,8 +112,10 @@ export const ActivitySection = ({
           activities={activities}
           onDeleteItem={handleDeleteActivityItem}
           onUpdateItem={handleUpdateActivityItem}
+          onToggleComplete={handleToggleComplete}
           isDeleting={deleteActivityMutation.isPending}
           isUpdating={updateActivityMutation.isPending}
+          isToggling={toggleCompleteMutation.isPending}
         />
       </div>
 
