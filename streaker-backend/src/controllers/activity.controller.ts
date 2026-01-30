@@ -78,4 +78,16 @@ export class ActivityController {
         }
         return c.json({ message: 'Activity deleted successfully' }, 200);
     }
+
+    async toggleComplete(c: Context) {
+        const { id: userId } = c.get('jwtPayload');
+        const activityId = c.req.param('id');
+        const itemIndex = parseInt(c.req.param('index'));
+
+        const activity = await this.activityService.toggleComplete(userId, activityId, itemIndex);
+        if (!activity) {
+            return c.json({ error: 'Activity not found' }, 404);
+        }
+        return c.json(activity, 200);
+    }
 }

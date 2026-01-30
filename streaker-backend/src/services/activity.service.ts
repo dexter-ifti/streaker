@@ -10,6 +10,15 @@ export class ActivityService {
             const activityDate = new Date(date);
             activityDate.setUTCHours(0, 0, 0, 0);
 
+            // First check if activity exists to get current completed array
+            const existingActivity = await this.db.activity.findUnique({
+                where: {
+                    userId_date: {
+                        userId,
+                        date: activityDate,
+                    }
+                }
+            });
 
             const activity = await this.db.activity.upsert({
                 where: {
@@ -22,11 +31,15 @@ export class ActivityService {
                     description: {
                         push: description,
                     },
+                    completed: {
+                        push: false,
+                    },
                 },
                 create: {
                     userId,
                     date: activityDate,
                     description: [description],
+                    completed: [false],
                 },
             });
 
@@ -272,7 +285,7 @@ export class ActivityService {
                     userId: userId,
                 },
             });
-            
+
             if (!activity) {
                 return null; // Activity not found
             }
@@ -280,6 +293,7 @@ export class ActivityService {
                 return null; // Invalid index
             }
             const updateddescription = activity.description.filter((_ : any, index: number) => index !== itemIndex);
+            const updatedCompleted = (activity.completed || []).filter((_ : any, index: number) => index !== itemIndex);
 
             const updatedActivity = await this.db.activity.update({
                 where : {
@@ -287,6 +301,7 @@ export class ActivityService {
                 },
                 data: {
                     description: updateddescription,
+                    completed: updatedCompleted,
                 },
             })
             if (updateddescription.length === 0) {
@@ -306,6 +321,47 @@ export class ActivityService {
             return updatedActivity;
         } catch (error: any) {
             throw new HTTPException(500, { message: `Failed to delete activity: ${error.message}` });
+        }
+    }
+
+    async toggleComplete(userId: string, activityId: string, itemIndex: number) {
+        try {
+            const activity = await this.db.activity.findUnique({
+                where: {
+                    id: activityId,
+                    userId: userId,
+                },
+            });
+
+            if (!activity) {
+                return null;
+            }
+
+            if (itemIndex < 0 || itemIndex >= activity.description.length) {
+                throw new HTTPException(400, { message: 'Invalid item index' });
+            }
+
+            // Initialize completed array if it doesn't exist or is shorter than description
+            let completedArray = activity.completed || [];
+            while (completedArray.length < activity.description.length) {
+                completedArray.push(false);
+            }
+
+            // Toggle the completion status
+            completedArray[itemIndex] = !completedArray[itemIndex];
+
+            const updatedActivity = await this.db.activity.update({
+                where: {
+                    id: activityId,
+                },
+                data: {
+                    completed: completedArray,
+                },
+            });
+
+            return updatedActivity;
+        } catch (error: any) {
+            throw new HTTPException(500, { message: `Failed to toggle completion: ${error.message}` });
         }
     }
 }
