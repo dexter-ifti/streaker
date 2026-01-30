@@ -29,13 +29,14 @@ model User {
 }
 
 model Activity {
-  id          String   @id @default(uuid())
-  date        DateTime @default(now()) @db.Date
+  id          String    @id @default(uuid())
+  date        DateTime  @default(now()) @db.Date
   description String[]
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String   @map("user_id")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  completed   Boolean[] @default([])
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String    @map("user_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
   @@unique([userId, date])
   @@map("activities")
