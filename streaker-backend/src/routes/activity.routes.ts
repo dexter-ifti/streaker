@@ -64,6 +64,26 @@ activityRouter.get('/longest-streak', (c) => {
     return activityController.getLongestStreak(c)
 });
 
+// GET api/activity/category-stats - Get stats for all categories
+activityRouter.get('/category-stats', (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env?.DATABASE_URL
+    }).$extends(withAccelerate());
+    const activityService = new ActivityService(prisma);
+    const activityController = new ActivityController(activityService);
+    return activityController.getCategoryStats(c)
+});
+
+// GET api/activity/category-streak - Get streak for a specific category
+activityRouter.get('/category-streak', (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env?.DATABASE_URL
+    }).$extends(withAccelerate());
+    const activityService = new ActivityService(prisma);
+    const activityController = new ActivityController(activityService);
+    return activityController.getCategoryStreak(c)
+});
+
 // PUT api/activity/activities/:id/items/index - Edit an activity
 activityRouter.put('/activities/:id/items/:index', (c) => {
     const prisma = new PrismaClient({
