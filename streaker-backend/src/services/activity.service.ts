@@ -5,7 +5,7 @@ import { HTTPException } from "hono/http-exception";
 export class ActivityService {
     constructor(private db: PrismaClient | any) { }
 
-    async saveActivity(date: Date, description: string, userId: string) {
+    async saveActivity(date: Date, description: string, userId: string, category: string = 'General') {
         try {
             const activityDate = new Date(date);
             activityDate.setUTCHours(0, 0, 0, 0);
@@ -34,12 +34,16 @@ export class ActivityService {
                     completed: {
                         push: false,
                     },
+                    category: {
+                        push: category,
+                    },
                 },
                 create: {
                     userId,
                     date: activityDate,
                     description: [description],
                     completed: [false],
+                    category: [category],
                 },
             });
 
@@ -243,7 +247,7 @@ export class ActivityService {
         }
     }
 
-    async editActivity(userId: string, activityId : string, newDescription : string, itemIndex : number) {
+    async editActivity(userId: string, activityId : string, newDescription : string, itemIndex : number, newCategory?: string) {
         try {
             const activity = await this.db.activity.findUnique({
                 where : {
@@ -263,17 +267,30 @@ export class ActivityService {
             const updatedDescription = [...activity.description];
             updatedDescription[itemIndex] = newDescription.trim();
 
+            // Handle category update if provided
+            const updateData: any = {
+                description: updatedDescription,
+            };
+
+            if (newCategory !== undefined) {
+                const updatedCategory = [...(activity.category || [])];
+                // Ensure category array is same length as description
+                while (updatedCategory.length < activity.description.length) {
+                    updatedCategory.push('General');
+                }
+                updatedCategory[itemIndex] = newCategory;
+                updateData.category = updatedCategory;
+            }
+
             const updatedActivity = await this.db.activity.update({
                 where: {
                     id: activityId,
                 },
-                data: {
-                    description: updatedDescription,
-                },
+                data: updateData,
             });
             return updatedActivity;
         } catch (error: any) {
-            throw new HTTPException(500, { message: `Failed to edit activity: ${error.message}` }); 
+            throw new HTTPException(500, { message: `Failed to edit activity: ${error.message}` });
         }
     }
 
@@ -294,6 +311,7 @@ export class ActivityService {
             }
             const updateddescription = activity.description.filter((_ : any, index: number) => index !== itemIndex);
             const updatedCompleted = (activity.completed || []).filter((_ : any, index: number) => index !== itemIndex);
+            const updatedCategory = (activity.category || []).filter((_ : any, index: number) => index !== itemIndex);
 
             const updatedActivity = await this.db.activity.update({
                 where : {
@@ -302,6 +320,7 @@ export class ActivityService {
                 data: {
                     description: updateddescription,
                     completed: updatedCompleted,
+                    category: updatedCategory,
                 },
             })
             if (updateddescription.length === 0) {
@@ -362,6 +381,114 @@ export class ActivityService {
             return updatedActivity;
         } catch (error: any) {
             throw new HTTPException(500, { message: `Failed to toggle completion: ${error.message}` });
+        }
+    }
+
+    async getCategoryStreak(userId: string, category: string) {
+        try {
+            const activities = await this.db.activity.findMany({
+                where: {
+                    userId,
+                },
+                orderBy: {
+                    date: 'desc',
+                },
+            });
+
+            let streak = 0;
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+
+            // Filter activities that have at least one item with the specified category
+            const categoryActivities = activities.filter((activity: any) => {
+                const categories = activity.category || [];
+                return categories.some((cat: string) => cat === category);
+            });
+
+            if (categoryActivities.length === 0) {
+                return 0;
+            }
+
+            // Check if there's any activity with this category today
+            const hasActivityToday = categoryActivities.some((activity: { date: Date | string }) => {
+                const activityDate = new Date(activity.date);
+                return activityDate.getTime() === today.getTime();
+            });
+
+            if (!hasActivityToday &&
+                new Date(categoryActivities[0].date).getTime() < today.getTime() - 24 * 60 * 60 * 1000) {
+                return 0;
+            }
+
+            for (let i = 0; i < categoryActivities.length - 1; i++) {
+                const currentDate = new Date(categoryActivities[i].date);
+                const nextDate = new Date(categoryActivities[i + 1].date);
+
+                const diffDays = (currentDate.getTime() - nextDate.getTime()) / (1000 * 60 * 60 * 24);
+
+                if (i === 0) streak++;
+
+                if (diffDays === 1) {
+                    streak++;
+                } else {
+                    break;
+                }
+            }
+
+            // Handle single activity case
+            if (categoryActivities.length === 1 && hasActivityToday) {
+                return 1;
+            }
+
+            return streak;
+        } catch (error: any) {
+            throw new HTTPException(500, { message: `Failed to get category streak: ${error.message}` });
+        }
+    }
+
+    async getCategoryStats(userId: string) {
+        try {
+            const activities = await this.db.activity.findMany({
+                where: {
+                    userId,
+                },
+            });
+
+            const categories = ['General', 'Exercise', 'Learning', 'Work', 'Health', 'Creative', 'Social', 'Personal'];
+            const stats: { [key: string]: { count: number; completed: number; streak: number } } = {};
+
+            // Initialize stats for all categories
+            for (const category of categories) {
+                stats[category] = { count: 0, completed: 0, streak: 0 };
+            }
+
+            // Count activities and completed items per category
+            for (const activity of activities) {
+                const categoryArray = activity.category || [];
+                const completedArray = activity.completed || [];
+
+                for (let i = 0; i < activity.description.length; i++) {
+                    const cat = categoryArray[i] || 'General';
+                    if (stats[cat]) {
+                        stats[cat].count++;
+                        if (completedArray[i]) {
+                            stats[cat].completed++;
+                        }
+                    } else {
+                        // Handle unknown categories
+                        stats[cat] = { count: 1, completed: completedArray[i] ? 1 : 0, streak: 0 };
+                    }
+                }
+            }
+
+            // Calculate streak for each category
+            for (const category of Object.keys(stats)) {
+                stats[category].streak = await this.getCategoryStreak(userId, category);
+            }
+
+            return stats;
+        } catch (error: any) {
+            throw new HTTPException(500, { message: `Failed to get category stats: ${error.message}` });
         }
     }
 }
