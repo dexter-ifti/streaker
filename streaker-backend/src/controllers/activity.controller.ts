@@ -15,15 +15,16 @@ export class ActivityController {
         if (!success) {
             return c.json({ error: 'Invalid request body' }, 400);
         }
-        
+
         // Create Date object and reset time to midnight UTC
         const activityDate = new Date(body.date);
         activityDate.setUTCHours(0, 0, 0, 0);
-        
+
         const today = new Date();
         today.setUTCHours(0, 0, 0, 0);
 
-        const activity = await this.activityService.saveActivity(activityDate, body.description, userId);
+        const category = body.category || 'General';
+        const activity = await this.activityService.saveActivity(activityDate, body.description, userId, category);
         return c.json(activity, 201);
     }
 
@@ -62,11 +63,11 @@ export class ActivityController {
         const { id : userId } = c.get('jwtPayload');
         const body = await c.req.json();
         const itemIndex = parseInt(c.req.param('index'));
-        const activity = await this.activityService.editActivity(userId, c.req.param('id'), body.description, itemIndex);
+        const activity = await this.activityService.editActivity(userId, c.req.param('id'), body.description, itemIndex, body.category);
         if (!activity) {
             return c.json({ error: 'Activity not found' }, 404);
         }
-        return c.json(activity, 200); 
+        return c.json(activity, 200);
     }
 
     async deleteActivity(c : Context){
@@ -89,5 +90,21 @@ export class ActivityController {
             return c.json({ error: 'Activity not found' }, 404);
         }
         return c.json(activity, 200);
+    }
+
+    async getCategoryStats(c: Context) {
+        const { id: userId } = c.get('jwtPayload');
+        const stats = await this.activityService.getCategoryStats(userId);
+        return c.json(stats, 200);
+    }
+
+    async getCategoryStreak(c: Context) {
+        const { id: userId } = c.get('jwtPayload');
+        const category = c.req.query('category');
+        if (!category) {
+            return c.json({ error: 'Category parameter is required' }, 400);
+        }
+        const streak = await this.activityService.getCategoryStreak(userId, category);
+        return c.json({ streak }, 200);
     }
 }
