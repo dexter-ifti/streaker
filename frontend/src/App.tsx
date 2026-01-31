@@ -36,16 +36,17 @@ function App() {
   const activities = activitiesData?.activities ?? [];
   const totalPages = activitiesData?.totalPages ?? 1;
 
-  const handleActivitySubmit = async (description: string) => {
+  const handleActivitySubmit = async (description: string, category: string = 'General') => {
     if (authUser?.token) {
       try {
         setIsSubmitting(true);
         await addActivityMutation.mutateAsync({
           token: authUser.token,
-          description
+          description,
+          category
         });
 
-        toast.success('🎉 Activity added! Keep the streak going!');
+        toast.success('Activity added! Keep the streak going!');
       } catch (error) {
         console.error('Error submitting activity:', error);
         toast.error('Oops! Something went wrong. Please try again.');
