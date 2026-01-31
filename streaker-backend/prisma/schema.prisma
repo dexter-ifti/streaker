@@ -33,6 +33,7 @@ model Activity {
   date        DateTime  @default(now()) @db.Date
   description String[]
   completed   Boolean[] @default([])
+  category    String[]  @default([])
   user        User      @relation(fields: [userId], references: [id])
   userId      String    @map("user_id")
   createdAt   DateTime  @default(now()) @map("created_at")
