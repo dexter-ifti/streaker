@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchStreaks, fetchLongestStreak, fetchAllActivities, addActivity, editActivityItem, deleteActivityItem, toggleActivityComplete, fetchUserProfile, updateUserProfile, changePassword } from '../utils/api'
+import { fetchStreaks, fetchLongestStreak, fetchAllActivities, addActivity, editActivityItem, deleteActivityItem, toggleActivityComplete, fetchCategoryStats, fetchCategoryStreak, fetchUserProfile, updateUserProfile, changePassword } from '../utils/api'
 import { Activity } from '@ifti_taha/streaker-common';
 import { useAuth } from '../utils/auth';
 
@@ -9,6 +9,8 @@ export const queryKeys = {
   longestStreak: 'longest-streak',
   activities: 'activities',
   allActivities: 'all-activities',
+  categoryStats: 'category-stats',
+  categoryStreak: 'category-streak',
 }
 
 // Helper functions for localStorage
@@ -142,14 +144,15 @@ export function useAddActivity() {
   const { authUser } = useAuth();
 
   return useMutation({
-    mutationFn: ({ token, description }: { token: string, description: string }) =>
-      addActivity(token, description),
-    onMutate: async ({ description }) => {
+    mutationFn: ({ token, description, category }: { token: string, description: string, category?: string }) =>
+      addActivity(token, description, category || 'General'),
+    onMutate: async ({ description, category }) => {
       // Create optimistic activity
       const now = new Date().toISOString();
       const newActivity = {
         id: `temp-${Date.now()}`,
         description,
+        category: category || 'General',
         date: new Date(now),
         createdAt: new Date(now),
         updatedAt: new Date(now),
@@ -195,6 +198,7 @@ export function useAddActivity() {
       queryClient.invalidateQueries({ queryKey: [queryKeys.allActivities] });
       queryClient.invalidateQueries({ queryKey: [queryKeys.streaks] });
       queryClient.invalidateQueries({ queryKey: [queryKeys.longestStreak] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.categoryStats] });
     }
   });
 }
@@ -225,6 +229,7 @@ export function useDeleteActivityItem() {
       queryClient.invalidateQueries({ queryKey: [queryKeys.allActivities] });
       queryClient.invalidateQueries({ queryKey: [queryKeys.streaks] });
       queryClient.invalidateQueries({ queryKey: [queryKeys.longestStreak] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.categoryStats] });
     }
   });
 }
@@ -239,7 +244,32 @@ export function useToggleActivityComplete() {
       // Invalidate and refetch relevant queries
       queryClient.invalidateQueries({ queryKey: [queryKeys.activities] });
       queryClient.invalidateQueries({ queryKey: [queryKeys.allActivities] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.categoryStats] });
     }
+  });
+}
+
+export interface CategoryStats {
+  [category: string]: {
+    count: number;
+    completed: number;
+    streak: number;
+  };
+}
+
+export function useCategoryStats(token: string) {
+  return useQuery<CategoryStats>({
+    queryKey: [queryKeys.categoryStats, token],
+    queryFn: () => fetchCategoryStats(token),
+    enabled: !!token,
+  });
+}
+
+export function useCategoryStreak(token: string, category: string) {
+  return useQuery<number>({
+    queryKey: [queryKeys.categoryStreak, token, category],
+    queryFn: () => fetchCategoryStreak(token, category),
+    enabled: !!token && !!category,
   });
 }
 
