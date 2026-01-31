@@ -121,25 +121,25 @@ const fetchAllActivities = async (token : string, page : number, limit : number)
     }
 }
 
-const addActivity = async (token: string, description: string) => {
-    // console.log(`Adding activity: ${description}`);
+const addActivity = async (token: string, description: string, category: string = 'General') => {
     const response = await activity_api.post('/activities', {
         date: new Date().toISOString(),
         description: description,
+        category: category,
     }, {
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
         }
     });
-    // console.log(`Activity added:`, response.data);
     return response;
 }
 
-const editActivityItem = async (token: string, activityId: string, index: number, description: string) => {
+const editActivityItem = async (token: string, activityId: string, index: number, description: string, category?: string) => {
     try {
         const response = await activity_api.put(`/activities/${activityId}/items/${index}`, {
             description: description,
+            category: category,
         }, {
             headers: {
                 'Content-Type': 'application/json',
@@ -175,6 +175,35 @@ const toggleActivityComplete = async (token: string, activityId: string, index: 
         return response.data;
     } catch (error: any) {
         handleApiError(error, 'Toggle activity completion');
+    }
+}
+
+const fetchCategoryStats = async (token: string) => {
+    try {
+        const response = await activity_api.get('/category-stats', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Fetch category stats');
+    }
+}
+
+const fetchCategoryStreak = async (token: string, category: string) => {
+    try {
+        const response = await activity_api.get('/category-streak', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            params: {
+                category: category,
+            }
+        });
+        return response.data.streak;
+    } catch (error: any) {
+        handleApiError(error, 'Fetch category streak');
     }
 }
 
@@ -265,6 +294,8 @@ export {
     editActivityItem,
     deleteActivityItem,
     toggleActivityComplete,
+    fetchCategoryStats,
+    fetchCategoryStreak,
     fetchUserProfile,
     updateUserProfile,
     changePassword,
