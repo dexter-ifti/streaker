@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Edit2, Trash2, Save, X, Check } from 'lucide-react';
+import { getCategoryBgClass } from './ActivityForm';
 
 interface ActivityListProps {
   activities: any[];
@@ -49,6 +50,10 @@ const ActivityList = ({
     return activity.completed?.[index] ?? false;
   };
 
+  const getItemCategory = (activity: any, index: number): string => {
+    return activity.category?.[index] || 'General';
+  };
+
   const getCompletedCount = (activity: any): number => {
     if (!activity.completed || !Array.isArray(activity.completed)) return 0;
     return activity.completed.filter((c: boolean) => c).length;
@@ -89,6 +94,7 @@ const ActivityList = ({
             <div className="space-y-2">
               {activity.description?.map((desc: string, index: number) => {
                 const isCompleted = isItemCompleted(activity, index);
+                const itemCategory = getItemCategory(activity, index);
 
                 return (
                   <div
@@ -133,7 +139,7 @@ const ActivityList = ({
                           <button
                             onClick={() => onToggleComplete(activity.id, index)}
                             disabled={isToggling || isDeleting || isUpdating || editingItem !== null}
-                            className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 disabled:opacity-50 ${
+                            className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 disabled:opacity-50 flex-shrink-0 ${
                               isCompleted
                                 ? 'bg-green-500 border-green-500 text-white'
                                 : 'border-gray-500 hover:border-green-400'
@@ -151,8 +157,11 @@ const ActivityList = ({
                           >
                             {desc}
                           </span>
+                          <span className={`text-xs px-2 py-0.5 rounded-full border ${getCategoryBgClass(itemCategory)}`}>
+                            {itemCategory}
+                          </span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-shrink-0">
                           <button
                             onClick={() => handleEdit(activity.id, index, desc)}
                             disabled={isUpdating || isDeleting || isToggling || editingItem !== null}
