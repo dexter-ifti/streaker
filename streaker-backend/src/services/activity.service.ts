@@ -5,38 +5,29 @@ import { HTTPException } from "hono/http-exception";
 export class ActivityService {
     constructor(private db: PrismaClient | any) { }
 
-    async saveActivity(date: Date, description: string, userId: string, category: string = 'General') {
+    async saveActivity(
+        date: Date,
+        description: string,
+        userId: string,
+        category: string = 'General'
+    ) {
         try {
             const activityDate = new Date(date);
             activityDate.setUTCHours(0, 0, 0, 0);
 
-            // First check if activity exists to get current completed array
-            const existingActivity = await this.db.activity.findUnique({
-                where: {
-                    userId_date: {
-                        userId,
-                        date: activityDate,
-                    }
-                }
-            });
-
+            // Upsert activity - streaks are NOT updated here
+            // Streaks only count when activities are marked as completed
             const activity = await this.db.activity.upsert({
                 where: {
                     userId_date: {
                         userId,
                         date: activityDate,
-                    }
+                    },
                 },
                 update: {
-                    description: {
-                        push: description,
-                    },
-                    completed: {
-                        push: false,
-                    },
-                    category: {
-                        push: category,
-                    },
+                    description: { push: description },
+                    completed: { push: false },
+                    category: { push: category },
                 },
                 create: {
                     userId,
@@ -47,22 +38,14 @@ export class ActivityService {
                 },
             });
 
-            const current_streak = await this.getCurrentStreak(userId);
-            const longest_streak = await this.getLongestStreak(userId);
-
-            await this.db.user.update({
-                where: { id: userId },
-                data: {
-                    current_streak,
-                    longest_streak: Math.max(current_streak, longest_streak),
-                },
-            });
-
             return activity;
         } catch (error: any) {
-            throw new HTTPException(500, { message: `Failed to save activity: ${error.message}` });
+            throw new HTTPException(500, {
+                message: `Failed to save activity: ${error.message}`,
+            });
         }
     }
+
 
     async getActivities(userId: string, days: number) {
         try {
@@ -134,61 +117,65 @@ export class ActivityService {
         }
     }
 
+    dayKeyUTC(date: Date) {
+        return date.toISOString().slice(0, 10); // YYYY-MM-DD (UTC)
+    }
     async getCurrentStreak(userId: string) {
         try {
             const activities = await this.db.activity.findMany({
-                where: {
-                    userId,
-                },
-                orderBy: {
-                    date: 'desc',
-                },
+                where: { userId },
+                select: { date: true, completed: true },
+                orderBy: { date: 'desc' },
             });
+
+            if (activities.length === 0) return 0;
+
+            // Only count days where at least one activity is completed
+            const completedDays = activities.filter((a: any) => {
+                const completedArray = a.completed || [];
+                return completedArray.some((c: boolean) => c === true);
+            });
+
+            if (completedDays.length === 0) return 0;
+
+            const uniqueDays: string[] = [
+                ...new Set<string>(completedDays.map((a: any) => this.dayKeyUTC(new Date(a.date))))
+            ];
+
+            const todayKey = this.dayKeyUTC(new Date());
 
             let streak = 0;
-            const today = new Date();
-            today.setUTCHours(0, 0, 0, 0);
+            let expectedDay = todayKey;
 
-            // Check if there's any activity today
-            const hasActivityToday: boolean = activities.some((activity: { date: Date | string }) => {
-                const activityDate: Date = new Date(activity.date);
-                return activityDate.getTime() === today.getTime();
-            });
-
-            if (activities.length === 0 || (!hasActivityToday &&
-                new Date(activities[0].date).getTime() < today.getTime() - 24 * 60 * 60 * 1000)) {
-                // Reset streak if no activity today and last activity was before yesterday
-                await this.db.user.update({
-                    where: { id: userId },
-                    data: { current_streak: 0 },
-                });
-                return 0;
-            }
-
-            for (let i = 0; i < activities.length - 1; i++) {
-                const currentDate = new Date(activities[i].date);
-                const nextDate = new Date(activities[i + 1].date);
-
-                const diffDays = (currentDate.getTime() - nextDate.getTime()) / (1000 * 60 * 60 * 24);
-
-                if (i === 0) streak++;
-
-                if (diffDays === 1) {
+            for (const day of uniqueDays) {
+                if (day === expectedDay) {
                     streak++;
+
+                    const d = new Date(expectedDay);
+                    d.setUTCDate(d.getUTCDate() - 1);
+                    expectedDay = this.dayKeyUTC(d);
+                } else if (streak === 0) {
+                    // Allow streak to start from yesterday if no activity completed today yet
+                    const yesterday = new Date(todayKey);
+                    yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+                    const yesterdayKey = this.dayKeyUTC(yesterday);
+
+                    if (day === yesterdayKey) {
+                        streak++;
+                        const d = new Date(yesterdayKey);
+                        d.setUTCDate(d.getUTCDate() - 1);
+                        expectedDay = this.dayKeyUTC(d);
+                    } else {
+                        break;
+                    }
                 } else {
                     break;
                 }
             }
 
-            // Update current streak in database
             await this.db.user.update({
                 where: { id: userId },
-                data: {
-                    current_streak: streak,
-                    longest_streak: {
-                        increment: streak > (await this.getLongestStreak(userId)) ? streak : 0
-                    }
-                },
+                data: { current_streak: streak },
             });
 
             return streak;
@@ -200,57 +187,62 @@ export class ActivityService {
     getLongestStreak = async (userId: string) => {
         try {
             const activities = await this.db.activity.findMany({
-                where: {
-                    userId, // Filter by userId
-                },
-                orderBy: {
-                    date: 'asc', // Sort by date in ascending order
-                },
+                where: { userId },
+                select: { date: true, completed: true },
+                orderBy: { date: 'asc' },
             });
 
-            let longestStreak = 0;
-            let current_streak = 0;
-            let previousDate: Date | null = null;
+            if (activities.length === 0) return 0;
 
-            for (const activity of activities) {
-                const currentDate = new Date(activity.date);
-                currentDate.setHours(0, 0, 0, 0); // Normalize the date to midnight
+            // Only count days where at least one activity is completed
+            const completedDays = activities.filter((a: any) => {
+                const completedArray = a.completed || [];
+                return completedArray.some((c: boolean) => c === true);
+            });
 
-                if (previousDate === null) {
-                    // First activity, start the streak
-                    current_streak = 1;
+            if (completedDays.length === 0) return 0;
+
+            const uniqueDays: string[] = [
+                ...new Set<string>(completedDays.map((a: any) => this.dayKeyUTC(new Date(a.date))))
+            ];
+
+            let longest = 0;
+            let current = 0;
+            let prevDay: string | null = null;
+
+            for (const day of uniqueDays) {
+                if (!prevDay) {
+                    current = 1;
                 } else {
-                    const diffTime = currentDate.getTime() - previousDate.getTime();
-                    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+                    const prev = new Date(prevDay);
+                    prev.setUTCDate(prev.getUTCDate() + 1);
 
-                    if (diffDays === 1) {
-                        // Consecutive day, increment the streak
-                        current_streak++;
-                    } else if (diffDays > 1) {
-                        // Gap of more than 1 day, reset the streak
-                        current_streak = 1;
+                    if (day === this.dayKeyUTC(prev)) {
+                        current++;
+                    } else {
+                        current = 1;
                     }
                 }
 
-                // Update the longest streak if the current streak is longer
-                if (current_streak > longestStreak) {
-                    longestStreak = current_streak;
-                }
-
-                // Update the previous date
-                previousDate = currentDate;
+                longest = Math.max(longest, current);
+                prevDay = day;
             }
 
-            return longestStreak;
+            await this.db.user.update({
+                where: { id: userId },
+                data: { longest_streak: longest },
+            });
+
+            return longest;
         } catch (error: any) {
             throw new HTTPException(500, { message: `Failed to get longest streak: ${error.message}` });
         }
     }
 
-    async editActivity(userId: string, activityId : string, newDescription : string, itemIndex : number, newCategory?: string) {
+    async editActivity(userId: string, activityId: string, newDescription: string, itemIndex: number, newCategory?: string) {
         try {
             const activity = await this.db.activity.findUnique({
-                where : {
+                where: {
                     id: activityId,
                     userId: userId,
                 },
@@ -294,7 +286,7 @@ export class ActivityService {
         }
     }
 
-    async deleteActivity(userId : string, activityId : string, itemIndex : number) {
+    async deleteActivity(userId: string, activityId: string, itemIndex: number) {
         try {
             const activity = await this.db.activity.findUnique({
                 where: {
@@ -309,12 +301,12 @@ export class ActivityService {
             if (itemIndex < 0 || itemIndex >= activity.description.length) {
                 return null; // Invalid index
             }
-            const updateddescription = activity.description.filter((_ : any, index: number) => index !== itemIndex);
-            const updatedCompleted = (activity.completed || []).filter((_ : any, index: number) => index !== itemIndex);
-            const updatedCategory = (activity.category || []).filter((_ : any, index: number) => index !== itemIndex);
+            const updateddescription = activity.description.filter((_: any, index: number) => index !== itemIndex);
+            const updatedCompleted = (activity.completed || []).filter((_: any, index: number) => index !== itemIndex);
+            const updatedCategory = (activity.category || []).filter((_: any, index: number) => index !== itemIndex);
 
             const updatedActivity = await this.db.activity.update({
-                where : {
+                where: {
                     id: activityId,
                 },
                 data: {
@@ -378,6 +370,10 @@ export class ActivityService {
                 },
             });
 
+            // Recalculate streaks since completion status changed
+            await this.getCurrentStreak(userId);
+            await this.getLongestStreak(userId);
+
             return updatedActivity;
         } catch (error: any) {
             throw new HTTPException(500, { message: `Failed to toggle completion: ${error.message}` });
@@ -399,17 +395,21 @@ export class ActivityService {
             const today = new Date();
             today.setUTCHours(0, 0, 0, 0);
 
-            // Filter activities that have at least one item with the specified category
+            // Filter activities that have at least one COMPLETED item with the specified category
             const categoryActivities = activities.filter((activity: any) => {
                 const categories = activity.category || [];
-                return categories.some((cat: string) => cat === category);
+                const completed = activity.completed || [];
+                // Check if any item in this category is completed
+                return categories.some((cat: string, index: number) =>
+                    cat === category && completed[index] === true
+                );
             });
 
             if (categoryActivities.length === 0) {
                 return 0;
             }
 
-            // Check if there's any activity with this category today
+            // Check if there's any completed activity with this category today
             const hasActivityToday = categoryActivities.some((activity: { date: Date | string }) => {
                 const activityDate = new Date(activity.date);
                 return activityDate.getTime() === today.getTime();
