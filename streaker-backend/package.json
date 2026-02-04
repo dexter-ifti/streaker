@@ -2,7 +2,11 @@
   "name": "backend",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify"
+    "deploy": "wrangler deploy --minify",
+    "db:seed": "npx ts-node --project prisma/tsconfig.seed.json prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "ts-node --project prisma/tsconfig.seed.json prisma/seed.ts"
   },
   "dependencies": {
     "@ifti_taha/streaker-common": "^1.0.9",
@@ -14,10 +18,12 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250109.0",
     "@prisma/client": "5.22.0",
-    "@types/node": "^22.12.0",
+    "@types/node": "^22.19.7",
     "i": "^0.3.7",
     "npm": "^11.8.0",
     "prisma": "5.22.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
     "wrangler": "^4.1.0"
   }
 }
