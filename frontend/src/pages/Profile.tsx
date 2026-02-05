@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { User, Settings, Calendar, Edit2, Save, X, Shield, Award, TrendingUp, Target } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { User, Settings, Calendar, Edit2, Save, X, Shield, Award, TrendingUp, Target, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../utils/auth';
 import { useUser, useAllActivities, useUpdateUser, useChangePassword } from '../hooks/useQueries';
 import Header from '../components/Header';
@@ -8,7 +8,9 @@ import { toast } from 'react-toastify';
 
 interface Activity {
     id: string;
-    description: string;
+    description: string[];
+    completed: boolean[];
+    category: string[];
     date: string;
     createdAt: string;
 }
@@ -34,6 +36,27 @@ const Profile: React.FC = () => {
         newPassword: '',
         confirmPassword: ''
     });
+
+    // Calculate total and completed activity counts
+    const activityStats = useMemo(() => {
+        if (!activities.activities || !Array.isArray(activities.activities)) {
+            return { total: 0, completed: 0 };
+        }
+
+        let total = 0;
+        let completed = 0;
+
+        activities.activities.forEach((activity: Activity) => {
+            const descCount = Array.isArray(activity.description) ? activity.description.length : 0;
+            const completedArray = activity.completed || [];
+            const completedCount = completedArray.filter((c: boolean) => c === true).length;
+
+            total += descCount;
+            completed += completedCount;
+        });
+
+        return { total, completed };
+    }, [activities.activities]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -186,9 +209,9 @@ const Profile: React.FC = () => {
                                     </div>
                                     <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
                                         <div className="flex items-center gap-2 text-green-400">
-                                            <Target className="w-5 h-5" />
-                                            <span className="font-semibold">{activities.activities?.length ?? 0}</span>
-                                            <span className="text-sm">Activities</span>
+                                            <CheckCircle2 className="w-5 h-5" />
+                                            <span className="font-semibold">{activityStats.completed}/{activityStats.total}</span>
+                                            <span className="text-sm">Completed</span>
                                         </div>
                                     </div>
                                 </div>
@@ -386,17 +409,18 @@ const Profile: React.FC = () => {
                                                 <h3 className="text-lg font-medium text-blue-300">Total Activities</h3>
                                                 <Target className="w-6 h-6 text-blue-400" />
                                             </div>
-                                            <p className="text-3xl font-bold text-blue-400">{activities.activities?.length ?? 0}</p>
+                                            <p className="text-3xl font-bold text-blue-400">{activityStats.total}</p>
                                         </div>
                                         <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 p-6 rounded-xl border border-green-500/30">
                                             <div className="flex items-center justify-between mb-2">
-                                                <h3 className="text-lg font-medium text-green-300">Success Rate</h3>
-                                                <TrendingUp className="w-6 h-6 text-green-400" />
+                                                <h3 className="text-lg font-medium text-green-300">Completed</h3>
+                                                <CheckCircle2 className="w-6 h-6 text-green-400" />
                                             </div>
                                             <p className="text-3xl font-bold text-green-400">
-                                                {activities.activities?.length > 0
-                                                    ? Math.round(((profileData?.current_streak ?? 0) / activities.activities.length) * 100) + '%'
-                                                    : '0%'}
+                                                {activityStats.completed}
+                                                <span className="text-lg text-green-300 ml-2">
+                                                    ({activityStats.total > 0 ? Math.round((activityStats.completed / activityStats.total) * 100) : 0}%)
+                                                </span>
                                             </p>
                                         </div>
                                     </div>
@@ -494,34 +518,50 @@ const Profile: React.FC = () => {
                                             <p className="text-gray-500 mt-2">Start your journey by adding your first activity!</p>
                                         </div>
                                     ) : (
-                                        Array.isArray(activities.activities) && activities.activities.map((activity: Activity, index: number) => (
-                                            <div key={activity.id} className={`p-6 border border-gray-600/50 rounded-xl hover:bg-gray-700/30 transition-all duration-300 animate-fade-in-up`} style={{ animationDelay: `${index * 100}ms` }}>
-                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                                    <div className="flex-1">
-                                                        <ul className="space-y-2">
-                                                            {Array.isArray(activity.description) && activity.description.map((desc: string, index: number) => (
-                                                                <li key={index} className="flex items-start gap-3 text-gray-300">
-                                                                    <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0" />
-                                                                    <span className="text-lg">{desc}</span>
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <div className="text-lg font-medium text-blue-400">
-                                                            {new Date(activity.date).toLocaleDateString('en-US', {
-                                                                weekday: 'short',
-                                                                month: 'short',
-                                                                day: 'numeric',
-                                                            })}
+                                        Array.isArray(activities.activities) && activities.activities.map((activity: Activity, actIndex: number) => {
+                                            const completedArray = activity.completed || [];
+                                            const completedCount = completedArray.filter((c: boolean) => c === true).length;
+                                            const totalCount = Array.isArray(activity.description) ? activity.description.length : 0;
+
+                                            return (
+                                                <div key={activity.id} className={`p-6 border border-gray-600/50 rounded-xl hover:bg-gray-700/30 transition-all duration-300 animate-fade-in-up`} style={{ animationDelay: `${actIndex * 100}ms` }}>
+                                                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                                                        <div className="flex-1">
+                                                            <ul className="space-y-2">
+                                                                {Array.isArray(activity.description) && activity.description.map((desc: string, index: number) => {
+                                                                    const isCompleted = completedArray[index] === true;
+                                                                    return (
+                                                                        <li key={index} className={`flex items-start gap-3 ${isCompleted ? 'text-green-300' : 'text-gray-400'}`}>
+                                                                            {isCompleted ? (
+                                                                                <CheckCircle2 className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                                                                            ) : (
+                                                                                <div className="w-5 h-5 border-2 border-gray-500 rounded-full mt-0.5 flex-shrink-0" />
+                                                                            )}
+                                                                            <span className={`text-lg ${isCompleted ? '' : 'opacity-70'}`}>{desc}</span>
+                                                                        </li>
+                                                                    );
+                                                                })}
+                                                            </ul>
                                                         </div>
-                                                        <div className="text-sm text-gray-500">
-                                                            {new Date(activity.date).getFullYear()}
+                                                        <div className="text-right flex-shrink-0">
+                                                            <div className="text-lg font-medium text-blue-400">
+                                                                {new Date(activity.date).toLocaleDateString('en-US', {
+                                                                    weekday: 'short',
+                                                                    month: 'short',
+                                                                    day: 'numeric',
+                                                                })}
+                                                            </div>
+                                                            <div className="text-sm text-gray-500">
+                                                                {new Date(activity.date).getFullYear()}
+                                                            </div>
+                                                            <div className={`text-sm mt-2 px-2 py-1 rounded-lg ${completedCount === totalCount && totalCount > 0 ? 'bg-green-500/20 text-green-400' : 'bg-gray-600/50 text-gray-400'}`}>
+                                                                {completedCount}/{totalCount} done
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))
+                                            );
+                                        })
                                     )}
                                 </div>
                             </div>

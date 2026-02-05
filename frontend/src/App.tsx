@@ -10,6 +10,7 @@ import { WelcomeMessage } from './components/WelcomeMessage';
 import { ActivityHistoryCard } from './components/ActivityHistoryCard';
 import { ActivitySection } from './components/ActivitySection';
 import { LoadingOverlay } from './components/LoadingOverlay';
+import GoalsSection from './components/GoalsSection';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -74,11 +75,13 @@ function App() {
           ? activityDate.split('T')[0]
           : new Date(activityDate).toISOString().split('T')[0];
 
-        const activityCount = Array.isArray(activity.description)
-          ? activity.description.length
-          : 1;
+        // Only count completed activities for the heatmap
+        const completedArray = activity.completed || [];
+        const completedCount = completedArray.filter((c: boolean) => c === true).length;
 
-        acc[date] = (acc[date] || 0) + activityCount;
+        if (completedCount > 0) {
+          acc[date] = (acc[date] || 0) + completedCount;
+        }
         return acc;
       } catch (error) {
         console.error('Error processing activity for heatmap:', error, activity);
@@ -121,6 +124,10 @@ function App() {
                 currentStreak={streak}
                 heatmapData={heatmapData}
               />
+            </div>
+
+            <div className="animate-fade-in-up delay-100">
+              <GoalsSection />
             </div>
 
             <div className="animate-fade-in-up delay-200">
