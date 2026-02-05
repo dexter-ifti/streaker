@@ -1,5 +1,36 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchStreaks, fetchLongestStreak, fetchAllActivities, addActivity, editActivityItem, deleteActivityItem, toggleActivityComplete, fetchCategoryStats, fetchCategoryStreak, fetchUserProfile, updateUserProfile, changePassword } from '../utils/api'
+import {
+    fetchStreaks,
+    fetchLongestStreak,
+    fetchAllActivities,
+    addActivity,
+    editActivityItem,
+    deleteActivityItem,
+    toggleActivityComplete,
+    fetchCategoryStats,
+    fetchCategoryStreak,
+    fetchUserProfile,
+    updateUserProfile,
+    changePassword,
+    createGoal,
+    fetchGoals,
+    fetchGoalById,
+    updateGoal,
+    deleteGoal,
+    updateGoalProgress,
+    fetchGoalProgress,
+    fetchGoalTemplates,
+    createGoalFromTemplate,
+    fetchUserBadges,
+    fetchAllBadges,
+    checkBadges,
+    Goal,
+    GoalTemplate,
+    GoalProgress,
+    Badge,
+    CreateGoalData,
+    UpdateGoalData
+} from '../utils/api'
 import { Activity } from '@ifti_taha/streaker-common';
 import { useAuth } from '../utils/auth';
 
@@ -11,6 +42,12 @@ export const queryKeys = {
   allActivities: 'all-activities',
   categoryStats: 'category-stats',
   categoryStreak: 'category-streak',
+  goals: 'goals',
+  goal: 'goal',
+  goalProgress: 'goal-progress',
+  goalTemplates: 'goal-templates',
+  userBadges: 'user-badges',
+  allBadges: 'all-badges',
 }
 
 // Helper functions for localStorage
@@ -37,21 +74,8 @@ const updateLocalStorageActivities = (newActivity : Activity) => {
 
     localStorage.setItem('cachedActivities', JSON.stringify(updatedActivities));
 
-    // Also update other stats
-    const currentStreak = localStorage.getItem('currentStreak');
-    if (currentStreak) {
-      localStorage.setItem('currentStreak', JSON.stringify(parseInt(JSON.parse(currentStreak)) + 1));
-    } else {
-      localStorage.setItem('currentStreak', JSON.stringify(1));
-    }
-
-    // Update longest streak if needed
-    const longestStreak = localStorage.getItem('longestStreak');
-    const currentStreakValue = localStorage.getItem('currentStreak') || '0';
-    const updatedCurrentStreak = parseInt(currentStreakValue);
-    if (!longestStreak || updatedCurrentStreak > parseInt(JSON.parse(longestStreak))) {
-      localStorage.setItem('longestStreak', JSON.stringify(updatedCurrentStreak));
-    }
+    // NOTE: Streaks are NOT updated here anymore
+    // Streaks only count when activities are marked as completed
 
     return updatedActivities;
   } catch (error) {
@@ -183,7 +207,7 @@ export function useAddActivity() {
       // Return a context object with the snapshotted value
       return { previousActivities, previousAllActivities };
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       // Rollback the optimistic updates on error
       if (context?.previousActivities) {
         queryClient.setQueryData([queryKeys.activities], context.previousActivities);
@@ -245,6 +269,9 @@ export function useToggleActivityComplete() {
       queryClient.invalidateQueries({ queryKey: [queryKeys.activities] });
       queryClient.invalidateQueries({ queryKey: [queryKeys.allActivities] });
       queryClient.invalidateQueries({ queryKey: [queryKeys.categoryStats] });
+      // Recalculate streaks when completion status changes
+      queryClient.invalidateQueries({ queryKey: [queryKeys.streaks] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.longestStreak] });
     }
   });
 }
@@ -312,4 +339,131 @@ export function useChangePassword() {
       queryClient.invalidateQueries({ queryKey: ['user'] })
     }
   })
+}
+
+// Goal Queries and Mutations
+export function useGoals(token: string, status?: string) {
+  return useQuery<Goal[]>({
+    queryKey: [queryKeys.goals, token, status],
+    queryFn: () => fetchGoals(token, status),
+    enabled: !!token,
+  });
+}
+
+export function useGoalById(token: string, goalId: string) {
+  return useQuery<Goal>({
+    queryKey: [queryKeys.goal, token, goalId],
+    queryFn: () => fetchGoalById(token, goalId),
+    enabled: !!token && !!goalId,
+  });
+}
+
+export function useGoalProgress(token: string, goalId: string) {
+  return useQuery<GoalProgress[]>({
+    queryKey: [queryKeys.goalProgress, token, goalId],
+    queryFn: () => fetchGoalProgress(token, goalId),
+    enabled: !!token && !!goalId,
+  });
+}
+
+export function useGoalTemplates(token: string, category?: string) {
+  return useQuery<GoalTemplate[]>({
+    queryKey: [queryKeys.goalTemplates, token, category],
+    queryFn: () => fetchGoalTemplates(token, category),
+    enabled: !!token,
+  });
+}
+
+export function useCreateGoal() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ token, data }: { token: string, data: CreateGoalData }) =>
+      createGoal(token, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [queryKeys.goals] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.userBadges] });
+    }
+  });
+}
+
+export function useUpdateGoal() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ token, goalId, data }: { token: string, goalId: string, data: UpdateGoalData }) =>
+      updateGoal(token, goalId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [queryKeys.goals] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.goal] });
+    }
+  });
+}
+
+export function useDeleteGoal() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ token, goalId }: { token: string, goalId: string }) =>
+      deleteGoal(token, goalId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [queryKeys.goals] });
+    }
+  });
+}
+
+export function useUpdateGoalProgress() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ token, goalId, incrementBy }: { token: string, goalId: string, incrementBy?: number }) =>
+      updateGoalProgress(token, goalId, incrementBy),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [queryKeys.goals] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.goal] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.goalProgress] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.userBadges] });
+    }
+  });
+}
+
+export function useCreateGoalFromTemplate() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ token, templateId, startDate }: { token: string, templateId: string, startDate: string }) =>
+      createGoalFromTemplate(token, templateId, startDate),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [queryKeys.goals] });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.userBadges] });
+    }
+  });
+}
+
+// Badge Queries and Mutations
+export function useUserBadges(token: string) {
+  return useQuery<Badge[]>({
+    queryKey: [queryKeys.userBadges, token],
+    queryFn: () => fetchUserBadges(token),
+    enabled: !!token,
+  });
+}
+
+export function useAllBadges(token: string) {
+  return useQuery<Badge[]>({
+    queryKey: [queryKeys.allBadges, token],
+    queryFn: () => fetchAllBadges(token),
+    enabled: !!token,
+  });
+}
+
+export function useCheckBadges() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ token }: { token: string }) => checkBadges(token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [queryKeys.userBadges] });
+    }
+  });
 }

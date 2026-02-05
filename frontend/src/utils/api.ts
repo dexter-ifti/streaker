@@ -4,6 +4,8 @@ import axios from "axios";
 const AUTH_BASE_URL = import.meta.env.VITE_LOCAL_AUTH_BASE_URL;
 const API_BASE_URL = import.meta.env.VITE_LOCAL_API_ACTIVITY_BASE_URL;
 const USER_API_BASE_URL = import.meta.env.VITE_LOCAL_API_USER_BASE_URL;
+const GOALS_API_BASE_URL = import.meta.env.VITE_LOCAL_API_GOALS_BASE_URL;
+const BADGES_API_BASE_URL = import.meta.env.VITE_LOCAL_API_BADGES_BASE_URL;
 
 const auth_api = axios.create({
     baseURL: AUTH_BASE_URL,
@@ -21,6 +23,20 @@ const activity_api = axios.create({
 
 const user_api = axios.create({
     baseURL: USER_API_BASE_URL,
+    headers: {
+        "Content-type": "application/json"
+    }
+})
+
+const goals_api = axios.create({
+    baseURL: GOALS_API_BASE_URL,
+    headers: {
+        "Content-type": "application/json"
+    }
+})
+
+const badges_api = axios.create({
+    baseURL: BADGES_API_BASE_URL,
     headers: {
         "Content-type": "application/json"
     }
@@ -283,6 +299,253 @@ const fetchUserInfo = async (accessToken: string): Promise<GoogleUserInfo> => {
         return userInfo;
     };
 
+// Goal Types
+export interface Goal {
+    id: string;
+    name: string;
+    description?: string;
+    period: 'DAILY' | 'WEEKLY' | 'MONTHLY';
+    targetCount: number;
+    targetDays?: number;
+    category?: string;
+    status: 'ACTIVE' | 'COMPLETED' | 'FAILED' | 'PAUSED';
+    startDate: string;
+    endDate?: string;
+    currentProgress: number;
+    userId: string;
+    templateId?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface GoalTemplate {
+    id: string;
+    name: string;
+    description: string;
+    targetDays: number;
+    period: 'DAILY' | 'WEEKLY' | 'MONTHLY';
+    targetCount: number;
+    category?: string;
+    icon?: string;
+    isActive: boolean;
+}
+
+export interface GoalProgress {
+    id: string;
+    goalId: string;
+    periodStart: string;
+    periodEnd: string;
+    targetCount: number;
+    achievedCount: number;
+    isCompleted: boolean;
+    createdAt: string;
+}
+
+export interface Badge {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    criteria: string;
+    rarity: string;
+    earnedAt?: string;
+}
+
+export interface CreateGoalData {
+    name: string;
+    description?: string;
+    period: 'DAILY' | 'WEEKLY' | 'MONTHLY';
+    targetCount: number;
+    targetDays?: number;
+    category?: string;
+    startDate: string;
+    endDate?: string;
+}
+
+export interface UpdateGoalData {
+    name?: string;
+    description?: string;
+    period?: 'DAILY' | 'WEEKLY' | 'MONTHLY';
+    targetCount?: number;
+    targetDays?: number;
+    category?: string;
+    status?: 'ACTIVE' | 'COMPLETED' | 'FAILED' | 'PAUSED';
+    endDate?: string;
+}
+
+// Goal API Functions
+const createGoal = async (token: string, data: CreateGoalData): Promise<Goal> => {
+    try {
+        const response = await goals_api.post('/', data, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Create goal');
+        throw error;
+    }
+};
+
+const fetchGoals = async (token: string, status?: string): Promise<Goal[]> => {
+    try {
+        const params = status ? { status } : {};
+        const response = await goals_api.get('', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            params
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Fetch goals');
+        throw error;
+    }
+};
+
+const fetchGoalById = async (token: string, goalId: string): Promise<Goal> => {
+    try {
+        const response = await goals_api.get(`/${goalId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Fetch goal');
+        throw error;
+    }
+};
+
+const updateGoal = async (token: string, goalId: string, data: UpdateGoalData): Promise<Goal> => {
+    try {
+        const response = await goals_api.put(`/${goalId}`, data, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Update goal');
+        throw error;
+    }
+};
+
+const deleteGoal = async (token: string, goalId: string): Promise<void> => {
+    try {
+        await goals_api.delete(`/${goalId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+    } catch (error: any) {
+        handleApiError(error, 'Delete goal');
+        throw error;
+    }
+};
+
+const updateGoalProgress = async (token: string, goalId: string, incrementBy: number = 1): Promise<Goal> => {
+    try {
+        const response = await goals_api.patch(`/${goalId}/progress`, { incrementBy }, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Update goal progress');
+        throw error;
+    }
+};
+
+const fetchGoalProgress = async (token: string, goalId: string): Promise<GoalProgress[]> => {
+    try {
+        const response = await goals_api.get(`/${goalId}/progress`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Fetch goal progress');
+        throw error;
+    }
+};
+
+const fetchGoalTemplates = async (token: string, category?: string): Promise<GoalTemplate[]> => {
+    try {
+        const params = category ? { category } : {};
+        const response = await goals_api.get('/templates', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            params
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Fetch goal templates');
+        throw error;
+    }
+};
+
+const createGoalFromTemplate = async (token: string, templateId: string, startDate: string): Promise<Goal> => {
+    try {
+        const response = await goals_api.post('/from-template', { templateId, startDate }, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Create goal from template');
+        throw error;
+    }
+};
+
+// Badge API Functions
+const fetchUserBadges = async (token: string): Promise<Badge[]> => {
+    try {
+        const response = await badges_api.get('', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Fetch user badges');
+        throw error;
+    }
+};
+
+const fetchAllBadges = async (token: string): Promise<Badge[]> => {
+    try {
+        const response = await badges_api.get('/all', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Fetch all badges');
+        throw error;
+    }
+};
+
+const checkBadges = async (token: string): Promise<{ awarded: Badge[], message: string }> => {
+    try {
+        const response = await badges_api.post('/check', {}, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Check badges');
+        throw error;
+    }
+};
+
 export {
     registerUser,
     loginUser,
@@ -299,5 +562,19 @@ export {
     fetchUserProfile,
     updateUserProfile,
     changePassword,
-    fetchUserInfo
+    fetchUserInfo,
+    // Goal exports
+    createGoal,
+    fetchGoals,
+    fetchGoalById,
+    updateGoal,
+    deleteGoal,
+    updateGoalProgress,
+    fetchGoalProgress,
+    fetchGoalTemplates,
+    createGoalFromTemplate,
+    // Badge exports
+    fetchUserBadges,
+    fetchAllBadges,
+    checkBadges
 };
