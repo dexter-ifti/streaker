@@ -59,7 +59,62 @@ export const userResponseSchema = userSchema.omit({ password: true });
 
 export const activityResponseSchema = activitySchema;
 
-// Types 
+// Goal Schemas
+export const goalPeriodSchema = z.enum(['DAILY', 'WEEKLY', 'MONTHLY']);
+export const goalStatusSchema = z.enum(['ACTIVE', 'COMPLETED', 'FAILED', 'PAUSED']);
+
+export const createGoalSchema = z.object({
+    name: z.string()
+        .min(1, { message: 'Goal name is required' })
+        .max(100, { message: 'Goal name cannot exceed 100 characters' }),
+    description: z.string()
+        .max(500, { message: 'Description cannot exceed 500 characters' })
+        .optional(),
+    period: goalPeriodSchema,
+    targetCount: z.number()
+        .int()
+        .min(1, { message: 'Target count must be at least 1' }),
+    targetDays: z.number()
+        .int()
+        .min(1, { message: 'Target days must be at least 1' })
+        .optional(),
+    category: z.string().optional(),
+    startDate: z.string().datetime().transform((val) => new Date(val)),
+    endDate: z.string().datetime().transform((val) => new Date(val)).optional(),
+});
+
+export const updateGoalSchema = z.object({
+    name: z.string()
+        .min(1, { message: 'Goal name is required' })
+        .max(100, { message: 'Goal name cannot exceed 100 characters' })
+        .optional(),
+    description: z.string()
+        .max(500, { message: 'Description cannot exceed 500 characters' })
+        .optional(),
+    period: goalPeriodSchema.optional(),
+    targetCount: z.number()
+        .int()
+        .min(1, { message: 'Target count must be at least 1' })
+        .optional(),
+    targetDays: z.number()
+        .int()
+        .min(1, { message: 'Target days must be at least 1' })
+        .optional(),
+    category: z.string().optional(),
+    status: goalStatusSchema.optional(),
+    endDate: z.string().datetime().transform((val) => new Date(val)).optional(),
+});
+
+export const goalProgressSchema = z.object({
+    incrementBy: z.number().int().min(1).default(1),
+});
+
+export const createGoalFromTemplateSchema = z.object({
+    templateId: z.string().uuid({ message: 'Invalid template ID format' }),
+    startDate: z.string().datetime().transform((val) => new Date(val)),
+});
+
+// Types
 export type User = z.infer<typeof userSchema>;
 export type UserResponse = z.infer<typeof userResponseSchema>;
 export type CreateUserInput = z.infer<typeof createUserSchema>;
@@ -68,3 +123,9 @@ export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 export type Activity = z.infer<typeof activitySchema>;
 export type CreateActivityInput = z.infer<typeof createActivitySchema>;
 export type UpdateActivityInput = z.infer<typeof updateActivitySchema>;
+export type GoalPeriod = z.infer<typeof goalPeriodSchema>;
+export type GoalStatus = z.infer<typeof goalStatusSchema>;
+export type CreateGoalInput = z.infer<typeof createGoalSchema>;
+export type UpdateGoalInput = z.infer<typeof updateGoalSchema>;
+export type GoalProgressInput = z.infer<typeof goalProgressSchema>;
+export type CreateGoalFromTemplateInput = z.infer<typeof createGoalFromTemplateSchema>;
