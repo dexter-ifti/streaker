@@ -18,9 +18,10 @@ model User {
   createdAt           DateTime    @default(now()) @map("created_at")
   updatedAt           DateTime    @updatedAt @map("updated_at")
   last_activity_date  DateTime?   @db.Date
-  activities          Activity[]
-  goals               Goal[]
-  badges              UserBadge[]
+  activities               Activity[]
+  goals                    Goal[]
+  badges                   UserBadge[]
+  notificationPreference   NotificationPreference?
 
   @@map("users")
 }
@@ -145,4 +146,17 @@ enum GoalStatus {
   COMPLETED
   FAILED
   PAUSED
+}
+
+model NotificationPreference {
+  id           String   @id @default(uuid())
+  userId       String   @unique @map("user_id")
+  enabled      Boolean  @default(true)
+  reminderTime String   @default("20:00")
+  timezone     String   @default("UTC")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
 }
