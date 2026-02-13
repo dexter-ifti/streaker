@@ -6,6 +6,7 @@ import { userRouter } from './routes/user.routes';
 import { feedbackRouter } from './routes/feedback.routes';
 import { goalRouter } from './routes/goal.routes';
 import { badgeRouter } from './routes/badge.routes';
+import { notificationRouter } from './routes/notification.routes';
 
 
 const app = new Hono<{
@@ -25,10 +26,11 @@ app.route('/api/users', userRouter);
 app.route('/api/feedback', feedbackRouter);
 app.route('/api/goals', goalRouter);
 app.route('/api/badges', badgeRouter);
+app.route('/api/notifications', notificationRouter);
 
 app.get('/health', (c) => {
-	return c.json({ message : "Server is running fine"})
-	});
+  return c.json({ message: "Server is running fine" })
+});
 
 app.get('/', (c) => {
   return c.html(`
