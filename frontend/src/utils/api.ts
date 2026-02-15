@@ -6,6 +6,9 @@ const API_BASE_URL = import.meta.env.VITE_LOCAL_API_ACTIVITY_BASE_URL;
 const USER_API_BASE_URL = import.meta.env.VITE_LOCAL_API_USER_BASE_URL;
 const GOALS_API_BASE_URL = import.meta.env.VITE_LOCAL_API_GOALS_BASE_URL;
 const BADGES_API_BASE_URL = import.meta.env.VITE_LOCAL_API_BADGES_BASE_URL;
+// Fallback derives from VITE_LOCAL_BASE_URL in case this env var wasn't picked up yet
+const NOTIFICATIONS_API_BASE_URL = import.meta.env.VITE_LOCAL_API_NOTIFICATIONS_BASE_URL
+    || (import.meta.env.VITE_LOCAL_BASE_URL ? `${import.meta.env.VITE_LOCAL_BASE_URL}/api/notifications` : 'http://localhost:8787/api/notifications');
 
 const auth_api = axios.create({
     baseURL: AUTH_BASE_URL,
@@ -42,6 +45,13 @@ const badges_api = axios.create({
     }
 })
 
+const notifications_api = axios.create({
+    baseURL: NOTIFICATIONS_API_BASE_URL,
+    headers: {
+        "Content-type": "application/json"
+    }
+})
+
 const handleApiError = (error: any, context: string) => {
     if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
@@ -55,7 +65,7 @@ const handleApiError = (error: any, context: string) => {
     if (error.response?.statusText) {
         throw new Error(error.response.statusText);
     }
-    
+
     console.error(`${context} error:`, error);
     throw new Error(`Unable to ${context.toLowerCase()}. Please try again later.`);
 };
@@ -118,20 +128,20 @@ const fetchActivities = async (token: string) => {
     return response.data.activities;
 };
 
-const fetchAllActivities = async (token : string, page : number, limit : number) => {
+const fetchAllActivities = async (token: string, page: number, limit: number) => {
     try {
         const response = await activity_api.get('/all', {
-            headers : {
-                Authorization : `Bearer ${token}`
-            }, 
-            params : {
-                page : page,
-                limit : limit
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            params: {
+                page: page,
+                limit: limit
             }
         });
         // console.log(response.data)
         return response.data;
-    } catch (error : any) {
+    } catch (error: any) {
         console.error(`Error in fetching all activities: ${error}`);
         throw new Error(error.response?.data?.message || "Error in fetching all activities");
     }
@@ -226,33 +236,33 @@ const fetchCategoryStreak = async (token: string, category: string) => {
 // dummy 
 
 // Fetch user profile
- const fetchUserProfile = async (token: string) => {
+const fetchUserProfile = async (token: string) => {
     try {
         const response = await user_api.get('/profile', {
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Accept' : 'application/json'
+                'Accept': 'application/json'
             },
         });
         // console.log('User profile:', response.data);
         return response.data;
-    } catch (error : any) {
+    } catch (error: any) {
         console.error('Error fetching user profile:', error.response || error);
         throw new Error(error.response?.data?.message || 'Failed to fetch user profile');
     }
 };
 
 // Update user profile
- const updateUserProfile = async (token: string, profileData: any): Promise<any> => {
+const updateUserProfile = async (token: string, profileData: any): Promise<any> => {
     try {
         const response = await user_api.post('/update', profileData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Accept' : 'application/json'
+                'Accept': 'application/json'
             }
         });
         return response.data;
-    } catch (error : any) {
+    } catch (error: any) {
         console.error('Error updating user profile:', error.response || error);
         throw new Error(error.response?.data?.message || 'Failed to update user profile');
     }
@@ -267,11 +277,11 @@ const changePassword = async (token: string, oldPassword: string, newPassword: s
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Accept' : 'application/json'
+                'Accept': 'application/json'
             }
         });
         return response.data;
-    } catch (error : any) {
+    } catch (error: any) {
         console.error('Error changing password:', error.response || error);
         throw new Error(error.response?.data?.message || 'Failed to change password');
     }
@@ -285,19 +295,19 @@ interface GoogleUserInfo {
 }
 
 const fetchUserInfo = async (accessToken: string): Promise<GoogleUserInfo> => {
-        const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch user info from Google');
-        }
-        
-        const userInfo = await response.json();
-        return userInfo;
-    };
+    const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch user info from Google');
+    }
+
+    const userInfo = await response.json();
+    return userInfo;
+};
 
 // Goal Types
 export interface Goal {
@@ -546,6 +556,62 @@ const checkBadges = async (token: string): Promise<{ awarded: Badge[], message: 
     }
 };
 
+// Notification Preference Type
+export interface NotificationPreference {
+    id: string;
+    userId: string;
+    enabled: boolean;
+    reminderTime: string; // HH:MM 24-hour
+    timezone: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface StreakStatus {
+    currentStreak: number;
+    hasActivityToday: boolean;
+}
+
+// Notification API Functions
+const fetchNotificationPreference = async (token: string): Promise<NotificationPreference> => {
+    try {
+        const response = await notifications_api.get('', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Fetch notification preference');
+        throw error;
+    }
+};
+
+const updateNotificationPreference = async (
+    token: string,
+    data: Partial<Pick<NotificationPreference, 'enabled' | 'reminderTime' | 'timezone'>>
+): Promise<NotificationPreference> => {
+    try {
+        const response = await notifications_api.put('', data, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Update notification preference');
+        throw error;
+    }
+};
+
+const fetchStreakStatus = async (token: string): Promise<StreakStatus> => {
+    try {
+        const response = await notifications_api.get('/streak-status', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error: any) {
+        handleApiError(error, 'Fetch streak status');
+        throw error;
+    }
+};
+
 export {
     registerUser,
     loginUser,
@@ -576,5 +642,9 @@ export {
     // Badge exports
     fetchUserBadges,
     fetchAllBadges,
-    checkBadges
+    checkBadges,
+    // Notification exports
+    fetchNotificationPreference,
+    updateNotificationPreference,
+    fetchStreakStatus,
 };
