@@ -1,35 +1,40 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-    fetchStreaks,
-    fetchLongestStreak,
-    fetchAllActivities,
-    addActivity,
-    editActivityItem,
-    deleteActivityItem,
-    toggleActivityComplete,
-    fetchCategoryStats,
-    fetchCategoryStreak,
-    fetchUserProfile,
-    updateUserProfile,
-    changePassword,
-    createGoal,
-    fetchGoals,
-    fetchGoalById,
-    updateGoal,
-    deleteGoal,
-    updateGoalProgress,
-    fetchGoalProgress,
-    fetchGoalTemplates,
-    createGoalFromTemplate,
-    fetchUserBadges,
-    fetchAllBadges,
-    checkBadges,
-    Goal,
-    GoalTemplate,
-    GoalProgress,
-    Badge,
-    CreateGoalData,
-    UpdateGoalData
+  fetchStreaks,
+  fetchLongestStreak,
+  fetchAllActivities,
+  addActivity,
+  editActivityItem,
+  deleteActivityItem,
+  toggleActivityComplete,
+  fetchCategoryStats,
+  fetchCategoryStreak,
+  fetchUserProfile,
+  updateUserProfile,
+  changePassword,
+  createGoal,
+  fetchGoals,
+  fetchGoalById,
+  updateGoal,
+  deleteGoal,
+  updateGoalProgress,
+  fetchGoalProgress,
+  fetchGoalTemplates,
+  createGoalFromTemplate,
+  fetchUserBadges,
+  fetchAllBadges,
+  checkBadges,
+  fetchNotificationPreference,
+  updateNotificationPreference,
+  fetchStreakStatus,
+  Goal,
+  GoalTemplate,
+  GoalProgress,
+  Badge,
+  NotificationPreference,
+  StreakStatus,
+  CreateGoalData,
+  UpdateGoalData
 } from '../utils/api'
 import { Activity } from '@ifti_taha/streaker-common';
 import { useAuth } from '../utils/auth';
@@ -48,6 +53,8 @@ export const queryKeys = {
   goalTemplates: 'goal-templates',
   userBadges: 'user-badges',
   allBadges: 'all-badges',
+  notificationPreference: 'notification-preference',
+  streakStatus: 'streak-status',
 }
 
 // Helper functions for localStorage
@@ -61,7 +68,7 @@ const getLocalStorageActivities = () => {
   }
 };
 
-const updateLocalStorageActivities = (newActivity : Activity) => {
+const updateLocalStorageActivities = (newActivity: Activity) => {
   try {
     // Get current activities
     const existingActivities = getLocalStorageActivities() || { activities: [] };
@@ -465,5 +472,41 @@ export function useCheckBadges() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [queryKeys.userBadges] });
     }
+  });
+}
+
+// Notification Hooks
+export function useNotificationPreference(token: string) {
+  return useQuery<NotificationPreference>({
+    queryKey: [queryKeys.notificationPreference, token],
+    queryFn: () => fetchNotificationPreference(token),
+    enabled: !!token,
+  });
+}
+
+export function useUpdateNotificationPreference() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      token,
+      data,
+    }: {
+      token: string;
+      data: Partial<Pick<NotificationPreference, 'enabled' | 'reminderTime' | 'timezone'>>;
+    }) => updateNotificationPreference(token, data),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: [queryKeys.notificationPreference, variables.token] });
+    },
+  });
+}
+
+export function useStreakStatus(token: string) {
+  return useQuery<StreakStatus>({
+    queryKey: [queryKeys.streakStatus, token],
+    queryFn: () => fetchStreakStatus(token),
+    enabled: !!token,
+    refetchInterval: 60_000, // re-check every minute
+    staleTime: 30_000,
   });
 }
