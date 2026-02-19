@@ -4,6 +4,7 @@ import { Flame, LogOut, MessageCircle, User, Menu, X, Sparkles } from 'lucide-re
 import { toast } from 'react-toastify';
 import { useAuth } from '../utils/auth';
 import FeedbackForm from './FeedbackForm';
+import NotificationBell from './NotificationBell';
 
 const Header: React.FC = () => {
     const { authUser, logout } = useAuth();
@@ -18,7 +19,7 @@ const Header: React.FC = () => {
     };
 
     return (
-        <header className="relative bg-gray-800/50 backdrop-blur-xl border-b border-gray-700/50 shadow-2xl">
+        <header className="relative z-50 bg-gray-800/50 backdrop-blur-xl border-b border-gray-700/50 shadow-2xl">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div className="flex justify-between items-center">
                     <div className="flex items-center space-x-4">
@@ -48,6 +49,7 @@ const Header: React.FC = () => {
 
                         {authUser ? (
                             <>
+                                <NotificationBell />
                                 <Link
                                     to="/user"
                                     className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl transition-all duration-200">
