@@ -5,6 +5,7 @@ import { useUser, useAllActivities, useUpdateUser, useChangePassword } from '../
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { toast } from 'react-toastify';
+import NotificationSettings from '../components/NotificationSettings';
 
 interface Activity {
     id: string;
@@ -424,6 +425,11 @@ const Profile: React.FC = () => {
                                             </p>
                                         </div>
                                     </div>
+                                </div>
+
+                                {/* Notification Settings Section */}
+                                <div className="mt-12">
+                                    <NotificationSettings />
                                 </div>
 
                                 {/* Security Section */}

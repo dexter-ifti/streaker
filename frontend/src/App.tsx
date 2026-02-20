@@ -11,12 +11,16 @@ import { ActivityHistoryCard } from './components/ActivityHistoryCard';
 import { ActivitySection } from './components/ActivitySection';
 import { LoadingOverlay } from './components/LoadingOverlay';
 import GoalsSection from './components/GoalsSection';
+import { useReminderScheduler } from './hooks/useReminderScheduler';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const activitiesPerPage = 3;
   const { authUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Mount the daily reminder scheduler
+  useReminderScheduler();
 
   const { data: streak = 0, isLoading: streakLoading } = useStreaks(authUser?.token ?? '')
   const { data: longestStreak = 0, isLoading: longestStreakLoading } = useLongestStreak(authUser?.token ?? '')
