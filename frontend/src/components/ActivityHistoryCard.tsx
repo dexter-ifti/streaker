@@ -1,5 +1,5 @@
 import { Calendar, TrendingUp, Award } from 'lucide-react';
-import { LongestStreak, StreakCounter } from '.';
+
 import HeatMap from './HeatMap';
 
 interface ActivityHistoryCardProps {
@@ -35,10 +35,6 @@ export const ActivityHistoryCard = ({ longestStreak, currentStreak, heatmapData 
         </div>
       </div>
     </div>
-    <div className="overflow-x-auto -mx-4 sm:mx-0">
-      <div className="min-w-fit px-4 sm:px-0">
-        <HeatMap data={heatmapData} />
-      </div>
-    </div>
+    <HeatMap data={heatmapData} />
   </div>
 );
