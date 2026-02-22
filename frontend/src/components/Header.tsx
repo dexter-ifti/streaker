@@ -86,8 +86,9 @@ const Header: React.FC = () => {
                         )}
                     </div>
 
-                    {/* Mobile Menu Button */}
-                    <div className="sm:hidden">
+                    {/* Mobile: Bell + Hamburger always visible */}
+                    <div className="sm:hidden flex items-center gap-1">
+                        {authUser && <NotificationBell />}
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             className="p-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl transition-all duration-200"
@@ -164,7 +165,7 @@ const Header: React.FC = () => {
                 isOpen={isFeedbackOpen}
                 onClose={() => setIsFeedbackOpen(false)}
             />
-        </header>
+        </header >
     );
 };
 
