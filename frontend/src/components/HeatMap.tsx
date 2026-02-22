@@ -21,13 +21,13 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
             // Cell sizes: xs=9, sm=11, md=13, lg=15
             if (width < 360) {
                 setCellSize(8);
-                setMonthsToShow(4);
+                setMonthsToShow(5);
             } else if (width < 480) {
                 setCellSize(9);
-                setMonthsToShow(5);
+                setMonthsToShow(6);
             } else if (width < 640) {
                 setCellSize(10);
-                setMonthsToShow(6);
+                setMonthsToShow(7);
             } else if (width < 768) {
                 setCellSize(11);
                 setMonthsToShow(8);
