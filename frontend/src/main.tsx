@@ -14,6 +14,7 @@ import FeedbackView from './pages/FeedbackView.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { Analytics } from "@vercel/analytics/react"
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -85,6 +86,7 @@ createRoot(document.getElementById('root')!).render(
               theme='dark'
             />
           </Router>
+          <Analytics />
         </QueryClientProvider>
       </AuthProvider>
     )}
