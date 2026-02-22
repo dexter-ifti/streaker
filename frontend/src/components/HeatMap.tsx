@@ -95,7 +95,7 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
     return (
         <div ref={containerRef} className="p-3 sm:p-4 bg-gray-900 rounded-lg shadow-lg text-gray-300 w-full">
             {/* Scrollable only when content truly can't fit */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto overflow-y-hidden">
                 <div className="flex" style={{ gap: gapPx }}>
                     {/* Day-of-week labels */}
                     <div
