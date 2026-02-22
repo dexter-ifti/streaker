@@ -59,6 +59,7 @@ createRoot(document.getElementById('root')!).render(
               />
             </Router>
           </QueryClientProvider>
+          <Analytics />
         </AuthProvider>
       </GoogleOAuthProvider>
     ) : (
