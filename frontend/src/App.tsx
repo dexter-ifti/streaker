@@ -100,11 +100,11 @@ function App() {
   }, [allActivities]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(235,188,252,0.45),_transparent_42%),linear-gradient(130deg,_#feecf5,_#f9eafe_45%,_#cadbfc)] text-slate-900">
       {/* Background Effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-[#cadbfc]/45 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#ebbcfc]/45 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
       <Header />
@@ -117,7 +117,7 @@ function App() {
           <div className="flex justify-center items-center h-64">
             <div className="text-center space-y-4">
               <LoadingSpinner />
-              <p className="text-gray-400 animate-pulse">Loading your progress...</p>
+              <p className="text-slate-600 animate-pulse">Loading your progress...</p>
             </div>
           </div>
         ) : (

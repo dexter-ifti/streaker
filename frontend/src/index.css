@@ -1,6 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --brand-ice: #cadbfc;
+    --brand-blush: #feecf5;
+    --brand-lilac: #f9eafe;
+    --brand-orchid: #ebbcfc;
+    --brand-punch: #ff0061;
+    --text-primary: #1f1b2d;
+    --text-muted: #5f5477;
+    --surface: rgba(254, 236, 245, 0.78);
+    --surface-strong: rgba(202, 219, 252, 0.9);
+    --ring: rgba(255, 0, 97, 0.45);
+}
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: radial-gradient(circle at 15% 10%, rgba(235, 188, 252, 0.45), transparent 45%),
+        radial-gradient(circle at 80% 20%, rgba(202, 219, 252, 0.55), transparent 42%),
+        linear-gradient(130deg, var(--brand-blush), var(--brand-lilac) 45%, var(--brand-ice));
+    color: var(--text-primary);
+    min-height: 100vh;
+}
 
 /* Custom animations */
 @keyframes fade-in-up {
@@ -62,11 +86,11 @@
 
     0%,
     100% {
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        box-shadow: 0 0 20px rgba(255, 0, 97, 0.35);
     }
 
     50% {
-        box-shadow: 0 0 30px rgba(59, 130, 246, 0.8);
+        box-shadow: 0 0 30px rgba(255, 0, 97, 0.55);
     }
 }
 
@@ -125,24 +149,29 @@
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(31, 41, 55, 0.5);
+    background: rgba(202, 219, 252, 0.45);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(75, 85, 99, 0.8);
+    background: rgba(255, 0, 97, 0.65);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(107, 114, 128, 0.9);
+    background: rgba(255, 0, 97, 0.85);
 }
 
-/* Smooth transitions for all interactive elements */
-* {
+/* Smooth transitions for interactive elements */
+a,
+button,
+input,
+textarea,
+select,
+[role="button"] {
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
+    transition-duration: 180ms;
 }
 
 /* Focus styles */
@@ -150,26 +179,48 @@ button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-    outline: 2px solid rgb(59, 130, 246);
+    outline: 2px solid var(--brand-punch);
     outline-offset: 2px;
 }
 
 /* Glass morphism effect */
 .glass {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--surface);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 0, 97, 0.12);
 }
 
 .glass-dark {
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--surface-strong);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 0, 97, 0.16);
+}
+
+@layer components {
+    .ui-panel {
+        @apply bg-white/70 backdrop-blur-xl border border-[#ebbcfc]/70 shadow-2xl rounded-2xl;
+    }
+
+    .ui-input {
+        @apply w-full px-4 py-4 border border-[#ebbcfc] rounded-xl shadow-sm bg-white/90 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ff0061] focus:border-transparent;
+    }
+
+    .ui-input-muted {
+        @apply w-full px-4 py-4 border border-[#ebbcfc] rounded-xl shadow-sm bg-white/70 text-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ff0061] focus:border-transparent;
+    }
+
+    .ui-btn-primary {
+        @apply bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] hover:from-[#cadbfc] hover:to-[#ff0061] text-white;
+    }
+
+    .ui-btn-secondary {
+        @apply bg-[#f9eafe] hover:bg-[#ebbcfc] text-slate-900;
+    }
 }
 
 /* Gradient text */
 .gradient-text {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(120deg, var(--brand-punch) 0%, var(--brand-orchid) 55%, var(--brand-ice) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -182,14 +233,14 @@ select:focus-visible {
 
 .btn-hover-lift:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 25px rgba(255, 0, 97, 0.2);
 }
 
 /* Loading spinner */
 .spinner {
-    border: 2px solid rgba(59, 130, 246, 0.3);
+    border: 2px solid rgba(235, 188, 252, 0.45);
     border-radius: 50%;
-    border-top: 2px solid rgb(59, 130, 246);
+    border-top: 2px solid var(--brand-punch);
     animation: spin 1s linear infinite;
 }
 
