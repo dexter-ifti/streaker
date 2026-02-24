@@ -158,37 +158,37 @@ const Login: React.FC = () => {
     });
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(235,188,252,0.45),_transparent_42%),linear-gradient(130deg,_#feecf5,_#f9eafe_45%,_#cadbfc)] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             {/* Background Effects */}
             <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+                <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-[#cadbfc]/60 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#ebbcfc]/60 rounded-full blur-3xl animate-pulse delay-1000" />
             </div>
 
             <div className="relative sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center animate-fade-in-up">
-                    <div className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-2xl">
+                    <div className="p-4 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] rounded-2xl shadow-2xl">
                         <LogIn className="w-12 h-12 text-white" />
                     </div>
                 </div>
-                <h2 className="mt-6 text-center text-4xl font-bold text-white animate-fade-in-up delay-100">
+                <h2 className="mt-6 text-center text-4xl font-bold text-slate-900 animate-fade-in-up delay-100">
                     Welcome Back
                 </h2>
-                <p className="mt-2 text-center text-lg text-gray-400 animate-fade-in-up delay-200">
+                <p className="mt-2 text-center text-lg text-slate-600 animate-fade-in-up delay-200">
                     Continue your habit journey
                 </p>
                 <div className="mt-4 text-center animate-fade-in-up delay-300">
-                    <span className="text-gray-400">Don't have an account? </span>
-                    <Link to="/register" className="font-medium text-blue-400 hover:text-blue-300 transition-colors duration-200">
+                    <span className="text-slate-600">Don't have an account? </span>
+                    <Link to="/register" className="font-medium text-[#ff0061] hover:text-[#ebbcfc] transition-colors duration-200">
                         Sign up here
                     </Link>
                 </div>
 
                 {error && (
                     <div className="mt-4 animate-fade-in-up delay-400">
-                        <div className="bg-red-900/50 border border-red-500/50 text-red-200 p-4 rounded-xl backdrop-blur-sm" role="alert">
+                        <div className="bg-[#feecf5] border border-[#ebbcfc] text-slate-700 p-4 rounded-xl backdrop-blur-sm" role="alert">
                             <div className="flex items-center">
-                                <svg className="h-5 w-5 text-red-400 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <svg className="h-5 w-5 text-[#ff0061] mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                 </svg>
                                 <span className="font-medium">{error}</span>
@@ -199,15 +199,15 @@ const Login: React.FC = () => {
             </div>
 
             <div className="relative mt-8 sm:mx-auto sm:w-full sm:max-w-md animate-fade-in-up delay-500">
-                <div className="bg-gray-800/50 backdrop-blur-xl py-8 px-6 shadow-2xl sm:rounded-2xl border border-gray-700/50">
+                <div className="ui-panel py-8 px-6 sm:rounded-2xl">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
                             <div className="relative">
                                 <label
                                     htmlFor="email"
                                     className={`absolute left-4 transition-all duration-200 pointer-events-none ${shouldFloat('email')
-                                        ? '-top-2 text-sm bg-gray-800 px-2 text-blue-400 z-10'
-                                        : 'top-4 text-gray-400'
+                                        ? '-top-2 text-sm bg-white px-2 text-[#ff0061] z-10'
+                                        : 'top-4 text-slate-600'
                                         }`}
                                 >
                                     Email address
@@ -222,12 +222,12 @@ const Login: React.FC = () => {
                                     onChange={handleChange}
                                     onFocus={() => handleFocus('email')}
                                     onBlur={handleBlur}
-                                    className="appearance-none block w-full px-4 py-4 border border-gray-600 rounded-xl shadow-sm bg-gray-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                    className="appearance-none block ui-input transition-all duration-200"
                                     aria-describedby={validationErrors.email ? "email-error" : undefined}
                                     aria-invalid={!!validationErrors.email}
                                 />
                                 {validationErrors.email && (
-                                    <p className="mt-2 text-sm text-red-400 flex items-center" id="email-error">
+                                    <p className="mt-2 text-sm text-[#ff0061] flex items-center" id="email-error">
                                         <svg className="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                         </svg>
@@ -242,8 +242,8 @@ const Login: React.FC = () => {
                                 <label
                                     htmlFor="password"
                                     className={`absolute left-4 transition-all duration-200 pointer-events-none ${shouldFloat('password')
-                                        ? '-top-2 text-sm bg-gray-800 px-2 text-blue-400 z-10'
-                                        : 'top-4 text-gray-400'
+                                        ? '-top-2 text-sm bg-white px-2 text-[#ff0061] z-10'
+                                        : 'top-4 text-slate-600'
                                         }`}
                                 >
                                     Password
@@ -258,19 +258,19 @@ const Login: React.FC = () => {
                                     onChange={handleChange}
                                     onFocus={() => handleFocus('password')}
                                     onBlur={handleBlur}
-                                    className="appearance-none block w-full px-4 py-4 pr-12 border border-gray-600 rounded-xl shadow-sm bg-gray-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                    className="appearance-none block ui-input pr-12 transition-all duration-200"
                                     aria-describedby={validationErrors.password ? "password-error" : undefined}
                                     aria-invalid={!!validationErrors.password}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-4 text-gray-400 hover:text-gray-300 transition-colors"
+                                    className="absolute right-4 top-4 text-slate-600 hover:text-slate-700 transition-colors"
                                 >
                                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                 </button>
                                 {validationErrors.password && (
-                                    <p className="mt-2 text-sm text-red-400 flex items-center" id="password-error">
+                                    <p className="mt-2 text-sm text-[#ff0061] flex items-center" id="password-error">
                                         <svg className="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                         </svg>
@@ -286,9 +286,9 @@ const Login: React.FC = () => {
                                     id="remember-me"
                                     name="remember-me"
                                     type="checkbox"
-                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-600 rounded bg-gray-700"
+                                    className="h-4 w-4 text-[#ff0061] focus:ring-[#ff0061] border-[#ebbcfc] rounded bg-white"
                                 />
-                                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-300">
+                                <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-700">
                                     Remember me
                                 </label>
                             </div>
@@ -298,7 +298,7 @@ const Login: React.FC = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="group relative w-full flex justify-center py-4 px-4 border border-transparent rounded-xl text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100"
+                                className="group relative w-full flex justify-center py-4 px-4 border border-transparent rounded-xl text-lg font-semibold ui-btn-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ff0061] disabled:opacity-50 transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100"
                                 aria-live="polite"
                             >
                                 {loading ? (
@@ -321,10 +321,10 @@ const Login: React.FC = () => {
                         <div className="mt-6">
                             <div className="relative">
                                 <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-t border-gray-600"></div>
+                                    <div className="w-full border-t border-[#ebbcfc]"></div>
                                 </div>
                                 <div className="relative flex justify-center text-sm">
-                                    <span className="px-4 bg-gray-800 text-gray-400">
+                                    <span className="px-4 bg-white text-slate-600">
                                         Or continue with
                                     </span>
                                 </div>
@@ -338,7 +338,7 @@ const Login: React.FC = () => {
                                     }}
                                     type="button"
                                     disabled={loading}
-                                    className="w-full inline-flex justify-center items-center py-4 px-4 border border-gray-600 rounded-xl shadow-sm bg-gray-700/50 text-lg font-medium text-gray-300 hover:bg-gray-600/50 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+                                    className="w-full inline-flex justify-center items-center py-4 px-4 border border-[#ebbcfc] rounded-xl shadow-sm bg-white text-lg font-medium text-slate-700 hover:bg-[#f9eafe] transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                                 >
                                     <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24">
                                         <path

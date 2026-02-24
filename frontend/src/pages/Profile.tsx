@@ -134,10 +134,10 @@ const Profile: React.FC = () => {
 
     if (profileError) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+            <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(235,188,252,0.45),_transparent_42%),linear-gradient(130deg,_#feecf5,_#f9eafe_45%,_#cadbfc)] text-slate-900">
                 <Header />
                 <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <div className="bg-red-900/50 border border-red-500/50 text-red-200 rounded-2xl p-6 backdrop-blur-sm">
+                    <div className="bg-[#feecf5] border border-[#ebbcfc] text-slate-700 rounded-2xl p-6 backdrop-blur-sm">
                         <h2 className="text-xl font-semibold mb-2 flex items-center">
                             <X className="w-6 h-6 mr-2" />
                             Error Loading Profile
@@ -152,13 +152,13 @@ const Profile: React.FC = () => {
 
     if (profileLoading || activitiesLoading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+            <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(235,188,252,0.45),_transparent_42%),linear-gradient(130deg,_#feecf5,_#f9eafe_45%,_#cadbfc)] text-slate-900">
                 <Header />
                 <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div className="flex justify-center items-center h-64">
                         <div className="text-center space-y-4">
-                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-                            <p className="text-gray-400 animate-pulse">Loading your profile...</p>
+                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#ff0061] mx-auto"></div>
+                            <p className="text-slate-600 animate-pulse">Loading your profile...</p>
                         </div>
                     </div>
                 </main>
@@ -168,48 +168,48 @@ const Profile: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+        <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(235,188,252,0.45),_transparent_42%),linear-gradient(130deg,_#feecf5,_#f9eafe_45%,_#cadbfc)] text-slate-900">
             {/* Background Effects */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl animate-pulse" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-1000" />
+                <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-[#cadbfc]/45 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#ebbcfc]/45 rounded-full blur-3xl animate-pulse delay-1000" />
             </div>
 
             <Header />
             <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-gray-700/50 animate-fade-in-up">
+                <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-[#ebbcfc]/70 animate-fade-in-up">
                     {/* Profile Header */}
-                    <div className="relative bg-gradient-to-r from-blue-600/20 to-purple-600/20 px-6 py-8 sm:px-8 sm:py-12">
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10" />
+                    <div className="relative bg-gradient-to-r from-[#cadbfc]/70 to-[#f9eafe]/85 px-6 py-8 sm:px-8 sm:py-12">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#feecf5]/35 to-[#cadbfc]/35" />
                         <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-6">
                             <div className="relative">
-                                <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-4 shadow-2xl">
+                                <div className="bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] rounded-2xl p-4 shadow-2xl">
                                     <User size={64} className="text-white" />
                                 </div>
-                                <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-2">
+                                <div className="absolute -bottom-2 -right-2 bg-[#ff0061] rounded-full p-2">
                                     <Award className="w-4 h-4 text-white" />
                                 </div>
                             </div>
                             <div className="text-center sm:text-left flex-1">
-                                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">{profileData?.name}</h1>
-                                <p className="text-blue-300 text-lg mb-4">@{profileData?.username}</p>
+                                <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">{profileData?.name}</h1>
+                                <p className="text-slate-700 text-lg mb-4">@{profileData?.username}</p>
                                 <div className="flex flex-wrap justify-center sm:justify-start gap-4">
-                                    <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
-                                        <div className="flex items-center gap-2 text-orange-400">
+                                    <div className="bg-white/70 backdrop-blur-sm rounded-xl px-4 py-2 border border-[#ebbcfc]/70">
+                                        <div className="flex items-center gap-2 text-[#ff0061]">
                                             <TrendingUp className="w-5 h-5" />
                                             <span className="font-semibold">{profileData?.current_streak}</span>
                                             <span className="text-sm">Day Streak</span>
                                         </div>
                                     </div>
-                                    <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
-                                        <div className="flex items-center gap-2 text-purple-400">
+                                    <div className="bg-white/70 backdrop-blur-sm rounded-xl px-4 py-2 border border-[#ebbcfc]/70">
+                                        <div className="flex items-center gap-2 text-[#ff0061]">
                                             <Award className="w-5 h-5" />
                                             <span className="font-semibold">{profileData?.longest_streak}</span>
                                             <span className="text-sm">Best Streak</span>
                                         </div>
                                     </div>
-                                    <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
-                                        <div className="flex items-center gap-2 text-green-400">
+                                    <div className="bg-white/70 backdrop-blur-sm rounded-xl px-4 py-2 border border-[#ebbcfc]/70">
+                                        <div className="flex items-center gap-2 text-[#ff0061]">
                                             <CheckCircle2 className="w-5 h-5" />
                                             <span className="font-semibold">{activityStats.completed}/{activityStats.total}</span>
                                             <span className="text-sm">Completed</span>
@@ -221,12 +221,12 @@ const Profile: React.FC = () => {
                     </div>
 
                     {/* Tab Navigation */}
-                    <div className="border-b border-gray-700/50">
+                    <div className="border-b border-[#ebbcfc]/70">
                         <div className="flex">
                             <button
                                 className={`px-6 py-4 text-lg font-medium flex items-center gap-3 transition-all duration-200 ${activeTab === 'profile'
-                                    ? 'border-b-2 border-blue-500 text-blue-400 bg-blue-500/10'
-                                    : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/30'
+                                    ? 'border-b-2 border-[#ff0061] text-[#ff0061] bg-[#ff0061]/10'
+                                    : 'text-slate-600 hover:text-slate-900 hover:bg-[#f9eafe]'
                                     }`}
                                 onClick={() => setActiveTab('profile')}
                             >
@@ -235,8 +235,8 @@ const Profile: React.FC = () => {
                             </button>
                             <button
                                 className={`px-6 py-4 text-lg font-medium flex items-center gap-3 transition-all duration-200 ${activeTab === 'activities'
-                                    ? 'border-b-2 border-blue-500 text-blue-400 bg-blue-500/10'
-                                    : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/30'
+                                    ? 'border-b-2 border-[#ff0061] text-[#ff0061] bg-[#ff0061]/10'
+                                    : 'text-slate-600 hover:text-slate-900 hover:bg-[#f9eafe]'
                                     }`}
                                 onClick={() => setActiveTab('activities')}
                             >
@@ -250,7 +250,7 @@ const Profile: React.FC = () => {
                     <div className="p-6 sm:p-8">
                         {/* Success Message */}
                         {successMessage && (
-                            <div className="mb-6 p-4 bg-green-900/50 border border-green-500/50 text-green-200 rounded-xl backdrop-blur-sm animate-fade-in-up">
+                            <div className="mb-6 p-4 bg-[#feecf5] border border-[#ebbcfc] text-slate-700 rounded-xl backdrop-blur-sm animate-fade-in-up">
                                 <div className="flex items-center">
                                     <Award className="w-5 h-5 mr-3" />
                                     {successMessage}
@@ -260,7 +260,7 @@ const Profile: React.FC = () => {
 
                         {/* Error Message */}
                         {error && (
-                            <div className="mb-6 p-4 bg-red-900/50 border border-red-500/50 text-red-200 rounded-xl backdrop-blur-sm animate-fade-in-up">
+                            <div className="mb-6 p-4 bg-[#feecf5] border border-[#ebbcfc] text-slate-700 rounded-xl backdrop-blur-sm animate-fade-in-up">
                                 <div className="flex items-center">
                                     <X className="w-5 h-5 mr-3" />
                                     {error}
@@ -271,11 +271,11 @@ const Profile: React.FC = () => {
                         {activeTab === 'profile' ? (
                             <div className="space-y-8">
                                 <div className="flex justify-between items-center">
-                                    <h2 className="text-2xl font-bold text-white">Profile Information</h2>
+                                    <h2 className="text-2xl font-bold text-slate-900">Profile Information</h2>
                                     {!isEditing ? (
                                         <button
                                             onClick={() => setIsEditing(true)}
-                                            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl text-white transition-all duration-300 transform hover:scale-105"
+                                            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] hover:from-[#cadbfc] hover:to-[#ff0061] rounded-xl text-white transition-all duration-300 transform hover:scale-105"
                                         >
                                             <Edit2 size={18} />
                                             <span>Edit Profile</span>
@@ -290,7 +290,7 @@ const Profile: React.FC = () => {
                                                     email: profileData?.email || '',
                                                 });
                                             }}
-                                            className="flex items-center gap-2 px-6 py-3 bg-gray-600 hover:bg-gray-500 rounded-xl text-white transition-all duration-300"
+                                            className="flex items-center gap-2 px-6 py-3 bg-[#f9eafe] hover:bg-[#ebbcfc] rounded-xl text-slate-900 transition-all duration-300"
                                         >
                                             <X size={18} />
                                             <span>Cancel</span>
@@ -302,7 +302,7 @@ const Profile: React.FC = () => {
                                     <form onSubmit={handleSubmit} className="space-y-6">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
-                                                <label htmlFor="name" className="block text-lg font-medium text-gray-300 mb-2">
+                                                <label htmlFor="name" className="block text-lg font-medium text-slate-700 mb-2">
                                                     Full Name
                                                 </label>
                                                 <input
@@ -311,12 +311,12 @@ const Profile: React.FC = () => {
                                                     name="name"
                                                     value={formData.name}
                                                     onChange={handleInputChange}
-                                                    className="w-full px-4 py-3 border border-gray-600 rounded-xl bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                                    className="w-full px-4 py-3 border border-[#ebbcfc] rounded-xl bg-white/90 text-slate-900 focus:ring-2 focus:ring-[#ff0061] focus:border-transparent transition-all duration-200"
                                                     required
                                                 />
                                             </div>
                                             <div>
-                                                <label htmlFor="username" className="block text-lg font-medium text-gray-300 mb-2">
+                                                <label htmlFor="username" className="block text-lg font-medium text-slate-700 mb-2">
                                                     Username
                                                 </label>
                                                 <input
@@ -325,12 +325,12 @@ const Profile: React.FC = () => {
                                                     name="username"
                                                     value={formData.username}
                                                     onChange={handleInputChange}
-                                                    className="w-full px-4 py-3 border border-gray-600 rounded-xl bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                                    className="w-full px-4 py-3 border border-[#ebbcfc] rounded-xl bg-white/90 text-slate-900 focus:ring-2 focus:ring-[#ff0061] focus:border-transparent transition-all duration-200"
                                                     required
                                                 />
                                             </div>
                                             <div className="md:col-span-2">
-                                                <label htmlFor="email" className="block text-lg font-medium text-gray-300 mb-2">
+                                                <label htmlFor="email" className="block text-lg font-medium text-slate-700 mb-2">
                                                     Email Address
                                                 </label>
                                                 <input
@@ -339,7 +339,7 @@ const Profile: React.FC = () => {
                                                     name="email"
                                                     value={formData.email}
                                                     onChange={handleInputChange}
-                                                    className="w-full px-4 py-3 border border-gray-600 rounded-xl bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                                    className="w-full px-4 py-3 border border-[#ebbcfc] rounded-xl bg-white/90 text-slate-900 focus:ring-2 focus:ring-[#ff0061] focus:border-transparent transition-all duration-200"
                                                     required
                                                 />
                                             </div>
@@ -347,7 +347,7 @@ const Profile: React.FC = () => {
                                         <div>
                                             <button
                                                 type="submit"
-                                                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-xl transition-all duration-300 transform hover:scale-105"
+                                                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] hover:from-[#cadbfc] hover:to-[#ff0061] text-white rounded-xl transition-all duration-300 transform hover:scale-105"
                                             >
                                                 <Save size={20} />
                                                 <span>Save Changes</span>
@@ -357,23 +357,23 @@ const Profile: React.FC = () => {
                                 ) : (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div className="space-y-6">
-                                            <div className="bg-gray-700/30 p-6 rounded-xl border border-gray-600/50">
-                                                <h3 className="text-lg font-medium text-gray-300 mb-2">Full Name</h3>
-                                                <p className="text-xl text-white">{profileData?.name}</p>
+                                            <div className="bg-white/75 p-6 rounded-xl border border-[#ebbcfc]/70">
+                                                <h3 className="text-lg font-medium text-slate-700 mb-2">Full Name</h3>
+                                                <p className="text-xl text-slate-900">{profileData?.name}</p>
                                             </div>
-                                            <div className="bg-gray-700/30 p-6 rounded-xl border border-gray-600/50">
-                                                <h3 className="text-lg font-medium text-gray-300 mb-2">Username</h3>
-                                                <p className="text-xl text-white">@{profileData?.username}</p>
+                                            <div className="bg-white/75 p-6 rounded-xl border border-[#ebbcfc]/70">
+                                                <h3 className="text-lg font-medium text-slate-700 mb-2">Username</h3>
+                                                <p className="text-xl text-slate-900">@{profileData?.username}</p>
                                             </div>
                                         </div>
                                         <div className="space-y-6">
-                                            <div className="bg-gray-700/30 p-6 rounded-xl border border-gray-600/50">
-                                                <h3 className="text-lg font-medium text-gray-300 mb-2">Email Address</h3>
-                                                <p className="text-xl text-white">{profileData?.email}</p>
+                                            <div className="bg-white/75 p-6 rounded-xl border border-[#ebbcfc]/70">
+                                                <h3 className="text-lg font-medium text-slate-700 mb-2">Email Address</h3>
+                                                <p className="text-xl text-slate-900">{profileData?.email}</p>
                                             </div>
-                                            <div className="bg-gray-700/30 p-6 rounded-xl border border-gray-600/50">
-                                                <h3 className="text-lg font-medium text-gray-300 mb-2">Member Since</h3>
-                                                <p className="text-xl text-white">
+                                            <div className="bg-white/75 p-6 rounded-xl border border-[#ebbcfc]/70">
+                                                <h3 className="text-lg font-medium text-slate-700 mb-2">Member Since</h3>
+                                                <p className="text-xl text-slate-900">
                                                     {profileData?.createdAt
                                                         ? new Date(profileData.createdAt).toLocaleDateString('en-US', {
                                                             year: 'numeric',
@@ -389,37 +389,37 @@ const Profile: React.FC = () => {
 
                                 {/* Statistics Section */}
                                 <div className="mt-12">
-                                    <h2 className="text-2xl font-bold text-white mb-6">Your Statistics</h2>
+                                    <h2 className="text-2xl font-bold text-slate-900 mb-6">Your Statistics</h2>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                                        <div className="bg-gradient-to-br from-orange-500/20 to-red-500/20 p-6 rounded-xl border border-orange-500/30">
+                                        <div className="bg-gradient-to-br from-[#feecf5] to-[#ebbcfc] p-6 rounded-xl border border-[#ebbcfc]/70">
                                             <div className="flex items-center justify-between mb-2">
-                                                <h3 className="text-lg font-medium text-orange-300">Current Streak</h3>
-                                                <TrendingUp className="w-6 h-6 text-orange-400" />
+                                                <h3 className="text-lg font-medium text-slate-700">Current Streak</h3>
+                                                <TrendingUp className="w-6 h-6 text-[#ff0061]" />
                                             </div>
-                                            <p className="text-3xl font-bold text-orange-400">{profileData?.current_streak} days</p>
+                                            <p className="text-3xl font-bold text-[#ff0061]">{profileData?.current_streak} days</p>
                                         </div>
-                                        <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 p-6 rounded-xl border border-purple-500/30">
+                                        <div className="bg-gradient-to-br from-[#f9eafe] to-[#ebbcfc] p-6 rounded-xl border border-[#ebbcfc]/70">
                                             <div className="flex items-center justify-between mb-2">
-                                                <h3 className="text-lg font-medium text-purple-300">Longest Streak</h3>
-                                                <Award className="w-6 h-6 text-purple-400" />
+                                                <h3 className="text-lg font-medium text-slate-700">Longest Streak</h3>
+                                                <Award className="w-6 h-6 text-[#ff0061]" />
                                             </div>
-                                            <p className="text-3xl font-bold text-purple-400">{profileData?.longest_streak} days</p>
+                                            <p className="text-3xl font-bold text-[#ff0061]">{profileData?.longest_streak} days</p>
                                         </div>
-                                        <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 p-6 rounded-xl border border-blue-500/30">
+                                        <div className="bg-gradient-to-br from-[#cadbfc] to-[#f9eafe] p-6 rounded-xl border border-[#cadbfc]/80">
                                             <div className="flex items-center justify-between mb-2">
-                                                <h3 className="text-lg font-medium text-blue-300">Total Activities</h3>
-                                                <Target className="w-6 h-6 text-blue-400" />
+                                                <h3 className="text-lg font-medium text-slate-700">Total Activities</h3>
+                                                <Target className="w-6 h-6 text-[#ff0061]" />
                                             </div>
-                                            <p className="text-3xl font-bold text-blue-400">{activityStats.total}</p>
+                                            <p className="text-3xl font-bold text-[#ff0061]">{activityStats.total}</p>
                                         </div>
-                                        <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 p-6 rounded-xl border border-green-500/30">
+                                        <div className="bg-gradient-to-br from-[#feecf5] to-[#cadbfc] p-6 rounded-xl border border-[#ebbcfc]/70">
                                             <div className="flex items-center justify-between mb-2">
-                                                <h3 className="text-lg font-medium text-green-300">Completed</h3>
-                                                <CheckCircle2 className="w-6 h-6 text-green-400" />
+                                                <h3 className="text-lg font-medium text-slate-700">Completed</h3>
+                                                <CheckCircle2 className="w-6 h-6 text-[#ff0061]" />
                                             </div>
-                                            <p className="text-3xl font-bold text-green-400">
+                                            <p className="text-3xl font-bold text-[#ff0061]">
                                                 {activityStats.completed}
-                                                <span className="text-lg text-green-300 ml-2">
+                                                <span className="text-lg text-slate-600 ml-2">
                                                     ({activityStats.total > 0 ? Math.round((activityStats.completed / activityStats.total) * 100) : 0}%)
                                                 </span>
                                             </p>
@@ -433,15 +433,15 @@ const Profile: React.FC = () => {
                                 </div>
 
                                 {/* Security Section */}
-                                <div className="mt-12 p-6 bg-red-900/20 border border-red-500/30 rounded-xl">
+                                <div className="mt-12 p-6 bg-[#feecf5] border border-[#ebbcfc] rounded-xl">
                                     <div className="flex items-center gap-3 mb-4">
-                                        <Shield className="w-6 h-6 text-red-400" />
-                                        <h2 className="text-xl font-bold text-red-300">Security Settings</h2>
+                                        <Shield className="w-6 h-6 text-[#ff0061]" />
+                                        <h2 className="text-xl font-bold text-slate-900">Security Settings</h2>
                                     </div>
-                                    <p className="text-red-200 mb-6">Keep your account secure by updating your password regularly.</p>
+                                    <p className="text-slate-700 mb-6">Keep your account secure by updating your password regularly.</p>
                                     <button
                                         onClick={() => setShowPasswordModal(true)}
-                                        className="px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-all duration-300 transform hover:scale-105"
+                                        className="px-6 py-3 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] hover:from-[#cadbfc] hover:to-[#ff0061] text-white rounded-xl transition-all duration-300 transform hover:scale-105"
                                     >
                                         Change Password
                                     </button>
@@ -449,12 +449,12 @@ const Profile: React.FC = () => {
 
                                 {/* Password Change Modal */}
                                 {showPasswordModal && (
-                                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                                        <div className="bg-gray-800 rounded-2xl p-8 max-w-md w-full border border-gray-700 shadow-2xl">
-                                            <h2 className="text-2xl font-bold text-white mb-6">Change Password</h2>
+                                    <div className="fixed inset-0 bg-[#1f1b2d]/45 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                                        <div className="bg-white rounded-2xl p-8 max-w-md w-full border border-[#ebbcfc] shadow-2xl">
+                                            <h2 className="text-2xl font-bold text-slate-900 mb-6">Change Password</h2>
                                             <form onSubmit={handlePasswordChange} className="space-y-4">
                                                 <div>
-                                                    <label htmlFor="currentPassword" className="block text-lg font-medium text-gray-300 mb-2">
+                                                    <label htmlFor="currentPassword" className="block text-lg font-medium text-slate-700 mb-2">
                                                         Current Password
                                                     </label>
                                                     <input
@@ -462,12 +462,12 @@ const Profile: React.FC = () => {
                                                         id="currentPassword"
                                                         value={passwordData.currentPassword}
                                                         onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                                                        className="w-full px-4 py-3 border border-gray-600 rounded-xl bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        className="w-full px-4 py-3 border border-[#ebbcfc] rounded-xl bg-white/90 text-slate-900 focus:ring-2 focus:ring-[#ff0061] focus:border-transparent"
                                                         required
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="newPassword" className="block text-lg font-medium text-gray-300 mb-2">
+                                                    <label htmlFor="newPassword" className="block text-lg font-medium text-slate-700 mb-2">
                                                         New Password
                                                     </label>
                                                     <input
@@ -475,12 +475,12 @@ const Profile: React.FC = () => {
                                                         id="newPassword"
                                                         value={passwordData.newPassword}
                                                         onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                                                        className="w-full px-4 py-3 border border-gray-600 rounded-xl bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        className="w-full px-4 py-3 border border-[#ebbcfc] rounded-xl bg-white/90 text-slate-900 focus:ring-2 focus:ring-[#ff0061] focus:border-transparent"
                                                         required
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="confirmPassword" className="block text-lg font-medium text-gray-300 mb-2">
+                                                    <label htmlFor="confirmPassword" className="block text-lg font-medium text-slate-700 mb-2">
                                                         Confirm New Password
                                                     </label>
                                                     <input
@@ -488,7 +488,7 @@ const Profile: React.FC = () => {
                                                         id="confirmPassword"
                                                         value={passwordData.confirmPassword}
                                                         onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                                                        className="w-full px-4 py-3 border border-gray-600 rounded-xl bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        className="w-full px-4 py-3 border border-[#ebbcfc] rounded-xl bg-white/90 text-slate-900 focus:ring-2 focus:ring-[#ff0061] focus:border-transparent"
                                                         required
                                                     />
                                                 </div>
@@ -496,13 +496,13 @@ const Profile: React.FC = () => {
                                                     <button
                                                         type="button"
                                                         onClick={() => setShowPasswordModal(false)}
-                                                        className="px-6 py-3 bg-gray-600 hover:bg-gray-500 text-white rounded-xl transition-colors"
+                                                        className="px-6 py-3 bg-[#f9eafe] hover:bg-[#ebbcfc] text-slate-900 rounded-xl transition-colors"
                                                     >
                                                         Cancel
                                                     </button>
                                                     <button
                                                         type="submit"
-                                                        className="px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-colors"
+                                                        className="px-6 py-3 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] hover:from-[#cadbfc] hover:to-[#ff0061] text-white rounded-xl transition-colors"
                                                     >
                                                         Change Password
                                                     </button>
@@ -514,14 +514,14 @@ const Profile: React.FC = () => {
                             </div>
                         ) : (
                             <div>
-                                <h2 className="text-2xl font-bold text-white mb-8">Activity History</h2>
+                                <h2 className="text-2xl font-bold text-slate-900 mb-8">Activity History</h2>
 
                                 <div className="space-y-4">
                                     {Array.isArray(activities.activities) && activities.activities.length === 0 ? (
-                                        <div className="text-center py-16 bg-gray-700/30 rounded-2xl border border-gray-600/50">
-                                            <Calendar className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                                            <p className="text-xl text-gray-400">No activities recorded yet.</p>
-                                            <p className="text-gray-500 mt-2">Start your journey by adding your first activity!</p>
+                                        <div className="text-center py-16 bg-white/75 rounded-2xl border border-[#ebbcfc]/70">
+                                            <Calendar className="w-16 h-16 text-slate-500 mx-auto mb-4" />
+                                            <p className="text-xl text-slate-600">No activities recorded yet.</p>
+                                            <p className="text-slate-500 mt-2">Start your journey by adding your first activity!</p>
                                         </div>
                                     ) : (
                                         Array.isArray(activities.activities) && activities.activities.map((activity: Activity, actIndex: number) => {
@@ -530,18 +530,18 @@ const Profile: React.FC = () => {
                                             const totalCount = Array.isArray(activity.description) ? activity.description.length : 0;
 
                                             return (
-                                                <div key={activity.id} className={`p-6 border border-gray-600/50 rounded-xl hover:bg-gray-700/30 transition-all duration-300 animate-fade-in-up`} style={{ animationDelay: `${actIndex * 100}ms` }}>
+                                                <div key={activity.id} className={`p-6 border border-[#ebbcfc]/70 rounded-xl hover:bg-[#f9eafe] transition-all duration-300 animate-fade-in-up`} style={{ animationDelay: `${actIndex * 100}ms` }}>
                                                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                                                         <div className="flex-1">
                                                             <ul className="space-y-2">
                                                                 {Array.isArray(activity.description) && activity.description.map((desc: string, index: number) => {
                                                                     const isCompleted = completedArray[index] === true;
                                                                     return (
-                                                                        <li key={index} className={`flex items-start gap-3 ${isCompleted ? 'text-green-300' : 'text-gray-400'}`}>
+                                                                        <li key={index} className={`flex items-start gap-3 ${isCompleted ? 'text-slate-600' : 'text-slate-600'}`}>
                                                                             {isCompleted ? (
-                                                                                <CheckCircle2 className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                                                                                <CheckCircle2 className="w-5 h-5 text-[#ff0061] mt-0.5 flex-shrink-0" />
                                                                             ) : (
-                                                                                <div className="w-5 h-5 border-2 border-gray-500 rounded-full mt-0.5 flex-shrink-0" />
+                                                                                <div className="w-5 h-5 border-2 border-[#ebbcfc] rounded-full mt-0.5 flex-shrink-0" />
                                                                             )}
                                                                             <span className={`text-lg ${isCompleted ? '' : 'opacity-70'}`}>{desc}</span>
                                                                         </li>
@@ -550,17 +550,17 @@ const Profile: React.FC = () => {
                                                             </ul>
                                                         </div>
                                                         <div className="text-right flex-shrink-0">
-                                                            <div className="text-lg font-medium text-blue-400">
+                                                            <div className="text-lg font-medium text-[#ff0061]">
                                                                 {new Date(activity.date).toLocaleDateString('en-US', {
                                                                     weekday: 'short',
                                                                     month: 'short',
                                                                     day: 'numeric',
                                                                 })}
                                                             </div>
-                                                            <div className="text-sm text-gray-500">
+                                                            <div className="text-sm text-slate-500">
                                                                 {new Date(activity.date).getFullYear()}
                                                             </div>
-                                                            <div className={`text-sm mt-2 px-2 py-1 rounded-lg ${completedCount === totalCount && totalCount > 0 ? 'bg-green-500/20 text-green-400' : 'bg-gray-600/50 text-gray-400'}`}>
+                                                            <div className={`text-sm mt-2 px-2 py-1 rounded-lg ${completedCount === totalCount && totalCount > 0 ? 'bg-[#ff0061]/15 text-[#ff0061]' : 'bg-white/80 text-slate-600 border border-[#ebbcfc]/60'}`}>
                                                                 {completedCount}/{totalCount} done
                                                             </div>
                                                         </div>
