@@ -130,13 +130,13 @@ const GoalsSection: React.FC = () => {
     ];
 
     return (
-        <div className="bg-gray-800/50 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-gray-700/50">
+        <div className="bg-white/70 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-[#ebbcfc]/70">
             {/* Badges Section */}
             <div className="mb-6">
                 <div className="flex items-center gap-2 mb-4">
-                    <Award className="w-5 h-5 text-yellow-400" />
-                    <h3 className="text-lg font-semibold text-white">Achievements</h3>
-                    <span className="text-sm text-gray-400">
+                    <Award className="w-5 h-5 text-[#ff0061]" />
+                    <h3 className="text-lg font-semibold text-slate-900">Achievements</h3>
+                    <span className="text-sm text-slate-600">
                         ({userBadges.length}/{allBadges.length})
                     </span>
                 </div>
@@ -150,13 +150,13 @@ const GoalsSection: React.FC = () => {
             {/* Goals Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                 <div className="flex items-center gap-2">
-                    <Target className="w-5 h-5 text-blue-400" />
-                    <h3 className="text-lg font-semibold text-white">Goals</h3>
+                    <Target className="w-5 h-5 text-[#ff0061]" />
+                    <h3 className="text-lg font-semibold text-slate-900">Goals</h3>
                 </div>
                 <div className="flex gap-2">
                     <button
                         onClick={() => setIsTemplatesOpen(true)}
-                        className="flex items-center gap-2 px-3 py-2 bg-purple-600/20 text-purple-400 border border-purple-500/30 rounded-lg hover:bg-purple-600/30 transition-colors text-sm"
+                        className="flex items-center gap-2 px-3 py-2 bg-[#f9eafe] text-slate-700 border border-[#ebbcfc]/70 rounded-lg hover:bg-[#ebbcfc] transition-colors text-sm"
                     >
                         <Layout className="w-4 h-4" />
                         Templates
@@ -166,7 +166,7 @@ const GoalsSection: React.FC = () => {
                             setEditingGoal(null);
                             setIsFormOpen(true);
                         }}
-                        className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                        className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] text-white rounded-lg hover:from-[#cadbfc] hover:to-[#ff0061] transition-colors text-sm"
                     >
                         <Plus className="w-4 h-4" />
                         New Goal
@@ -182,8 +182,8 @@ const GoalsSection: React.FC = () => {
                         onClick={() => setStatusFilter(tab.value)}
                         className={`px-3 py-1.5 rounded-lg text-sm whitespace-nowrap transition-colors ${
                             statusFilter === tab.value
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-gray-700/50 text-gray-400 hover:bg-gray-700 hover:text-white'
+                                ? 'bg-[#ff0061] text-white'
+                                : 'bg-white/70 text-slate-600 border border-[#ebbcfc]/60 hover:bg-[#f9eafe] hover:text-slate-900'
                         }`}
                     >
                         {tab.label}
@@ -220,18 +220,18 @@ const GoalsSection: React.FC = () => {
 
             {/* Templates Modal */}
             {isTemplatesOpen && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-gray-800 rounded-2xl border border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-hidden">
-                        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+                <div className="fixed inset-0 bg-[#1f1b2d]/45 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl border border-[#ebbcfc] w-full max-w-2xl max-h-[90vh] overflow-hidden">
+                        <div className="flex items-center justify-between p-4 border-b border-[#ebbcfc]">
                             <div className="flex items-center gap-2">
-                                <Layout className="w-5 h-5 text-purple-400" />
-                                <h2 className="text-lg font-semibold text-white">Goal Templates</h2>
+                                <Layout className="w-5 h-5 text-[#ff0061]" />
+                                <h2 className="text-lg font-semibold text-slate-900">Goal Templates</h2>
                             </div>
                             <button
                                 onClick={() => setIsTemplatesOpen(false)}
-                                className="p-1 rounded-lg hover:bg-gray-700 transition-colors"
+                                className="p-1 rounded-lg hover:bg-[#f9eafe] transition-colors"
                             >
-                                <X className="w-5 h-5 text-gray-400" />
+                                <X className="w-5 h-5 text-slate-500" />
                             </button>
                         </div>
                         <div className="p-4 overflow-y-auto max-h-[calc(90vh-80px)]">
@@ -240,12 +240,12 @@ const GoalsSection: React.FC = () => {
                                     {[...Array(4)].map((_, i) => (
                                         <div
                                             key={i}
-                                            className="h-24 bg-gray-700/50 rounded-xl animate-pulse"
+                                            className="h-24 bg-[#f9eafe] rounded-xl animate-pulse"
                                         />
                                     ))}
                                 </div>
                             ) : templates.length === 0 ? (
-                                <p className="text-center text-gray-400 py-8">
+                                <p className="text-center text-slate-600 py-8">
                                     No templates available.
                                 </p>
                             ) : (

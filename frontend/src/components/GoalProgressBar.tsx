@@ -25,24 +25,24 @@ const GoalProgressBar: React.FC<GoalProgressBarProps> = ({
     };
 
     const colorClasses = {
-        blue: 'from-blue-500 to-blue-600',
-        green: 'from-green-500 to-green-600',
-        purple: 'from-purple-500 to-purple-600',
-        orange: 'from-orange-500 to-orange-600',
-        pink: 'from-pink-500 to-pink-600'
+        blue: 'from-[#cadbfc] to-[#ebbcfc]',
+        green: 'from-[#feecf5] to-[#ebbcfc]',
+        purple: 'from-[#f9eafe] to-[#ebbcfc]',
+        orange: 'from-[#ebbcfc] to-[#ff0061]',
+        pink: 'from-[#cadbfc] to-[#ff0061]'
     };
 
     const glowClasses = {
-        blue: 'shadow-blue-500/50',
-        green: 'shadow-green-500/50',
-        purple: 'shadow-purple-500/50',
-        orange: 'shadow-orange-500/50',
-        pink: 'shadow-pink-500/50'
+        blue: 'shadow-[#cadbfc]/70',
+        green: 'shadow-[#feecf5]/80',
+        purple: 'shadow-[#ebbcfc]/70',
+        orange: 'shadow-[#ff0061]/40',
+        pink: 'shadow-[#ff0061]/40'
     };
 
     return (
         <div className="w-full">
-            <div className={`w-full bg-gray-700/50 rounded-full overflow-hidden ${sizeClasses[size]}`}>
+            <div className={`w-full bg-[#f9eafe] rounded-full overflow-hidden ${sizeClasses[size]}`}>
                 <div
                     className={`${sizeClasses[size]} rounded-full bg-gradient-to-r ${colorClasses[color]} transition-all duration-500 ease-out ${isComplete ? `shadow-lg ${glowClasses[color]}` : ''}`}
                     style={{ width: `${percentage}%` }}
@@ -50,10 +50,10 @@ const GoalProgressBar: React.FC<GoalProgressBarProps> = ({
             </div>
             {showLabel && (
                 <div className="flex justify-between items-center mt-1">
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-slate-600">
                         {current} / {target}
                     </span>
-                    <span className={`text-xs font-medium ${isComplete ? 'text-green-400' : 'text-gray-400'}`}>
+                    <span className={`text-xs font-medium ${isComplete ? 'text-[#ff0061]' : 'text-slate-600'}`}>
                         {Math.round(percentage)}%
                     </span>
                 </div>

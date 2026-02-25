@@ -49,17 +49,17 @@ const GoalTemplateCard: React.FC<GoalTemplateCardProps> = ({ template, onSelect 
     return (
         <button
             onClick={() => onSelect(template)}
-            className="w-full text-left bg-gray-800/50 backdrop-blur-xl rounded-xl border border-gray-700/50 p-4 hover:border-blue-500/50 hover:bg-gray-800/70 transition-all group"
+            className="w-full text-left bg-white/75 backdrop-blur-xl rounded-xl border border-[#ebbcfc]/70 p-4 hover:border-[#ff0061]/50 hover:bg-[#f9eafe]/70 transition-all group"
         >
             <div className="flex items-start gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-blue-400 group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-colors">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#cadbfc]/60 to-[#ebbcfc]/70 text-[#ff0061] group-hover:from-[#feecf5]/80 group-hover:to-[#ebbcfc]/80 transition-colors">
                     {getIcon(template.icon)}
                 </div>
                 <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-white text-sm mb-1 group-hover:text-blue-400 transition-colors">
+                    <h3 className="font-semibold text-slate-900 text-sm mb-1 group-hover:text-[#ff0061] transition-colors">
                         {template.name}
                     </h3>
-                    <p className="text-gray-400 text-xs line-clamp-2 mb-2">
+                    <p className="text-slate-600 text-xs line-clamp-2 mb-2">
                         {template.description}
                     </p>
                     <div className="flex items-center gap-2 flex-wrap">
@@ -68,13 +68,13 @@ const GoalTemplateCard: React.FC<GoalTemplateCardProps> = ({ template, onSelect 
                                 {template.category}
                             </span>
                         )}
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-slate-500">
                             {template.targetDays} days
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-slate-500">
                             {getPeriodLabel(template.period)}
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-slate-500">
                             {template.targetCount}x
                         </span>
                     </div>
