@@ -62,7 +62,7 @@ const ActivityList = ({
   if (!activities || activities.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-400">No activities yet. Add your first activity above!</p>
+        <p className="text-slate-600">No activities yet. Add your first activity above!</p>
       </div>
     );
   }
@@ -74,18 +74,18 @@ const ActivityList = ({
         const totalCount = activity.description?.length || 0;
 
         return (
-          <div key={activity.id} className="border border-gray-600/50 rounded-xl p-4 bg-gray-700/30 backdrop-blur-sm">
+          <div key={activity.id} className="border border-[#ebbcfc]/70 rounded-xl p-4 bg-white/80 backdrop-blur-sm">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-medium text-gray-200">
+              <h3 className="font-medium text-slate-800">
                 {new Date(activity.date || activity.createdAt).toLocaleDateString()}
               </h3>
               <div className="flex items-center gap-2">
                 {completedCount > 0 && (
-                  <span className="text-xs px-2 py-1 bg-green-500/20 text-green-400 rounded-full">
+                  <span className="text-xs px-2 py-1 bg-[#cadbfc]/60 text-slate-800 rounded-full border border-[#cadbfc]">
                     {completedCount}/{totalCount} done
                   </span>
                 )}
-                <span className="text-sm text-gray-400">
+                <span className="text-sm text-slate-600">
                   {totalCount} {totalCount === 1 ? 'item' : 'items'}
                 </span>
               </div>
@@ -101,8 +101,8 @@ const ActivityList = ({
                     key={index}
                     className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-200 ${
                       isCompleted
-                        ? 'bg-green-900/20 border-green-600/30'
-                        : 'bg-gray-800/50 border-gray-600/30'
+                        ? 'bg-[#cadbfc]/45 border-[#cadbfc]'
+                        : 'bg-[#f9eafe]/55 border-[#ebbcfc]/60'
                     }`}
                   >
                     {isCurrentlyEditing(activity.id, index) ? (
@@ -111,7 +111,7 @@ const ActivityList = ({
                           type="text"
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value)}
-                          className="flex-1 px-3 py-2 bg-gray-700 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="flex-1 px-3 py-2 bg-white border border-[#ebbcfc] rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ff0061] focus:border-transparent"
                           placeholder="Enter activity description..."
                           onKeyDown={(e) => e.key === 'Enter' && handleSave(activity.id, index)}
                           autoFocus
@@ -119,7 +119,7 @@ const ActivityList = ({
                         <button
                           onClick={() => handleSave(activity.id, index)}
                           disabled={isUpdating}
-                          className="p-2 text-green-400 hover:bg-green-500/20 rounded-lg transition-colors disabled:opacity-50"
+                          className="p-2 text-[#ff0061] hover:bg-[#feecf5] rounded-lg transition-colors disabled:opacity-50"
                           title="Save"
                         >
                           <Save size={16} />
@@ -127,7 +127,7 @@ const ActivityList = ({
                         <button
                           onClick={handleCancel}
                           disabled={isUpdating}
-                          className="p-2 text-gray-400 hover:bg-gray-600/50 rounded-lg transition-colors disabled:opacity-50"
+                          className="p-2 text-slate-500 hover:bg-[#f9eafe] rounded-lg transition-colors disabled:opacity-50"
                           title="Cancel"
                         >
                           <X size={16} />
@@ -141,8 +141,8 @@ const ActivityList = ({
                             disabled={isToggling || isDeleting || isUpdating || editingItem !== null}
                             className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 disabled:opacity-50 flex-shrink-0 ${
                               isCompleted
-                                ? 'bg-green-500 border-green-500 text-white'
-                                : 'border-gray-500 hover:border-green-400'
+                                ? 'bg-[#ff0061] border-[#ff0061] text-white'
+                                : 'border-[#ebbcfc] hover:border-[#ff0061]'
                             }`}
                             title={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
                           >
@@ -151,8 +151,8 @@ const ActivityList = ({
                           <span
                             className={`transition-all duration-200 ${
                               isCompleted
-                                ? 'text-gray-400 line-through'
-                                : 'text-gray-200'
+                                ? 'text-slate-500 line-through'
+                                : 'text-slate-800'
                             }`}
                           >
                             {desc}
@@ -165,7 +165,7 @@ const ActivityList = ({
                           <button
                             onClick={() => handleEdit(activity.id, index, desc)}
                             disabled={isUpdating || isDeleting || isToggling || editingItem !== null}
-                            className="p-2 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors disabled:opacity-50"
+                            className="p-2 text-[#ff0061] hover:bg-[#feecf5] rounded-lg transition-colors disabled:opacity-50"
                             title="Edit"
                           >
                             <Edit2 size={16} />
@@ -173,7 +173,7 @@ const ActivityList = ({
                           <button
                             onClick={() => onDeleteItem(activity.id, index)}
                             disabled={isDeleting || isUpdating || isToggling || editingItem !== null}
-                            className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors disabled:opacity-50"
+                            className="p-2 text-[#ff0061] hover:bg-[#feecf5] rounded-lg transition-colors disabled:opacity-50"
                             title="Delete"
                           >
                             <Trash2 size={16} />

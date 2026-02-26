@@ -11,14 +11,14 @@ interface CategoryStatsCardProps {
 const CategoryStatsCard: React.FC<CategoryStatsCardProps> = ({ stats, isLoading }) => {
   if (isLoading) {
     return (
-      <div className="bg-gray-800/50 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-gray-700/50">
-        <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-          <Flame className="w-5 h-5 text-orange-400" />
+      <div className="bg-white/70 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-[#ebbcfc]/70">
+        <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
+          <Flame className="w-5 h-5 text-[#ff0061]" />
           Category Streaks
         </h3>
         <div className="animate-pulse grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="h-20 bg-gray-700/50 rounded-xl"></div>
+            <div key={i} className="h-20 bg-[#f9eafe] rounded-xl"></div>
           ))}
         </div>
       </div>
@@ -30,9 +30,9 @@ const CategoryStatsCard: React.FC<CategoryStatsCardProps> = ({ stats, isLoading 
   }
 
   return (
-    <div className="bg-gray-800/50 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-gray-700/50">
-      <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-        <Flame className="w-5 h-5 text-orange-400" />
+    <div className="bg-white/70 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-[#ebbcfc]/70">
+      <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
+        <Flame className="w-5 h-5 text-[#ff0061]" />
         Category Streaks
       </h3>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -46,7 +46,7 @@ const CategoryStatsCard: React.FC<CategoryStatsCardProps> = ({ stats, isLoading 
             >
               <div className="font-medium text-sm mb-2">{cat.name}</div>
               <div className="flex items-center gap-1 text-lg font-bold">
-                <Flame className="w-4 h-4 text-orange-400" />
+                <Flame className="w-4 h-4 text-[#ff0061]" />
                 <span>{catStats.streak}</span>
               </div>
               <div className="flex items-center gap-3 text-xs mt-1 opacity-80">

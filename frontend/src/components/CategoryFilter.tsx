@@ -20,8 +20,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         onClick={() => onCategorySelect(null)}
         className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 border ${
           selectedCategory === null
-            ? 'bg-white/20 text-white border-white/40'
-            : 'bg-gray-700/30 text-gray-400 border-gray-600/30 hover:bg-gray-700/50'
+            ? 'bg-[#ff0061]/15 text-[#ff0061] border-[#ff0061]/40'
+            : 'bg-white/70 text-slate-600 border-[#ebbcfc]/70 hover:bg-[#f9eafe]'
         }`}
       >
         All ({totalCount})

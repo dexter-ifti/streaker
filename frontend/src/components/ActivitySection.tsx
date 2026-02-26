@@ -158,9 +158,9 @@ export const ActivitySection = ({
     <div className="space-y-6">
       <CategoryStatsCard stats={categoryStats} isLoading={isLoadingStats} />
 
-      <div className="bg-gray-800/50 backdrop-blur-xl p-6 sm:p-8 rounded-2xl shadow-2xl border border-gray-700/50">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 flex items-center gap-3 text-white">
-          <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-2 rounded-xl">
+      <div className="bg-white/70 backdrop-blur-xl p-6 sm:p-8 rounded-2xl shadow-2xl border border-[#ebbcfc]/70">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 flex items-center gap-3 text-slate-900">
+          <div className="bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] p-2 rounded-xl">
             <Plus className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
           </div>
           Today's Activities
@@ -172,8 +172,8 @@ export const ActivitySection = ({
 
         <div className="space-y-6">
           <div className="flex items-center gap-3 mb-4">
-            <Calendar className="w-5 h-5 text-blue-400" />
-            <h3 className="text-xl font-semibold text-white">Recent Activities</h3>
+            <Calendar className="w-5 h-5 text-[#ff0061]" />
+            <h3 className="text-xl font-semibold text-slate-900">Recent Activities</h3>
           </div>
 
           <CategoryFilter
@@ -198,17 +198,17 @@ export const ActivitySection = ({
             <button
               onClick={onPreviousPage}
               disabled={currentPage === 1}
-              className="px-6 py-3 bg-gray-700/50 hover:bg-gray-600/50 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition-all duration-200 border border-gray-600/50"
+              className="px-6 py-3 bg-[#f9eafe] hover:bg-[#ebbcfc] disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 rounded-xl transition-all duration-200 border border-[#ebbcfc]"
             >
               Previous
             </button>
-            <span className="text-lg text-gray-300 bg-gray-700/30 px-4 py-2 rounded-xl">
+            <span className="text-lg text-slate-700 bg-white/70 px-4 py-2 rounded-xl border border-[#ebbcfc]/60">
               Page {currentPage} of {totalPages}
             </span>
             <button
               onClick={onNextPage}
               disabled={currentPage === totalPages}
-              className="px-6 py-3 bg-gray-700/50 hover:bg-gray-600/50 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition-all duration-200 border border-gray-600/50"
+              className="px-6 py-3 bg-[#f9eafe] hover:bg-[#ebbcfc] disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 rounded-xl transition-all duration-200 border border-[#ebbcfc]"
             >
               Next
             </button>
