@@ -7,8 +7,8 @@ interface LongestStreakProps {
 
 const LongestStreak: React.FC<LongestStreakProps> = ({ count }) => {
   return (
-    <div className="flex items-center gap-2 text-lg font-semibold text-purple-600">
-      <Crown size={24} className="text-purple-600" />
+    <div className="flex items-center gap-2 text-lg font-semibold text-[#ff0061]">
+      <Crown size={24} className="text-[#ff0061]" />
       <span>Best Streak: {count} Days</span>
     </div>
   );

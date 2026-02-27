@@ -70,10 +70,10 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
     }, [data, monthsToShow]);
 
     const getColorClass = (count: number): string => {
-        if (count === 0) return 'bg-gray-800';
-        if (count <= 2) return 'bg-green-900';
-        if (count <= 4) return 'bg-green-700';
-        return 'bg-green-500';
+        if (count === 0) return 'bg-[#f9eafe] border border-[#ebbcfc]/70';
+        if (count <= 2) return 'bg-[#cadbfc]';
+        if (count <= 4) return 'bg-[#ebbcfc]';
+        return 'bg-[#ff0061]';
     };
 
     const getDayMatrix = (days: Date[]) => {
@@ -93,13 +93,13 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
     const gapPx = `${gap}px`;
 
     return (
-        <div ref={containerRef} className="p-3 sm:p-4 bg-gray-900 rounded-lg shadow-lg text-gray-300 w-full">
+        <div ref={containerRef} className="p-3 sm:p-4 bg-white/80 rounded-lg shadow-lg text-slate-700 w-full border border-[#ebbcfc]/70">
             {/* Scrollable only when content truly can't fit */}
             <div className="overflow-x-auto overflow-y-hidden">
                 <div className="flex" style={{ gap: gapPx }}>
                     {/* Day-of-week labels */}
                     <div
-                        className="flex flex-col justify-around text-gray-500 flex-shrink-0"
+                        className="flex flex-col justify-around text-slate-500 flex-shrink-0"
                         style={{
                             fontSize: Math.max(8, cellSize - 3),
                             width: Math.max(18, cellSize * 1.8),
@@ -121,7 +121,7 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
                             <div key={monthIdx} className="flex flex-col flex-shrink-0">
                                 {/* Month label */}
                                 <div
-                                    className="text-gray-400 text-center mb-1 font-medium"
+                                    className="text-slate-600 text-center mb-1 font-medium"
                                     style={{ fontSize: Math.max(8, cellSize - 2), height: cellSize + gap }}
                                 >
                                     {monthData.month}
@@ -149,7 +149,7 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
                                                     <div
                                                         key={colIdx}
                                                         style={{ width: cellPx, height: cellPx, borderRadius: Math.max(1, cellSize / 8) }}
-                                                        className={`flex-shrink-0 ${getColorClass(count)} transition-colors duration-200 hover:ring-1 hover:ring-gray-400 cursor-default`}
+                                                        className={`flex-shrink-0 ${getColorClass(count)} transition-colors duration-200 hover:ring-1 hover:ring-[#ff0061]/60 cursor-default`}
                                                         title={`${format(day, 'MMM d, yyyy')}: ${count} ${count === 1 ? 'activity' : 'activities'}`}
                                                     />
                                                 );
@@ -164,13 +164,13 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
             </div>
 
             {/* Legend */}
-            <div className="mt-3 flex items-center text-gray-500 justify-end" style={{ fontSize: Math.max(9, cellSize - 3) }}>
+            <div className="mt-3 flex items-center text-slate-500 justify-end" style={{ fontSize: Math.max(9, cellSize - 3) }}>
                 <span className="mr-2">Less</span>
                 <div className="flex gap-1">
-                    <div className="bg-gray-800 rounded-sm" style={{ width: cellPx, height: cellPx }} />
-                    <div className="bg-green-900 rounded-sm" style={{ width: cellPx, height: cellPx }} />
-                    <div className="bg-green-700 rounded-sm" style={{ width: cellPx, height: cellPx }} />
-                    <div className="bg-green-500 rounded-sm" style={{ width: cellPx, height: cellPx }} />
+                    <div className="bg-white border border-[#ebbcfc] rounded-sm" style={{ width: cellPx, height: cellPx }} />
+                    <div className="bg-[#cadbfc] rounded-sm" style={{ width: cellPx, height: cellPx }} />
+                    <div className="bg-[#ebbcfc] rounded-sm" style={{ width: cellPx, height: cellPx }} />
+                    <div className="bg-[#ff0061] rounded-sm" style={{ width: cellPx, height: cellPx }} />
                 </div>
                 <span className="ml-2">More</span>
             </div>

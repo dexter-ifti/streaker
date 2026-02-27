@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, CheckCircle, AlertCircle, Send, MessageSquare, Bug, Lightbulb, Sparkles } from 'lucide-react';
 import axios from 'axios';
 
@@ -77,49 +78,30 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const getTypeColor = (feedbackType: string) => {
-    switch (feedbackType) {
-      case 'bug':
-        return 'from-red-500 to-pink-500';
-      case 'feature':
-        return 'from-yellow-500 to-orange-500';
-      default:
-        return 'from-blue-500 to-purple-500';
-    }
-  };
-
-  return (
+  return createPortal(
     <>
       {/* Main Feedback Modal */}
       <div
-        className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-start justify-center pt-8 pb-8 px-4 overflow-y-auto animate-fade-in"
-        style={{
-          zIndex: 2147483647, // Maximum z-index value
-          position: 'initial',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0
-        }}
+        className="fixed inset-0 z-[2147483647] bg-[#1f1b2d]/45 backdrop-blur-sm flex items-start justify-center pt-8 pb-8 px-4 overflow-y-auto animate-fade-in"
       >
         <div
-          className="bg-gray-800/95 backdrop-blur-xl rounded-2xl p-6 sm:p-8 w-full max-w-lg shadow-2xl border border-gray-700/50 animate-fade-in-up my-auto"
+          className="bg-white/95 backdrop-blur-xl rounded-2xl p-6 sm:p-8 w-full max-w-lg shadow-2xl border border-[#ebbcfc]/70 animate-fade-in-up my-auto"
           style={{ position: 'relative', zIndex: 1 }}
         >
           {/* Header */}
           <div className="flex justify-between items-start mb-6">
             <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2.5 rounded-xl">
+              <div className="bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] p-2.5 rounded-xl">
                 <MessageSquare className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-white">Share Your Thoughts</h2>
-                <p className="text-gray-400 text-sm">Help us improve Streaker</p>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Share Your Thoughts</h2>
+                <p className="text-slate-600 text-sm">Help us improve Streaker</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-gray-700/50 rounded-xl flex-shrink-0"
+              className="text-slate-500 hover:text-[#ff0061] transition-colors p-2 hover:bg-[#f9eafe] rounded-xl flex-shrink-0"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />
@@ -129,7 +111,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Feedback Type Selection */}
             <div>
-              <label className="block text-base sm:text-lg font-semibold text-white mb-3">
+              <label className="block text-base sm:text-lg font-semibold text-slate-900 mb-3">
                 What would you like to share?
               </label>
               <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -149,8 +131,8 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) => {
                     <div className={`
                       flex flex-col items-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-300
                       ${type === option.value
-                        ? 'border-blue-500 bg-blue-500/20 text-blue-300'
-                        : 'border-gray-600 bg-gray-700/30 text-gray-400 hover:border-gray-500 hover:bg-gray-600/30'
+                        ? 'border-[#ff0061] bg-[#ff0061]/10 text-[#ff0061]'
+                        : 'border-[#ebbcfc] bg-white text-slate-600 hover:border-[#ff0061]/50 hover:bg-[#f9eafe]'
                       }
                     `}>
                       <option.icon className="w-4 h-4 sm:w-5 sm:h-5 mb-1 sm:mb-2" />
@@ -163,7 +145,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) => {
 
             {/* Description */}
             <div>
-              <label className="block text-base sm:text-lg font-semibold text-white mb-3">
+              <label className="block text-base sm:text-lg font-semibold text-slate-900 mb-3">
                 Tell us more
               </label>
               <div className="relative">
@@ -172,11 +154,11 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   maxLength={500}
-                  className="w-full p-3 sm:p-4 border border-gray-600 rounded-xl bg-gray-700/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none text-sm sm:text-base"
+                  className="w-full p-3 sm:p-4 border border-[#ebbcfc] rounded-xl bg-white text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-[#ff0061] focus:border-transparent transition-all duration-200 resize-none text-sm sm:text-base"
                   rows={4}
                   placeholder={`Share your ${type === 'bug' ? 'bug report' : type === 'feature' ? 'feature idea' : 'feedback'} with us...`}
                 />
-                <div className="absolute bottom-2 right-3 text-xs text-gray-500">
+                <div className="absolute bottom-2 right-3 text-xs text-slate-500">
                   {description.length}/500
                 </div>
               </div>
@@ -184,17 +166,17 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) => {
 
             {/* Email */}
             <div>
-              <label className="block text-base sm:text-lg font-semibold text-white mb-3">
-                Email <span className="text-gray-400 font-normal">(optional)</span>
+              <label className="block text-base sm:text-lg font-semibold text-slate-900 mb-3">
+                Email <span className="text-slate-500 font-normal">(optional)</span>
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 sm:p-4 border border-gray-600 rounded-xl bg-gray-700/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                className="w-full p-3 sm:p-4 border border-[#ebbcfc] rounded-xl bg-white text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-[#ff0061] focus:border-transparent transition-all duration-200 text-sm sm:text-base"
                 placeholder="your@email.com"
               />
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-slate-500 mt-2">
                 We'll only use this to follow up on your feedback
               </p>
             </div>
@@ -203,7 +185,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) => {
             <button
               type="submit"
               disabled={isSubmitting || !description.trim()}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 disabled:from-gray-600 disabled:to-gray-700 text-white py-3 sm:py-4 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 disabled:opacity-50 font-semibold text-base sm:text-lg flex items-center justify-center gap-3"
+              className="w-full bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] hover:from-[#cadbfc] hover:to-[#ff0061] disabled:from-[#cadbfc] disabled:to-[#ebbcfc] text-white py-3 sm:py-4 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 disabled:opacity-50 font-semibold text-base sm:text-lg flex items-center justify-center gap-3"
             >
               {isSubmitting ? (
                 <>
@@ -224,41 +206,33 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) => {
       {/* Success/Error Alert Modal */}
       {alert.isOpen && (
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
-          style={{
-            zIndex: 2147483647, // Maximum z-index value
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0
-          }}
+          className="fixed inset-0 z-[2147483647] bg-[#1f1b2d]/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
         >
           <div
-            className="bg-gray-800/95 backdrop-blur-xl rounded-2xl p-6 sm:p-8 w-full max-w-md shadow-2xl border border-gray-700/50 animate-bounce-in"
+            className="bg-white/95 backdrop-blur-xl rounded-2xl p-6 sm:p-8 w-full max-w-md shadow-2xl border border-[#ebbcfc]/70 animate-bounce-in"
             style={{ position: 'relative', zIndex: 1 }}
           >
             <div className="flex flex-col items-center space-y-6 text-center">
               {alert.isSuccess ? (
-                <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-3 sm:p-4 rounded-full">
+                <div className="bg-gradient-to-r from-[#cadbfc] to-[#ff0061] p-3 sm:p-4 rounded-full">
                   <CheckCircle className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
                 </div>
               ) : (
-                <div className="bg-gradient-to-r from-red-500 to-pink-500 p-3 sm:p-4 rounded-full">
+                <div className="bg-gradient-to-r from-[#feecf5] to-[#ff0061] p-3 sm:p-4 rounded-full">
                   <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
                 </div>
               )}
 
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
                   {alert.isSuccess ? 'Thank You!' : 'Oops!'}
                 </h2>
-                <p className="text-gray-300 text-base sm:text-lg leading-relaxed">{alert.message}</p>
+                <p className="text-slate-700 text-base sm:text-lg leading-relaxed">{alert.message}</p>
               </div>
 
               <button
                 onClick={closeAlert}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white py-3 px-6 sm:px-8 rounded-xl transition-all duration-300 transform hover:scale-105 font-semibold flex items-center gap-2"
+                className="bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] hover:from-[#cadbfc] hover:to-[#ff0061] text-white py-3 px-6 sm:px-8 rounded-xl transition-all duration-300 transform hover:scale-105 font-semibold flex items-center gap-2"
               >
                 <Sparkles className="w-4 h-4" />
                 Got it!
@@ -267,7 +241,8 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ isOpen, onClose }) => {
           </div>
         </div>
       )}
-    </>
+    </>,
+    document.body
   );
 };
 
