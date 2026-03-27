@@ -1,6 +1,12 @@
 import { PrismaClient } from "@prisma/client/edge";
 // import { cache } from "hono/cache";
 import { HTTPException } from "hono/http-exception";
+import {
+    dayKeyInTimezone,
+    todayKeyInTimezone,
+    shiftDayKey,
+    startOfDayInTimezone,
+} from "../utils/timezone.util";
 
 export class ActivityService {
     constructor(private db: PrismaClient | any) { }
@@ -9,11 +15,14 @@ export class ActivityService {
         date: Date,
         description: string,
         userId: string,
-        category: string = 'General'
+        category: string = 'General',
+        tz: string = 'UTC'
     ) {
         try {
-            const activityDate = new Date(date);
-            activityDate.setUTCHours(0, 0, 0, 0);
+            // Interpret the incoming date in the user's timezone and normalize
+            // to midnight UTC of that local day for storage.
+            const localDayKey = dayKeyInTimezone(date, tz);
+            const activityDate = startOfDayInTimezone(localDayKey, "UTC");
 
             // Upsert activity - streaks are NOT updated here
             // Streaks only count when activities are marked as completed
@@ -117,10 +126,11 @@ export class ActivityService {
         }
     }
 
-    dayKeyUTC(date: Date) {
-        return date.toISOString().slice(0, 10); // YYYY-MM-DD (UTC)
+    dayKey(date: Date, tz: string = 'UTC') {
+        return dayKeyInTimezone(date, tz);
     }
-    async getCurrentStreak(userId: string) {
+
+    async getCurrentStreak(userId: string, tz: string = 'UTC') {
         try {
             const activities = await this.db.activity.findMany({
                 where: { userId },
@@ -139,10 +149,10 @@ export class ActivityService {
             if (completedDays.length === 0) return 0;
 
             const uniqueDays: string[] = [
-                ...new Set<string>(completedDays.map((a: any) => this.dayKeyUTC(new Date(a.date))))
+                ...new Set<string>(completedDays.map((a: any) => this.dayKey(new Date(a.date), tz)))
             ];
 
-            const todayKey = this.dayKeyUTC(new Date());
+            const todayKey = todayKeyInTimezone(tz);
 
             let streak = 0;
             let expectedDay = todayKey;
@@ -150,21 +160,14 @@ export class ActivityService {
             for (const day of uniqueDays) {
                 if (day === expectedDay) {
                     streak++;
-
-                    const d = new Date(expectedDay);
-                    d.setUTCDate(d.getUTCDate() - 1);
-                    expectedDay = this.dayKeyUTC(d);
+                    expectedDay = shiftDayKey(expectedDay, -1, tz);
                 } else if (streak === 0) {
                     // Allow streak to start from yesterday if no activity completed today yet
-                    const yesterday = new Date(todayKey);
-                    yesterday.setUTCDate(yesterday.getUTCDate() - 1);
-                    const yesterdayKey = this.dayKeyUTC(yesterday);
+                    const yesterdayKey = shiftDayKey(todayKey, -1, tz);
 
                     if (day === yesterdayKey) {
                         streak++;
-                        const d = new Date(yesterdayKey);
-                        d.setUTCDate(d.getUTCDate() - 1);
-                        expectedDay = this.dayKeyUTC(d);
+                        expectedDay = shiftDayKey(yesterdayKey, -1, tz);
                     } else {
                         break;
                     }
@@ -184,7 +187,7 @@ export class ActivityService {
         }
     }
 
-    getLongestStreak = async (userId: string) => {
+    getLongestStreak = async (userId: string, tz: string = 'UTC') => {
         try {
             const activities = await this.db.activity.findMany({
                 where: { userId },
@@ -203,7 +206,7 @@ export class ActivityService {
             if (completedDays.length === 0) return 0;
 
             const uniqueDays: string[] = [
-                ...new Set<string>(completedDays.map((a: any) => this.dayKeyUTC(new Date(a.date))))
+                ...new Set<string>(completedDays.map((a: any) => this.dayKey(new Date(a.date), tz)))
             ];
 
             let longest = 0;
@@ -214,10 +217,9 @@ export class ActivityService {
                 if (!prevDay) {
                     current = 1;
                 } else {
-                    const prev = new Date(prevDay);
-                    prev.setUTCDate(prev.getUTCDate() + 1);
+                    const nextExpected = shiftDayKey(prevDay, 1, tz);
 
-                    if (day === this.dayKeyUTC(prev)) {
+                    if (day === nextExpected) {
                         current++;
                     } else {
                         current = 1;
@@ -286,7 +288,7 @@ export class ActivityService {
         }
     }
 
-    async deleteActivity(userId: string, activityId: string, itemIndex: number) {
+    async deleteActivity(userId: string, activityId: string, itemIndex: number, tz: string = 'UTC') {
         try {
             const activity = await this.db.activity.findUnique({
                 where: {
@@ -326,8 +328,8 @@ export class ActivityService {
             }
 
             // Recalculate streaks after deletion
-            await this.getCurrentStreak(userId);
-            await this.getLongestStreak(userId);
+            await this.getCurrentStreak(userId, tz);
+            await this.getLongestStreak(userId, tz);
 
             return updatedActivity;
         } catch (error: any) {
@@ -335,7 +337,7 @@ export class ActivityService {
         }
     }
 
-    async toggleComplete(userId: string, activityId: string, itemIndex: number) {
+    async toggleComplete(userId: string, activityId: string, itemIndex: number, tz: string = 'UTC') {
         try {
             const activity = await this.db.activity.findUnique({
                 where: {
@@ -371,8 +373,8 @@ export class ActivityService {
             });
 
             // Recalculate streaks since completion status changed
-            await this.getCurrentStreak(userId);
-            await this.getLongestStreak(userId);
+            await this.getCurrentStreak(userId, tz);
+            await this.getLongestStreak(userId, tz);
 
             return updatedActivity;
         } catch (error: any) {
@@ -380,7 +382,7 @@ export class ActivityService {
         }
     }
 
-    async getCategoryStreak(userId: string, category: string) {
+    async getCategoryStreak(userId: string, category: string, tz: string = 'UTC') {
         try {
             const activities = await this.db.activity.findMany({
                 where: {
@@ -392,8 +394,7 @@ export class ActivityService {
             });
 
             let streak = 0;
-            const today = new Date();
-            today.setUTCHours(0, 0, 0, 0);
+            const todayKey = todayKeyInTimezone(tz);
 
             // Filter activities that have at least one COMPLETED item with the specified category
             const categoryActivities = activities.filter((activity: any) => {
@@ -411,24 +412,27 @@ export class ActivityService {
 
             // Check if there's any completed activity with this category today
             const hasActivityToday = categoryActivities.some((activity: { date: Date | string }) => {
-                const activityDate = new Date(activity.date);
-                return activityDate.getTime() === today.getTime();
+                const activityDayKey = this.dayKey(new Date(activity.date), tz);
+                return activityDayKey === todayKey;
             });
 
-            if (!hasActivityToday &&
-                new Date(categoryActivities[0].date).getTime() < today.getTime() - 24 * 60 * 60 * 1000) {
-                return 0;
+            if (!hasActivityToday) {
+                const latestDayKey = this.dayKey(new Date(categoryActivities[0].date), tz);
+                const yesterdayKey = shiftDayKey(todayKey, -1, tz);
+                if (latestDayKey < yesterdayKey) {
+                    return 0;
+                }
             }
 
             for (let i = 0; i < categoryActivities.length - 1; i++) {
-                const currentDate = new Date(categoryActivities[i].date);
-                const nextDate = new Date(categoryActivities[i + 1].date);
+                const currentDayKey = this.dayKey(new Date(categoryActivities[i].date), tz);
+                const nextDayKey = this.dayKey(new Date(categoryActivities[i + 1].date), tz);
 
-                const diffDays = (currentDate.getTime() - nextDate.getTime()) / (1000 * 60 * 60 * 24);
+                const expectedPrev = shiftDayKey(currentDayKey, -1, tz);
 
                 if (i === 0) streak++;
 
-                if (diffDays === 1) {
+                if (nextDayKey === expectedPrev) {
                     streak++;
                 } else {
                     break;
@@ -446,7 +450,7 @@ export class ActivityService {
         }
     }
 
-    async getCategoryStats(userId: string) {
+    async getCategoryStats(userId: string, tz: string = 'UTC') {
         try {
             const activities = await this.db.activity.findMany({
                 where: {
@@ -483,7 +487,7 @@ export class ActivityService {
 
             // Calculate streak for each category
             for (const category of Object.keys(stats)) {
-                stats[category].streak = await this.getCategoryStreak(userId, category);
+                stats[category].streak = await this.getCategoryStreak(userId, category, tz);
             }
 
             return stats;
