@@ -58,6 +58,7 @@ createRoot(document.getElementById('root')!).render(
                 theme='dark'
               />
             </Router>
+            <Analytics />
           </QueryClientProvider>
           <Analytics />
         </AuthProvider>
