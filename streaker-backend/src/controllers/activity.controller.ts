@@ -1,6 +1,7 @@
 import { Context } from "hono";
 import { ActivityService } from "../services/activity.service";
 import { createActivitySchema } from "@ifti_taha/streaker-common";
+import { getTimezone } from "../utils/timezone.util";
 
 export class ActivityController {
     constructor(private activityService: ActivityService) { }
@@ -9,6 +10,7 @@ export class ActivityController {
     async saveActivity(c: Context) {
         const { id: userId } = c.get('jwtPayload');
         const body = await c.req.json();
+        const tz = getTimezone(c);
 
         // Validate request body
         const { success } = createActivitySchema.safeParse(body);
@@ -16,15 +18,12 @@ export class ActivityController {
             return c.json({ error: 'Invalid request body' }, 400);
         }
 
-        // Create Date object and reset time to midnight UTC
+        // Create Date object — the service will normalize to the correct
+        // local day using the user's timezone.
         const activityDate = new Date(body.date);
-        activityDate.setUTCHours(0, 0, 0, 0);
-
-        const today = new Date();
-        today.setUTCHours(0, 0, 0, 0);
 
         const category = body.category || 'General';
-        const activity = await this.activityService.saveActivity(activityDate, body.description, userId, category);
+        const activity = await this.activityService.saveActivity(activityDate, body.description, userId, category, tz);
         return c.json(activity, 201);
     }
 
@@ -48,14 +47,16 @@ export class ActivityController {
     // method to get current streak
     async getStreak(c: Context) {
         const { id: userId } = c.get('jwtPayload');
-        const streak = await this.activityService.getCurrentStreak(userId);
+        const tz = getTimezone(c);
+        const streak = await this.activityService.getCurrentStreak(userId, tz);
         return c.json({ streak });
     }
 
     // method to get longest streak
     async getLongestStreak(c: Context) {
         const { id: userId } = c.get('jwtPayload');
-        const streak = await this.activityService.getLongestStreak(userId);
+        const tz = getTimezone(c);
+        const streak = await this.activityService.getLongestStreak(userId, tz);
         return c.json({ streak });
     }
 
@@ -72,8 +73,9 @@ export class ActivityController {
 
     async deleteActivity(c : Context){
         const { id : userId } = c.get('jwtPayload');
+        const tz = getTimezone(c);
         const itemIndex = parseInt(c.req.param('index'));
-        const activity = await this.activityService.deleteActivity(userId, c.req.param('id'), itemIndex);
+        const activity = await this.activityService.deleteActivity(userId, c.req.param('id'), itemIndex, tz);
         if (!activity) {
             return c.json({ error: 'Activity not found' }, 404);
         }
@@ -82,10 +84,11 @@ export class ActivityController {
 
     async toggleComplete(c: Context) {
         const { id: userId } = c.get('jwtPayload');
+        const tz = getTimezone(c);
         const activityId = c.req.param('id');
         const itemIndex = parseInt(c.req.param('index'));
 
-        const activity = await this.activityService.toggleComplete(userId, activityId, itemIndex);
+        const activity = await this.activityService.toggleComplete(userId, activityId, itemIndex, tz);
         if (!activity) {
             return c.json({ error: 'Activity not found' }, 404);
         }
@@ -94,17 +97,19 @@ export class ActivityController {
 
     async getCategoryStats(c: Context) {
         const { id: userId } = c.get('jwtPayload');
-        const stats = await this.activityService.getCategoryStats(userId);
+        const tz = getTimezone(c);
+        const stats = await this.activityService.getCategoryStats(userId, tz);
         return c.json(stats, 200);
     }
 
     async getCategoryStreak(c: Context) {
         const { id: userId } = c.get('jwtPayload');
+        const tz = getTimezone(c);
         const category = c.req.query('category');
         if (!category) {
             return c.json({ error: 'Category parameter is required' }, 400);
         }
-        const streak = await this.activityService.getCategoryStreak(userId, category);
+        const streak = await this.activityService.getCategoryStreak(userId, category, tz);
         return c.json({ streak }, 200);
     }
 }
