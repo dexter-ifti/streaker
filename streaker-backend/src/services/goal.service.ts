@@ -1,5 +1,14 @@
 import { PrismaClient } from "@prisma/client/edge";
 import { HTTPException } from "hono/http-exception";
+import {
+    dayKeyInTimezone,
+    todayKeyInTimezone,
+    startOfDayInTimezone,
+    mondayOfWeekFromKey,
+    sundayOfWeekFromKey,
+    firstOfMonthFromKey,
+    lastOfMonthFromKey,
+} from "../utils/timezone.util";
 
 export class GoalService {
     constructor(private db: PrismaClient | any) { }
@@ -13,14 +22,15 @@ export class GoalService {
         category?: string;
         startDate: Date;
         endDate?: Date;
-    }) {
+    }, tz: string = 'UTC') {
         try {
-            const startDate = new Date(data.startDate);
-            startDate.setUTCHours(0, 0, 0, 0);
+            const startDayKey = dayKeyInTimezone(data.startDate, tz);
+            const startDate = startOfDayInTimezone(startDayKey, "UTC");
 
-            let endDate = data.endDate ? new Date(data.endDate) : null;
-            if (endDate) {
-                endDate.setUTCHours(0, 0, 0, 0);
+            let endDate: Date | null = null;
+            if (data.endDate) {
+                const endDayKey = dayKeyInTimezone(data.endDate, tz);
+                endDate = startOfDayInTimezone(endDayKey, "UTC");
             } else if (data.targetDays) {
                 endDate = new Date(startDate);
                 endDate.setDate(endDate.getDate() + data.targetDays);
@@ -99,7 +109,7 @@ export class GoalService {
         category?: string;
         status?: 'ACTIVE' | 'COMPLETED' | 'FAILED' | 'PAUSED';
         endDate?: Date;
-    }) {
+    }, tz: string = 'UTC') {
         try {
             const existingGoal = await this.db.goal.findFirst({
                 where: { id: goalId, userId },
@@ -118,9 +128,8 @@ export class GoalService {
             if (data.category !== undefined) updateData.category = data.category;
             if (data.status !== undefined) updateData.status = data.status;
             if (data.endDate !== undefined) {
-                const endDate = new Date(data.endDate);
-                endDate.setUTCHours(0, 0, 0, 0);
-                updateData.endDate = endDate;
+                const endDayKey = dayKeyInTimezone(data.endDate, tz);
+                updateData.endDate = startOfDayInTimezone(endDayKey, "UTC");
             }
 
             const goal = await this.db.goal.update({
@@ -154,7 +163,7 @@ export class GoalService {
         }
     }
 
-    async updateGoalProgress(userId: string, goalId: string, incrementBy: number = 1) {
+    async updateGoalProgress(userId: string, goalId: string, incrementBy: number = 1, tz: string = 'UTC') {
         try {
             const goal = await this.db.goal.findFirst({
                 where: { id: goalId, userId },
@@ -176,11 +185,9 @@ export class GoalService {
             });
 
             // Create or update progress log for current period
-            const now = new Date();
-            now.setUTCHours(0, 0, 0, 0);
-
-            const periodStart = this.getPeriodStart(now, goal.period);
-            const periodEnd = this.getPeriodEnd(now, goal.period);
+            const nowKey = todayKeyInTimezone(tz);
+            const periodStart = this.getPeriodStartDate(nowKey, goal.period);
+            const periodEnd = this.getPeriodEndDate(nowKey, goal.period);
 
             await this.db.goalProgress.upsert({
                 where: {
@@ -248,7 +255,7 @@ export class GoalService {
         }
     }
 
-    async createGoalFromTemplate(userId: string, templateId: string, startDate: Date) {
+    async createGoalFromTemplate(userId: string, templateId: string, startDate: Date, tz: string = 'UTC') {
         try {
             const template = await this.db.goalTemplate.findUnique({
                 where: { id: templateId },
@@ -258,8 +265,8 @@ export class GoalService {
                 throw new HTTPException(404, { message: 'Template not found' });
             }
 
-            const start = new Date(startDate);
-            start.setUTCHours(0, 0, 0, 0);
+            const startDayKey = dayKeyInTimezone(startDate, tz);
+            const start = startOfDayInTimezone(startDayKey, "UTC");
 
             const endDate = new Date(start);
             endDate.setDate(endDate.getDate() + template.targetDays);
@@ -288,7 +295,7 @@ export class GoalService {
         }
     }
 
-    async checkAndUpdateGoalStatus(goalId: string) {
+    async checkAndUpdateGoalStatus(goalId: string, tz: string = 'UTC') {
         try {
             const goal = await this.db.goal.findUnique({
                 where: { id: goalId },
@@ -298,8 +305,8 @@ export class GoalService {
                 return goal;
             }
 
-            const now = new Date();
-            now.setUTCHours(0, 0, 0, 0);
+            const nowKey = todayKeyInTimezone(tz);
+            const now = startOfDayInTimezone(nowKey, "UTC");
 
             let newStatus = goal.status;
 
@@ -325,36 +332,37 @@ export class GoalService {
         }
     }
 
-    private getPeriodStart(date: Date, period: string): Date {
-        const start = new Date(date);
-        start.setUTCHours(0, 0, 0, 0);
+    /**
+     * Get the start-of-period Date for a given day key and period type.
+     * Returns a Date at midnight UTC of the period start day.
+     */
+    private getPeriodStartDate(dateStr: string, period: string): Date {
+        let dayKey = dateStr;
 
         if (period === 'WEEKLY') {
-            const day = start.getUTCDay();
-            const diff = start.getUTCDate() - day + (day === 0 ? -6 : 1); // Monday
-            start.setUTCDate(diff);
+            dayKey = mondayOfWeekFromKey(dateStr);
         } else if (period === 'MONTHLY') {
-            start.setUTCDate(1);
+            dayKey = firstOfMonthFromKey(dateStr);
         }
 
-        return start;
+        return startOfDayInTimezone(dayKey, "UTC");
     }
 
-    private getPeriodEnd(date: Date, period: string): Date {
-        const end = new Date(date);
-        end.setUTCHours(0, 0, 0, 0);
+    /**
+     * Get the end-of-period Date for a given day key and period type.
+     * Returns a Date at midnight UTC of the period end day.
+     */
+    private getPeriodEndDate(dateStr: string, period: string): Date {
+        let dayKey = dateStr;
 
         if (period === 'DAILY') {
             // End is same as start for daily
         } else if (period === 'WEEKLY') {
-            const day = end.getUTCDay();
-            const diff = end.getUTCDate() - day + (day === 0 ? 0 : 7); // Sunday
-            end.setUTCDate(diff);
+            dayKey = sundayOfWeekFromKey(dateStr);
         } else if (period === 'MONTHLY') {
-            end.setUTCMonth(end.getUTCMonth() + 1);
-            end.setUTCDate(0); // Last day of current month
+            dayKey = lastOfMonthFromKey(dateStr);
         }
 
-        return end;
+        return startOfDayInTimezone(dayKey, "UTC");
     }
 }
