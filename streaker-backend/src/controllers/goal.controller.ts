@@ -1,6 +1,7 @@
 import { Context } from "hono";
 import { GoalService } from "../services/goal.service";
 import { BadgeService } from "../services/badge.service";
+import { getTimezone } from "../utils/timezone.util";
 
 export class GoalController {
     constructor(
@@ -11,6 +12,7 @@ export class GoalController {
     async createGoal(c: Context) {
         const { id: userId } = c.get('jwtPayload');
         const body = await c.req.json();
+        const tz = getTimezone(c);
 
         if (!body.name || !body.period || !body.targetCount || !body.startDate) {
             return c.json({ error: 'Missing required fields: name, period, targetCount, startDate' }, 400);
@@ -25,7 +27,7 @@ export class GoalController {
             category: body.category,
             startDate: new Date(body.startDate),
             endDate: body.endDate ? new Date(body.endDate) : undefined,
-        });
+        }, tz);
 
         // Check for badges after creating a goal
         await this.badgeService.checkGoalBadges(userId);
@@ -57,6 +59,7 @@ export class GoalController {
         const { id: userId } = c.get('jwtPayload');
         const goalId = c.req.param('id');
         const body = await c.req.json();
+        const tz = getTimezone(c);
 
         const goal = await this.goalService.updateGoal(userId, goalId, {
             name: body.name,
@@ -67,7 +70,7 @@ export class GoalController {
             category: body.category,
             status: body.status,
             endDate: body.endDate ? new Date(body.endDate) : undefined,
-        });
+        }, tz);
 
         if (!goal) {
             return c.json({ error: 'Goal not found' }, 404);
@@ -92,10 +95,11 @@ export class GoalController {
         const { id: userId } = c.get('jwtPayload');
         const goalId = c.req.param('id');
         const body = await c.req.json();
+        const tz = getTimezone(c);
 
         const incrementBy = body.incrementBy ?? 1;
 
-        const goal = await this.goalService.updateGoalProgress(userId, goalId, incrementBy);
+        const goal = await this.goalService.updateGoalProgress(userId, goalId, incrementBy, tz);
         if (!goal) {
             return c.json({ error: 'Goal not found' }, 404);
         }
@@ -128,6 +132,7 @@ export class GoalController {
     async createFromTemplate(c: Context) {
         const { id: userId } = c.get('jwtPayload');
         const body = await c.req.json();
+        const tz = getTimezone(c);
 
         if (!body.templateId || !body.startDate) {
             return c.json({ error: 'Missing required fields: templateId, startDate' }, 400);
@@ -136,7 +141,8 @@ export class GoalController {
         const goal = await this.goalService.createGoalFromTemplate(
             userId,
             body.templateId,
-            new Date(body.startDate)
+            new Date(body.startDate),
+            tz
         );
 
         // Check for badges after creating a goal
