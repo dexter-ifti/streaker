@@ -1,5 +1,10 @@
 import { PrismaClient } from "@prisma/client/edge";
 import { HTTPException } from "hono/http-exception";
+import {
+    todayKeyInTimezone,
+    startOfDayInTimezone,
+    shiftDayKey,
+} from "../utils/timezone.util";
 
 export class NotificationService {
     constructor(private db: PrismaClient | any) { }
@@ -33,6 +38,7 @@ export class NotificationService {
 
     /**
      * Update notification preferences for a user (partial update).
+     * Also silently syncs the timezone from the X-Timezone header if provided.
      */
     async updatePreference(
         userId: string,
@@ -77,20 +83,20 @@ export class NotificationService {
 
     /**
      * Get current streak status: streak count and whether the user already
-     * has a completed activity today (UTC). Used by the frontend to decide
-     * whether to fire a reminder notification.
+     * has a completed activity today (in the user's timezone). Used by the
+     * frontend to decide whether to fire a reminder notification.
      */
-    async getStreakStatus(userId: string) {
+    async getStreakStatus(userId: string, tz: string = 'UTC') {
         try {
             const user = await this.db.user.findUnique({
                 where: { id: userId },
                 select: { current_streak: true },
             });
 
-            const todayStart = new Date();
-            todayStart.setUTCHours(0, 0, 0, 0);
-            const tomorrowStart = new Date(todayStart);
-            tomorrowStart.setUTCDate(tomorrowStart.getUTCDate() + 1);
+            const todayKey = todayKeyInTimezone(tz);
+            const todayStart = startOfDayInTimezone(todayKey, "UTC");
+            const tomorrowKey = shiftDayKey(todayKey, 1, tz);
+            const tomorrowStart = startOfDayInTimezone(tomorrowKey, "UTC");
 
             const todayActivity = await this.db.activity.findFirst({
                 where: {
