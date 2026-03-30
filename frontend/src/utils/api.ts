@@ -52,6 +52,23 @@ const notifications_api = axios.create({
     }
 })
 
+// Detect user's IANA timezone (e.g. "Asia/Kolkata", "America/New_York")
+const getUserTimezone = (): string => {
+    try {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch {
+        return "UTC";
+    }
+};
+
+// Attach X-Timezone header to all API instances that need timezone-aware logic
+[activity_api, goals_api, badges_api, notifications_api].forEach((api) => {
+    api.interceptors.request.use((config) => {
+        config.headers['X-Timezone'] = getUserTimezone();
+        return config;
+    });
+});
+
 const handleApiError = (error: any, context: string) => {
     if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
