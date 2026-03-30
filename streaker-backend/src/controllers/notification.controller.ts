@@ -1,5 +1,6 @@
 import { Context } from "hono";
 import { NotificationService } from "../services/notification.service";
+import { getTimezone } from "../utils/timezone.util";
 
 export class NotificationController {
     constructor(private notificationService: NotificationService) { }
@@ -20,14 +21,16 @@ export class NotificationController {
         try {
             const payload = c.get('jwtPayload');
             const userId = payload.id;
+            const headerTz = getTimezone(c);
 
             const body = await c.req.json();
             const { enabled, reminderTime, timezone } = body;
 
+            // Use the explicitly provided timezone, or fall back to header timezone
             const updated = await this.notificationService.updatePreference(userId, {
                 enabled,
                 reminderTime,
-                timezone,
+                timezone: timezone || headerTz,
             });
 
             return c.json(updated);
@@ -40,8 +43,9 @@ export class NotificationController {
         try {
             const payload = c.get('jwtPayload');
             const userId = payload.id;
+            const tz = getTimezone(c);
 
-            const status = await this.notificationService.getStreakStatus(userId);
+            const status = await this.notificationService.getStreakStatus(userId, tz);
             return c.json(status);
         } catch (error: any) {
             return c.json({ error: error.message }, error.status || 500);
