@@ -52,13 +52,16 @@ export default function NotificationSettings() {
     const handleSave = async () => {
         if (!token) return;
         const reminderTime = `${hour}:${minute}`;
+        // Auto-detect user's timezone to sync with the backend
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
         try {
-            await updateMutation.mutateAsync({ token, data: { enabled, reminderTime } });
+            await updateMutation.mutateAsync({ token, data: { enabled, reminderTime, timezone } });
             toast.success('Notification settings saved!');
         } catch {
             toast.error('Failed to save notification settings.');
         }
     };
+
 
     if (isLoading) {
         return (
