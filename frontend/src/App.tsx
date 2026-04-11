@@ -12,12 +12,15 @@ import { ActivitySection } from './components/ActivitySection';
 import { LoadingOverlay } from './components/LoadingOverlay';
 import GoalsSection from './components/GoalsSection';
 import { useReminderScheduler } from './hooks/useReminderScheduler';
+import DailySummaryCard from './components/DailySummaryCard';
+import { BarChart3 } from 'lucide-react';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const activitiesPerPage = 3;
   const { authUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
 
   // Mount the daily reminder scheduler
   useReminderScheduler();
@@ -150,6 +153,23 @@ function App() {
 
       <Footer />
       {isSubmitting && <LoadingOverlay />}
+
+      {/* Daily Summary FAB */}
+      <button
+        onClick={() => setIsSummaryOpen(true)}
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] text-white rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 fab-pulse group"
+        title="View Daily Summary"
+        id="daily-summary-fab"
+      >
+        <BarChart3 className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+        <span className="text-sm font-semibold hidden sm:inline">Daily Summary</span>
+      </button>
+
+      {/* Daily Summary Modal */}
+      <DailySummaryCard
+        isOpen={isSummaryOpen}
+        onClose={() => setIsSummaryOpen(false)}
+      />
     </div>
   );
 }
