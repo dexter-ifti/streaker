@@ -253,3 +253,47 @@ select:focus-visible {
         transform: rotate(360deg);
     }
 }
+
+/* Daily Summary Card — shimmer border */
+@keyframes shimmer-border {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.summary-shimmer-border {
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(235, 188, 252, 0.15),
+            rgba(255, 0, 97, 0.1),
+            rgba(202, 219, 252, 0.15),
+            transparent);
+    background-size: 300% 100%;
+    animation: shimmer-border 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* FAB pulse ring */
+@keyframes fab-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 97, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 10px rgba(255, 0, 97, 0);
+    }
+}
+
+.fab-pulse {
+    animation: fab-pulse 2.5s ease-in-out infinite;
+}
