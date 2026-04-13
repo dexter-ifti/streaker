@@ -156,7 +156,20 @@ function App() {
 
       {/* Daily Summary FAB */}
       <button
-        onClick={() => setIsSummaryOpen(true)}
+        onClick={() => {
+          const today = new Date().toISOString().split('T')[0];
+          const hasTodayActivity = allActivities.some((a: any) => {
+            const d = a.date || a.createdAt;
+            if (!d) return false;
+            const dateStr = typeof d === 'string' ? d.split('T')[0] : new Date(d).toISOString().split('T')[0];
+            return dateStr === today;
+          });
+          if (!hasTodayActivity) {
+            toast.info("You haven't done anything today yet — go do something! 💪");
+            return;
+          }
+          setIsSummaryOpen(true);
+        }}
         className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] text-white rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 fab-pulse group"
         title="View Daily Summary"
         id="daily-summary-fab"
