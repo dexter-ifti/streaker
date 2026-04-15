@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { rateLimiter } from './middleware/ratelimit.middleware'
 import { authRouter } from './routes/auth.routes';
 import { activityRouter } from './routes/activity.routes';
 import { userRouter } from './routes/user.routes';
@@ -18,6 +19,22 @@ const app = new Hono<{
 
 app.use('/*', cors({
   origin: '*'
+}))
+
+// Global rate limit for API routes: 100 requests per minute per IP
+app.use('/api/*', rateLimiter({
+  max: 100,
+  windowMs: 60_000,
+  keyPrefix: 'api',
+  message: 'Too many requests. Please slow down.',
+}))
+
+// Stricter rate limit for auth routes: 10 requests per minute per IP
+app.use('/auth/*', rateLimiter({
+  max: 10,
+  windowMs: 60_000,
+  keyPrefix: 'auth',
+  message: 'Too many authentication attempts. Please try again later.',
 }))
 
 app.route('/auth', authRouter)
