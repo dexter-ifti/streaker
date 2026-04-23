@@ -87,18 +87,18 @@ const handleApiError = (error: any, context: string) => {
     throw new Error(`Unable to ${context.toLowerCase()}. Please try again later.`);
 };
 
-const registerUser = async (userData: CreateUserInput) => {
+const registerUser = async (userData: CreateUserInput, turnstileToken?: string) => {
     try {
-        const response = await auth_api.post("/register", userData);
+        const response = await auth_api.post("/register", { ...userData, turnstileToken });
         return response.data;
     } catch (error: any) {
         handleApiError(error, 'Registration');
     }
 };
 
-const loginUser = async (userData: LoginInput) => {
+const loginUser = async (userData: LoginInput, turnstileToken?: string) => {
     try {
-        const response = await auth_api.post("/login", userData);
+        const response = await auth_api.post("/login", { ...userData, turnstileToken });
         return response.data;
     } catch (error: any) {
         // console.log("Login error:", error.response?.data); // For debugging
