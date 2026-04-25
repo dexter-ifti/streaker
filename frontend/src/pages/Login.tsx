@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, Eye, EyeOff, Sparkles } from 'lucide-react';
 import { fetchUserInfo, loginUser, registerUser } from '../utils/api';
@@ -6,12 +6,17 @@ import { useAuth } from '../utils/auth';
 import { LoginInput, loginSchema } from '@ifti_taha/streaker-common';
 import { toast } from 'react-toastify';
 import { useGoogleLogin } from '@react-oauth/google';
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 
 const Login: React.FC = () => {
     const { login, authUser } = useAuth();
     const navigate = useNavigate();
     const [focusedField, setFocusedField] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+    const turnstileRef = useRef<TurnstileInstance>(null);
+
+    const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '';
 
     useEffect(() => {
         if (authUser) {
@@ -35,7 +40,14 @@ const Login: React.FC = () => {
 
         try {
             loginSchema.parse(formData);
-            const response = await loginUser(formData);
+
+            if (!turnstileToken) {
+                setError('Please complete the human verification.');
+                setLoading(false);
+                return;
+            }
+
+            const response = await loginUser(formData, turnstileToken);
 
             if (response.error || !response.token) {
                 setError(response.error || response.message || 'Invalid email or password');
@@ -66,6 +78,9 @@ const Login: React.FC = () => {
             }
         } finally {
             setLoading(false);
+            // Reset turnstile for next attempt
+            turnstileRef.current?.reset();
+            setTurnstileToken(null);
         }
     };
 
@@ -97,7 +112,7 @@ const Login: React.FC = () => {
                 const loginResponse = await loginUser({
                     email: userInfo.email,
                     isOAuthLogin: true,
-                });
+                }, turnstileToken || undefined);
 
                 if (loginResponse.error === 'USER_NOT_FOUND') {
                     const randomString = Math.random().toString(36).substring(2, 8);
@@ -108,7 +123,7 @@ const Login: React.FC = () => {
                         username: suggestedUsername,
                         email: userInfo.email,
                         password: `G${Math.random().toString(36).slice(-8)}${Math.random().toString(36).slice(-8)}`
-                    });
+                    }, turnstileToken || undefined);
 
                     if (registerResponse.error) {
                         setError(registerResponse.message || 'Registration failed');
@@ -119,7 +134,7 @@ const Login: React.FC = () => {
                     const newLoginResponse = await loginUser({
                         email: userInfo.email,
                         isOAuthLogin: true,
-                    });
+                    }, turnstileToken || undefined);
 
                     if (!newLoginResponse.error && newLoginResponse.token) {
                         login(newLoginResponse.user, newLoginResponse.token);
@@ -148,6 +163,8 @@ const Login: React.FC = () => {
                 toast.error(error.message || 'Login failed');
             } finally {
                 setLoading(false);
+                turnstileRef.current?.reset();
+                setTurnstileToken(null);
             }
         },
         onError: () => {
@@ -293,6 +310,26 @@ const Login: React.FC = () => {
                                 </label>
                             </div>
                         </div>
+
+                        {/* Cloudflare Turnstile */}
+                        {TURNSTILE_SITE_KEY && (
+                            <div className="flex justify-center">
+                                <Turnstile
+                                    ref={turnstileRef}
+                                    siteKey={TURNSTILE_SITE_KEY}
+                                    onSuccess={setTurnstileToken}
+                                    onError={() => {
+                                        setTurnstileToken(null);
+                                        toast.error('Verification failed. Please try again.');
+                                    }}
+                                    onExpire={() => setTurnstileToken(null)}
+                                    options={{
+                                        theme: 'light',
+                                        size: 'normal',
+                                    }}
+                                />
+                            </div>
+                        )}
 
                         <div>
                             <button
