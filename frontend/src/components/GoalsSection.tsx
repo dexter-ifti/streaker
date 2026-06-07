@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Target, Plus, Layout, Award, X } from 'lucide-react';
+import { Plus, Layout, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import GoalList from './GoalList';
 import GoalForm from './GoalForm';
@@ -130,14 +130,13 @@ const GoalsSection: React.FC = () => {
     ];
 
     return (
-        <div className="bg-white/70 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-[#ebbcfc]/70">
+        <section className="streaker-panel p-6 sm:p-8" aria-label="Goals and achievements">
             {/* Badges Section */}
-            <div className="mb-6">
-                <div className="flex items-center gap-2 mb-4">
-                    <Award className="w-5 h-5 text-[#ff0061]" />
-                    <h3 className="text-lg font-semibold text-slate-900">Achievements</h3>
-                    <span className="text-sm text-slate-600">
-                        ({userBadges.length}/{allBadges.length})
+            <div className="mb-8">
+                <div className="flex items-baseline justify-between mb-4">
+                    <h3 className="text-xl font-bold text-[#1f1b2d] tracking-[-0.01em]">Achievements</h3>
+                    <span className="text-sm text-[#5f5477] font-medium">
+                        {userBadges.length} of {allBadges.length}
                     </span>
                 </div>
                 <BadgeDisplay
@@ -149,27 +148,29 @@ const GoalsSection: React.FC = () => {
 
             {/* Goals Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                <div className="flex items-center gap-2">
-                    <Target className="w-5 h-5 text-[#ff0061]" />
-                    <h3 className="text-lg font-semibold text-slate-900">Goals</h3>
+                <div>
+                    <h3 className="text-xl font-bold text-[#1f1b2d] tracking-[-0.01em]">Goals</h3>
+                    <p className="mt-1 text-sm text-[#5f5477]">What you're chaining toward.</p>
                 </div>
                 <div className="flex gap-2">
                     <button
                         onClick={() => setIsTemplatesOpen(true)}
-                        className="flex items-center gap-2 px-3 py-2 bg-[#f9eafe] text-slate-700 border border-[#ebbcfc]/70 rounded-lg hover:bg-[#ebbcfc] transition-colors text-sm"
+                        className="streaker-btn-secondary"
+                        type="button"
                     >
-                        <Layout className="w-4 h-4" />
-                        Templates
+                        <Layout className="w-4 h-4" aria-hidden="true" />
+                        <span>Templates</span>
                     </button>
                     <button
                         onClick={() => {
                             setEditingGoal(null);
                             setIsFormOpen(true);
                         }}
-                        className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] text-white rounded-lg hover:from-[#cadbfc] hover:to-[#ff0061] transition-colors text-sm"
+                        className="streaker-btn-primary"
+                        type="button"
                     >
-                        <Plus className="w-4 h-4" />
-                        New Goal
+                        <Plus className="w-4 h-4" aria-hidden="true" />
+                        <span>New goal</span>
                     </button>
                 </div>
             </div>
@@ -180,11 +181,13 @@ const GoalsSection: React.FC = () => {
                     <button
                         key={tab.value}
                         onClick={() => setStatusFilter(tab.value)}
-                        className={`px-3 py-1.5 rounded-lg text-sm whitespace-nowrap transition-colors ${
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium tracking-tight whitespace-nowrap transition-colors border-2 ${
                             statusFilter === tab.value
-                                ? 'bg-[#ff0061] text-white'
-                                : 'bg-white/70 text-slate-600 border border-[#ebbcfc]/60 hover:bg-[#f9eafe] hover:text-slate-900'
+                                ? 'bg-[#ff0061]/15 text-[#ff0061] border-[#ebbcfc]'
+                                : 'bg-[#f9eafe] text-[#1f1b2d] border-transparent hover:bg-[#ebbcfc]'
                         }`}
+                        type="button"
+                        aria-pressed={statusFilter === tab.value}
                     >
                         {tab.label}
                     </button>
@@ -263,7 +266,7 @@ const GoalsSection: React.FC = () => {
                     </div>
                 </div>
             )}
-        </div>
+        </section>
     );
 };
 
