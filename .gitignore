@@ -2,3 +2,12 @@ backend/src/seed.js
 TODOS/*
 TODOS/fetures_to_add.md
 node_modules/*
+docs/*
+.claude
+.agents
+.github
+.impeccable
+CLAUDE.md
+DESIGN.md
+PRODUCT.md
+skills-lock.json
