@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Flame, LogOut, MessageCircle, User, Menu, X, Sparkles } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Flame, LogOut, MessageCircle, User, Menu, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../utils/auth';
 import FeedbackForm from './FeedbackForm';
@@ -9,78 +9,85 @@ import NotificationBell from './NotificationBell';
 const Header: React.FC = () => {
     const { authUser, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const handleLogout = () => {
-        toast.success('See you soon! 👋');
+        toast.success('See you soon.');
         logout();
         navigate('/');
     };
 
+    const navLinkClass = (path: string) =>
+        `streaker-btn-ghost relative ${location.pathname === path ? 'text-[#1f1b2d]' : ''}`;
+
+    const isActive = (path: string) => location.pathname === path;
+
     return (
-        <header className="relative z-50 bg-white/65 backdrop-blur-xl border-b border-[#ebbcfc]/70 shadow-2xl">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <header
+            className="sticky top-0 z-50 border-b border-[#ebbcfc]/60"
+            style={{
+                background: 'rgba(255, 255, 255, 0.78)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+            }}
+        >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
                 <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-4">
-                        <Link to="/" className="flex items-center gap-3 group">
-                            <div className="relative">
-                                <div className="absolute inset-0 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity"></div>
-                                <div className="relative bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] p-2 rounded-xl">
-                                    <Flame className="h-8 w-8 text-white" />
-                                </div>
-                            </div>
-                            <span className="text-2xl font-bold bg-gradient-to-r from-[#1f1b2d] to-[#5f5477] bg-clip-text text-transparent group-hover:from-[#ff0061] group-hover:to-[#ebbcfc] transition-all duration-300">
-                                Streaker
-                            </span>
-                        </Link>
-                    </div>
+                    <Link
+                        to="/"
+                        className="flex items-center gap-3 group rounded-xl"
+                        aria-label="Streaker home"
+                    >
+                        <span
+                            className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#ff0061] text-white"
+                            aria-hidden="true"
+                        >
+                            <Flame className="h-5 w-5" strokeWidth={2.25} />
+                        </span>
+                        <span className="text-xl sm:text-2xl font-bold text-[#1f1b2d] tracking-[-0.01em]">
+                            Streaker
+                        </span>
+                    </Link>
 
                     {/* Desktop Menu */}
-                    <div className="hidden sm:flex items-center space-x-2">
-                        {/* Feedback Button */}
+                    <div className="hidden sm:flex items-center gap-1">
                         <button
                             onClick={() => setIsFeedbackOpen(true)}
-                            className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-[#ff0061] hover:bg-white/70 rounded-xl transition-all duration-200"
+                            className="streaker-btn-ghost"
+                            type="button"
                         >
-                            <MessageCircle className="h-5 w-5" />
+                            <MessageCircle className="h-4 w-4" aria-hidden="true" />
                             <span>Feedback</span>
                         </button>
 
                         {authUser ? (
                             <>
                                 <NotificationBell />
-                                <Link
-                                    to="/user"
-                                    className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-[#ff0061] hover:bg-white/70 rounded-xl transition-all duration-200">
-                                    <User className="h-5 w-5" />
+                                <Link to="/user" className={navLinkClass('/user')}>
+                                    <User className="h-4 w-4" aria-hidden="true" />
                                     <span>Profile</span>
+                                    {isActive('/user') && (
+                                        <span className="absolute left-3 right-3 -bottom-[3px] h-[2px] bg-[#ff0061] rounded-full" />
+                                    )}
                                 </Link>
                                 <button
-                                    className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-[#ff0061] hover:bg-[#feecf5] rounded-xl transition-all duration-200"
+                                    className="streaker-btn-ghost"
                                     onClick={handleLogout}
+                                    type="button"
                                 >
-                                    <LogOut className="h-5 w-5" />
-                                    <span>Sign Out</span>
+                                    <LogOut className="h-4 w-4" aria-hidden="true" />
+                                    <span>Sign out</span>
                                 </button>
                             </>
                         ) : (
                             <>
-                                <Link
-                                    to="/login"
-                                    className="text-slate-700 hover:text-[#ff0061] px-4 py-2 rounded-xl hover:bg-white/70 transition-all duration-200"
-                                >
-                                    Sign In
+                                <Link to="/login" className="streaker-btn-ghost">
+                                    Sign in
                                 </Link>
-                                <Link
-                                    to="/register"
-                                    className="group relative px-6 py-2 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] hover:from-[#cadbfc] hover:to-[#ff0061] text-white rounded-xl transition-all duration-300 transform hover:scale-105"
-                                >
-                                    <span className="relative z-10 flex items-center gap-2">
-                                        <Sparkles className="w-4 h-4" />
-                                        Get Started
-                                    </span>
-                                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#cadbfc] to-[#f9eafe] opacity-0 group-hover:opacity-20 transition-opacity" />
+                                <Link to="/register" className="streaker-btn-primary">
+                                    Get started
                                 </Link>
                             </>
                         )}
@@ -91,12 +98,15 @@ const Header: React.FC = () => {
                         {authUser && <NotificationBell />}
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="p-2 text-slate-700 hover:text-[#ff0061] hover:bg-white/70 rounded-xl transition-all duration-200"
+                            className="streaker-btn-ghost p-2"
+                            type="button"
+                            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                            aria-expanded={isMobileMenuOpen}
                         >
                             {isMobileMenuOpen ? (
-                                <X className="h-6 w-6" />
+                                <X className="h-5 w-5" />
                             ) : (
-                                <Menu className="h-6 w-6" />
+                                <Menu className="h-5 w-5" />
                             )}
                         </button>
                     </div>
@@ -104,25 +114,26 @@ const Header: React.FC = () => {
 
                 {/* Mobile Menu Panel */}
                 {isMobileMenuOpen && (
-                    <div className="sm:hidden mt-4 py-4 border-t border-[#ebbcfc]/70 animate-fade-in-up">
+                    <div className="sm:hidden mt-3 pt-3 border-t border-[#ebbcfc]/60 animate-fade-in-up">
                         {authUser ? (
-                            <div className="flex flex-col space-y-2">
+                            <div className="flex flex-col gap-1">
                                 <button
                                     onClick={() => {
                                         setIsFeedbackOpen(true);
                                         setIsMobileMenuOpen(false);
                                     }}
-                                    className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:text-[#ff0061] hover:bg-white/70 rounded-xl transition-all duration-200"
+                                    className="streaker-btn-ghost justify-start px-3 py-3"
+                                    type="button"
                                 >
-                                    <MessageCircle className="h-5 w-5" />
+                                    <MessageCircle className="h-4 w-4" aria-hidden="true" />
                                     <span>Feedback</span>
                                 </button>
                                 <Link
                                     to="/user"
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:text-[#ff0061] hover:bg-white/70 rounded-xl transition-all duration-200"
+                                    className="streaker-btn-ghost justify-start px-3 py-3"
                                 >
-                                    <User className="h-5 w-5" />
+                                    <User className="h-4 w-4" aria-hidden="true" />
                                     <span>Profile</span>
                                 </Link>
                                 <button
@@ -130,30 +141,28 @@ const Header: React.FC = () => {
                                         handleLogout();
                                         setIsMobileMenuOpen(false);
                                     }}
-                                    className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:text-[#ff0061] hover:bg-[#feecf5] rounded-xl transition-all duration-200"
+                                    className="streaker-btn-ghost justify-start px-3 py-3"
+                                    type="button"
                                 >
-                                    <LogOut className="h-5 w-5" />
-                                    <span>Sign Out</span>
+                                    <LogOut className="h-4 w-4" aria-hidden="true" />
+                                    <span>Sign out</span>
                                 </button>
                             </div>
                         ) : (
-                            <div className="flex flex-col space-y-2">
+                            <div className="flex flex-col gap-2 pb-1">
                                 <Link
                                     to="/login"
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className="block px-4 py-3 text-slate-700 hover:text-[#ff0061] hover:bg-white/70 rounded-xl transition-all duration-200"
+                                    className="streaker-btn-ghost justify-start px-3 py-3"
                                 >
-                                    Sign In
+                                    Sign in
                                 </Link>
                                 <Link
                                     to="/register"
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className="block px-4 py-3 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] text-white rounded-xl hover:from-[#cadbfc] hover:to-[#ff0061] transition-all duration-300 text-center mx-4"
+                                    className="streaker-btn-primary justify-center"
                                 >
-                                    <span className="flex items-center justify-center gap-2">
-                                        <Sparkles className="w-4 h-4" />
-                                        Get Started
-                                    </span>
+                                    Get started
                                 </Link>
                             </div>
                         )}
@@ -165,7 +174,7 @@ const Header: React.FC = () => {
                 isOpen={isFeedbackOpen}
                 onClose={() => setIsFeedbackOpen(false)}
             />
-        </header >
+        </header>
     );
 };
 
