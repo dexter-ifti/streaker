@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { Plus, Calendar } from 'lucide-react';
 import { ActivityForm, ActivityList } from '.';
 import CategoryFilter from './CategoryFilter';
 import CategoryStatsCard from './CategoryStatsCard';
@@ -158,22 +157,24 @@ export const ActivitySection = ({
     <div className="space-y-6">
       <CategoryStatsCard stats={categoryStats} isLoading={isLoadingStats} />
 
-      <div className="bg-white/70 backdrop-blur-xl p-6 sm:p-8 rounded-2xl shadow-2xl border border-[#ebbcfc]/70">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 flex items-center gap-3 text-slate-900">
-          <div className="bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] p-2 rounded-xl">
-            <Plus className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-          </div>
-          Today's Activities
-        </h2>
+      <section className="streaker-panel p-6 sm:p-8" aria-label="Today's activities">
+        <div className="mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1f1b2d] tracking-[-0.01em]">
+            Today's activities
+          </h2>
+          <p className="mt-1 text-sm text-[#5f5477]">
+            Add what you did. Tick it when it's done.
+          </p>
+        </div>
 
         <div className="mb-8">
           <ActivityForm onSubmit={onSubmit} />
         </div>
 
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 mb-4">
-            <Calendar className="w-5 h-5 text-[#ff0061]" />
-            <h3 className="text-xl font-semibold text-slate-900">Recent Activities</h3>
+        <div className="space-y-5">
+          <div>
+            <h3 className="text-base sm:text-lg font-semibold text-[#1f1b2d]">Recent activities</h3>
+            <p className="mt-1 text-sm text-[#5f5477]">Browse the last few days.</p>
           </div>
 
           <CategoryFilter
@@ -198,23 +199,25 @@ export const ActivitySection = ({
             <button
               onClick={onPreviousPage}
               disabled={currentPage === 1}
-              className="px-6 py-3 bg-[#f9eafe] hover:bg-[#ebbcfc] disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 rounded-xl transition-all duration-200 border border-[#ebbcfc]"
+              className="streaker-btn-secondary"
+              type="button"
             >
               Previous
             </button>
-            <span className="text-lg text-slate-700 bg-white/70 px-4 py-2 rounded-xl border border-[#ebbcfc]/60">
+            <span className="text-sm font-medium text-[#5f5477]">
               Page {currentPage} of {totalPages}
             </span>
             <button
               onClick={onNextPage}
               disabled={currentPage === totalPages}
-              className="px-6 py-3 bg-[#f9eafe] hover:bg-[#ebbcfc] disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 rounded-xl transition-all duration-200 border border-[#ebbcfc]"
+              className="streaker-btn-secondary"
+              type="button"
             >
               Next
             </button>
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 };
