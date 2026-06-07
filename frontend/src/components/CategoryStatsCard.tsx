@@ -11,17 +11,17 @@ interface CategoryStatsCardProps {
 const CategoryStatsCard: React.FC<CategoryStatsCardProps> = ({ stats, isLoading }) => {
   if (isLoading) {
     return (
-      <div className="bg-white/70 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-[#ebbcfc]/70">
-        <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
-          <Flame className="w-5 h-5 text-[#ff0061]" />
-          Category Streaks
-        </h3>
+      <section className="streaker-panel p-6" aria-label="Category streaks">
+        <div className="mb-4">
+          <h3 className="text-xl font-bold text-[#1f1b2d] tracking-[-0.01em]">Category streaks</h3>
+          <p className="mt-1 text-sm text-[#5f5477]">Loading…</p>
+        </div>
         <div className="animate-pulse grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="h-20 bg-[#f9eafe] rounded-xl"></div>
+            <div key={i} className="h-20 bg-[#f9eafe] rounded-xl" />
           ))}
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -30,32 +30,40 @@ const CategoryStatsCard: React.FC<CategoryStatsCardProps> = ({ stats, isLoading 
   }
 
   return (
-    <div className="bg-white/70 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-[#ebbcfc]/70">
-      <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
-        <Flame className="w-5 h-5 text-[#ff0061]" />
-        Category Streaks
-      </h3>
+    <section className="streaker-panel p-6" aria-label="Category streaks">
+      <div className="mb-4">
+        <h3 className="text-xl font-bold text-[#1f1b2d] tracking-[-0.01em]">Category streaks</h3>
+        <p className="mt-1 text-sm text-[#5f5477]">Where your chains are growing.</p>
+      </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {CATEGORIES.map((cat) => {
           const catStats = stats[cat.name] || { count: 0, completed: 0, streak: 0 };
+          const isLive = catStats.streak > 0;
 
           return (
             <div
               key={cat.name}
-              className={`p-3 rounded-xl border ${getCategoryBgClass(cat.name)}`}
+              className={`p-3 rounded-xl ${getCategoryBgClass(cat.name)}`}
             >
-              <div className="font-medium text-sm mb-2">{cat.name}</div>
-              <div className="flex items-center gap-1 text-lg font-bold">
-                <Flame className="w-4 h-4 text-[#ff0061]" />
-                <span>{catStats.streak}</span>
+              <div className="font-medium text-sm mb-1.5">{cat.name}</div>
+              <div className="flex items-baseline gap-1.5">
+                <Flame
+                  className={`w-4 h-4 ${isLive ? 'text-[#ff0061]' : 'text-[#5f5477]'}`}
+                  strokeWidth={2.25}
+                  aria-hidden="true"
+                />
+                <span className="text-lg font-bold tracking-[-0.01em]">{catStats.streak}</span>
+                <span className="text-xs text-[#5f5477]">
+                  {catStats.streak === 1 ? 'day' : 'days'}
+                </span>
               </div>
-              <div className="flex items-center gap-3 text-xs mt-1 opacity-80">
+              <div className="flex items-center gap-3 text-xs mt-2 text-[#5f5477]">
                 <span className="flex items-center gap-1">
-                  <ListTodo className="w-3 h-3" />
+                  <ListTodo className="w-3 h-3" aria-hidden="true" />
                   {catStats.count}
                 </span>
                 <span className="flex items-center gap-1">
-                  <CheckCircle className="w-3 h-3" />
+                  <CheckCircle className="w-3 h-3" aria-hidden="true" />
                   {catStats.completed}
                 </span>
               </div>
@@ -63,7 +71,7 @@ const CategoryStatsCard: React.FC<CategoryStatsCardProps> = ({ stats, isLoading 
           );
         })}
       </div>
-    </div>
+    </section>
   );
 };
 
