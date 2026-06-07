@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useAuth } from './utils/auth';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -6,7 +6,7 @@ import InstallPrompt from './components/InstallPrompt';
 import { useStreaks, useLongestStreak, useActivities, useAllActivities, useAddActivity } from './hooks/useQueries';
 import { toast } from 'react-toastify';
 import { LoadingSpinner } from './components/LoadingSpinner';
-import { WelcomeMessage } from './components/WelcomeMessage';
+import StreakHero from './components/StreakHero';
 import { ActivityHistoryCard } from './components/ActivityHistoryCard';
 import { ActivitySection } from './components/ActivitySection';
 import { LoadingOverlay } from './components/LoadingOverlay';
@@ -21,8 +21,8 @@ function App() {
   const { authUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
+  const activitySectionRef = useRef<HTMLDivElement>(null);
 
-  // Mount the daily reminder scheduler
   useReminderScheduler();
 
   const { data: streak = 0, isLoading: streakLoading } = useStreaks(authUser?.token ?? '')
@@ -54,15 +54,28 @@ function App() {
           category
         });
 
-        toast.success('Activity added! Keep the streak going!');
+        toast.success('Activity added. Streak intact.');
       } catch (error) {
         console.error('Error submitting activity:', error);
-        toast.error('Oops! Something went wrong. Please try again.');
+        toast.error('Something went wrong. Please try again.');
       } finally {
         setIsSubmitting(false);
       }
     }
   }
+
+  const todayKey = new Date().toISOString().split('T')[0];
+
+  const loggedToday = useMemo(() => {
+    return allActivities.some((a: any) => {
+      const d = a?.date || a?.createdAt;
+      if (!d) return false;
+      const dateStr = typeof d === 'string' ? d.split('T')[0] : new Date(d).toISOString().split('T')[0];
+      if (dateStr !== todayKey) return false;
+      const completed = a?.completed || [];
+      return completed.some((c: boolean) => c === true);
+    });
+  }, [allActivities, todayKey]);
 
   const heatmapData = useMemo(() => {
     if (!Array.isArray(allActivities) || allActivities.length === 0) {
@@ -82,7 +95,6 @@ function App() {
           ? activityDate.split('T')[0]
           : new Date(activityDate).toISOString().split('T')[0];
 
-        // Only count completed activities for the heatmap
         const completedArray = activity.completed || [];
         const completedCount = completedArray.filter((c: boolean) => c === true).length;
 
@@ -102,42 +114,40 @@ function App() {
     }));
   }, [allActivities]);
 
-  return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(235,188,252,0.45),_transparent_42%),linear-gradient(130deg,_#feecf5,_#f9eafe_45%,_#cadbfc)] text-slate-900">
-      {/* Background Effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-[#cadbfc]/45 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#ebbcfc]/45 rounded-full blur-3xl animate-pulse delay-1000" />
-      </div>
+  const scrollToActivityForm = () => {
+    activitySectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
+  return (
+    <div className="min-h-screen text-[#1f1b2d]">
       <Header />
       <InstallPrompt />
 
-      {authUser?.user.name && <WelcomeMessage userName={authUser.user.name} />}
-
-      <main className="relative px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="relative px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="text-center space-y-4">
               <LoadingSpinner />
-              <p className="text-slate-600 animate-pulse">Loading your progress...</p>
+              <p className="text-[#5f5477]">Loading your progress…</p>
             </div>
           </div>
         ) : (
-          <div className="max-w-7xl mx-auto space-y-8">
-            <div className="animate-fade-in-up">
-              <ActivityHistoryCard
-                longestStreak={longestStreak}
-                currentStreak={streak}
-                heatmapData={heatmapData}
-              />
-            </div>
+          <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8">
+            <StreakHero
+              userName={authUser?.user?.name}
+              currentStreak={streak}
+              longestStreak={longestStreak}
+              loggedToday={loggedToday}
+              onLogActivity={scrollToActivityForm}
+            />
 
-            <div className="animate-fade-in-up delay-100">
-              <GoalsSection />
-            </div>
+            <ActivityHistoryCard
+              heatmapData={heatmapData}
+            />
 
-            <div className="animate-fade-in-up delay-200">
+            <GoalsSection />
+
+            <div ref={activitySectionRef}>
               <ActivitySection
                 activities={activities}
                 currentPage={currentPage}
@@ -154,31 +164,19 @@ function App() {
       <Footer />
       {isSubmitting && <LoadingOverlay />}
 
-      {/* Daily Summary FAB */}
-      <button
-        onClick={() => {
-          const today = new Date().toISOString().split('T')[0];
-          const hasTodayActivity = allActivities.some((a: any) => {
-            const d = a.date || a.createdAt;
-            if (!d) return false;
-            const dateStr = typeof d === 'string' ? d.split('T')[0] : new Date(d).toISOString().split('T')[0];
-            return dateStr === today;
-          });
-          if (!hasTodayActivity) {
-            toast.info("You haven't done anything today yet — go do something! 💪");
-            return;
-          }
-          setIsSummaryOpen(true);
-        }}
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] text-white rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 fab-pulse group"
-        title="View Daily Summary"
-        id="daily-summary-fab"
-      >
-        <BarChart3 className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-        <span className="text-sm font-semibold hidden sm:inline">Daily Summary</span>
-      </button>
+      {loggedToday && (
+        <button
+          onClick={() => setIsSummaryOpen(true)}
+          className="streaker-btn-primary fab-pulse fixed bottom-6 right-6 z-40"
+          title="View daily summary"
+          id="daily-summary-fab"
+          type="button"
+        >
+          <BarChart3 className="w-5 h-5" aria-hidden="true" />
+          <span className="hidden sm:inline">Daily summary</span>
+        </button>
+      )}
 
-      {/* Daily Summary Modal */}
       <DailySummaryCard
         isOpen={isSummaryOpen}
         onClose={() => setIsSummaryOpen(false)}
