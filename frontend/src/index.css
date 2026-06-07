@@ -15,6 +15,13 @@
     --surface: rgba(254, 236, 245, 0.78);
     --surface-strong: rgba(202, 219, 252, 0.9);
     --ring: rgba(255, 0, 97, 0.45);
+
+    --shadow-panel-rest: 0 8px 24px -12px rgba(31, 27, 45, 0.12);
+    --shadow-panel-lift: 0 16px 40px -16px rgba(31, 27, 45, 0.18);
+    --shadow-magenta-halo: 0 0 0 4px rgba(255, 0, 97, 0.18);
+    --shadow-streak-glow: 0 0 28px rgba(255, 0, 97, 0.35);
+
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body {
@@ -86,32 +93,48 @@ body {
 
     0%,
     100% {
-        box-shadow: 0 0 20px rgba(255, 0, 97, 0.35);
+        box-shadow: 0 0 18px rgba(255, 0, 97, 0.25);
     }
 
     50% {
-        box-shadow: 0 0 30px rgba(255, 0, 97, 0.55);
+        box-shadow: 0 0 32px rgba(255, 0, 97, 0.55);
+    }
+}
+
+@keyframes streak-text-glow {
+
+    0%,
+    100% {
+        text-shadow: 0 0 14px rgba(255, 0, 97, 0.22);
+    }
+
+    50% {
+        text-shadow: 0 0 28px rgba(255, 0, 97, 0.5);
     }
 }
 
 .animate-fade-in-up {
-    animation: fade-in-up 0.6s ease-out;
+    animation: fade-in-up 0.6s var(--ease-out-quint);
 }
 
 .animate-fade-in {
-    animation: fade-in 0.6s ease-out;
+    animation: fade-in 0.6s var(--ease-out-quint);
 }
 
 .animate-slide-in-right {
-    animation: slide-in-right 0.6s ease-out;
+    animation: slide-in-right 0.6s var(--ease-out-quint);
 }
 
 .animate-bounce-in {
-    animation: bounce-in 0.6s ease-out;
+    animation: bounce-in 0.6s var(--ease-out-quint);
 }
 
 .animate-pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-streak-text-glow {
+    animation: streak-text-glow 2.4s ease-in-out infinite;
 }
 
 /* Delay classes for staggered animations */
@@ -170,20 +193,22 @@ textarea,
 select,
 [role="button"] {
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-timing-function: var(--ease-out-quint);
     transition-duration: 180ms;
 }
 
-/* Focus styles */
+/* Focus styles: magenta halo, not outline */
 button:focus-visible,
+a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
-select:focus-visible {
-    outline: 2px solid var(--brand-punch);
-    outline-offset: 2px;
+select:focus-visible,
+[role="button"]:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-magenta-halo);
 }
 
-/* Glass morphism effect */
+/* Glass morphism effect — reserved for the fixed header and overlay surfaces */
 .glass {
     background: var(--surface);
     backdrop-filter: blur(10px);
@@ -197,43 +222,148 @@ select:focus-visible {
 }
 
 @layer components {
+    .streaker-panel {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: var(--shadow-panel-rest);
+    }
+
+    .streaker-panel-interactive {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: var(--shadow-panel-rest);
+        transition: box-shadow 220ms var(--ease-out-quint);
+    }
+
+    .streaker-panel-interactive:hover {
+        box-shadow: var(--shadow-panel-lift);
+    }
+
+    .streaker-btn-primary {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-white font-medium text-sm tracking-tight;
+        background: var(--brand-punch);
+        transition: background 180ms var(--ease-out-quint), transform 60ms var(--ease-out-quint);
+    }
+
+    .streaker-btn-primary:hover {
+        background: #e80059;
+    }
+
+    .streaker-btn-primary:active {
+        transform: scale(0.98);
+    }
+
+    .streaker-btn-primary:disabled {
+        background: var(--brand-orchid);
+        cursor: not-allowed;
+    }
+
+    .streaker-btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-medium text-sm tracking-tight;
+        background: var(--brand-lilac);
+        color: var(--text-primary);
+        transition: background 180ms var(--ease-out-quint), transform 60ms var(--ease-out-quint);
+    }
+
+    .streaker-btn-secondary:hover {
+        background: var(--brand-orchid);
+    }
+
+    .streaker-btn-secondary:active {
+        transform: scale(0.98);
+    }
+
+    .streaker-btn-secondary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .streaker-btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-medium text-sm tracking-tight;
+        background: transparent;
+        color: var(--text-muted);
+        transition: color 180ms var(--ease-out-quint), background 180ms var(--ease-out-quint);
+    }
+
+    .streaker-btn-ghost:hover {
+        color: var(--text-primary);
+        background: rgba(249, 234, 254, 0.6);
+    }
+
+    .streaker-input {
+        @apply w-full px-4 py-3 rounded-xl bg-white text-base;
+        color: var(--text-primary);
+        border: 1px solid var(--brand-orchid);
+        transition: border-color 180ms var(--ease-out-quint), box-shadow 180ms var(--ease-out-quint);
+    }
+
+    .streaker-input::placeholder {
+        color: var(--text-muted);
+    }
+
+    .streaker-input:focus,
+    .streaker-input:focus-visible {
+        outline: none;
+        border-color: var(--brand-punch);
+        box-shadow: var(--shadow-magenta-halo);
+    }
+
+    .streaker-input:disabled {
+        background: var(--brand-lilac);
+        color: var(--text-muted);
+        cursor: not-allowed;
+    }
+
+    /* Legacy aliases used elsewhere; kept until those surfaces are polished. */
     .ui-panel {
-        @apply bg-white/70 backdrop-blur-xl border border-[#ebbcfc]/70 shadow-2xl rounded-2xl;
+        @apply bg-white border border-transparent rounded-2xl;
+        box-shadow: var(--shadow-panel-rest);
     }
 
     .ui-input {
-        @apply w-full px-4 py-4 border border-[#ebbcfc] rounded-xl shadow-sm bg-white/90 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ff0061] focus:border-transparent;
+        @apply w-full px-4 py-4 border rounded-xl bg-white;
+        color: var(--text-primary);
+        border-color: var(--brand-orchid);
+    }
+
+    .ui-input:focus,
+    .ui-input:focus-visible {
+        outline: none;
+        border-color: var(--brand-punch);
+        box-shadow: var(--shadow-magenta-halo);
     }
 
     .ui-input-muted {
-        @apply w-full px-4 py-4 border border-[#ebbcfc] rounded-xl shadow-sm bg-white/70 text-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#ff0061] focus:border-transparent;
+        @apply w-full px-4 py-4 border rounded-xl bg-white;
+        color: var(--text-primary);
+        border-color: var(--brand-orchid);
     }
 
     .ui-btn-primary {
-        @apply bg-gradient-to-r from-[#ebbcfc] to-[#ff0061] hover:from-[#cadbfc] hover:to-[#ff0061] text-white;
+        background: var(--brand-punch);
+        color: #ffffff;
+    }
+
+    .ui-btn-primary:hover {
+        background: #e80059;
     }
 
     .ui-btn-secondary {
-        @apply bg-[#f9eafe] hover:bg-[#ebbcfc] text-slate-900;
+        background: var(--brand-lilac);
+        color: var(--text-primary);
+    }
+
+    .ui-btn-secondary:hover {
+        background: var(--brand-orchid);
     }
 }
 
-/* Gradient text */
+/* Gradient text — retained for any surface that hasn't migrated yet; do not use on /home. */
 .gradient-text {
     background: linear-gradient(120deg, var(--brand-punch) 0%, var(--brand-orchid) 55%, var(--brand-ice) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-}
-
-/* Custom button hover effects */
-.btn-hover-lift {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-hover-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(255, 0, 97, 0.2);
 }
 
 /* Loading spinner */
@@ -286,14 +416,36 @@ select:focus-visible {
 
     0%,
     100% {
-        box-shadow: 0 0 0 0 rgba(255, 0, 97, 0.4);
+        box-shadow: var(--shadow-panel-lift), 0 0 0 0 rgba(255, 0, 97, 0.35);
     }
 
     50% {
-        box-shadow: 0 0 0 10px rgba(255, 0, 97, 0);
+        box-shadow: var(--shadow-panel-lift), 0 0 0 12px rgba(255, 0, 97, 0);
     }
 }
 
 .fab-pulse {
-    animation: fab-pulse 2.5s ease-in-out infinite;
+    animation: fab-pulse 2.4s ease-in-out infinite;
+}
+
+/* Respect prefers-reduced-motion across every keyframe in the system. */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .animate-streak-text-glow {
+        text-shadow: 0 0 18px rgba(255, 0, 97, 0.35);
+    }
+
+    .fab-pulse {
+        box-shadow: var(--shadow-panel-lift);
+    }
 }
