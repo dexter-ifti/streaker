@@ -1,5 +1,5 @@
 import React from 'react';
-import { CATEGORIES, getCategoryBgClass, CategoryName } from './ActivityForm';
+import { CATEGORIES, getCategoryBgClass } from './ActivityForm';
 
 interface CategoryFilterProps {
   selectedCategory: string | null;
@@ -14,15 +14,19 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 }) => {
   const totalCount = Object.values(categoryCounts).reduce((sum, count) => sum + count, 0);
 
+  const baseChip = 'px-3 py-1.5 rounded-full text-xs font-medium tracking-tight transition-colors border-2';
+  const activeBorder = 'border-[#ebbcfc]';
+  const inactiveBorder = 'border-transparent';
+
   return (
-    <div className="flex flex-wrap gap-2 mb-4">
+    <div className="flex flex-wrap gap-2" role="group" aria-label="Filter activities by category">
       <button
         onClick={() => onCategorySelect(null)}
-        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 border ${
-          selectedCategory === null
-            ? 'bg-[#ff0061]/15 text-[#ff0061] border-[#ff0061]/40'
-            : 'bg-white/70 text-slate-600 border-[#ebbcfc]/70 hover:bg-[#f9eafe]'
+        className={`${baseChip} bg-[#f9eafe] text-[#1f1b2d] ${
+          selectedCategory === null ? activeBorder : inactiveBorder
         }`}
+        aria-pressed={selectedCategory === null}
+        type="button"
       >
         All ({totalCount})
       </button>
@@ -34,11 +38,11 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           <button
             key={cat.name}
             onClick={() => onCategorySelect(cat.name)}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 border ${
-              isSelected
-                ? getCategoryBgClass(cat.name).replace('/20', '/40').replace('/30', '/50')
-                : `${getCategoryBgClass(cat.name)} opacity-70 hover:opacity-100`
+            className={`${baseChip} ${getCategoryBgClass(cat.name)} ${
+              isSelected ? activeBorder : inactiveBorder
             }`}
+            aria-pressed={isSelected}
+            type="button"
           >
             {cat.name} ({count})
           </button>
