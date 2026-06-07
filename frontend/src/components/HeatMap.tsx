@@ -70,8 +70,8 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
     }, [data, monthsToShow]);
 
     const getColorClass = (count: number): string => {
-        if (count === 0) return 'bg-[#f9eafe] border border-[#ebbcfc]/70';
-        if (count <= 2) return 'bg-[#cadbfc]';
+        if (count === 0) return 'bg-[#f9eafe] border border-[#ebbcfc]/60';
+        if (count <= 2) return 'bg-[#feecf5]';
         if (count <= 4) return 'bg-[#ebbcfc]';
         return 'bg-[#ff0061]';
     };
@@ -93,13 +93,13 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
     const gapPx = `${gap}px`;
 
     return (
-        <div ref={containerRef} className="p-3 sm:p-4 bg-white/80 rounded-lg shadow-lg text-slate-700 w-full border border-[#ebbcfc]/70">
+        <div ref={containerRef} className="w-full text-[#5f5477]">
             {/* Scrollable only when content truly can't fit */}
             <div className="overflow-x-auto overflow-y-hidden">
                 <div className="flex" style={{ gap: gapPx }}>
                     {/* Day-of-week labels */}
                     <div
-                        className="flex flex-col justify-around text-slate-500 flex-shrink-0"
+                        className="flex flex-col justify-around text-[#5f5477] flex-shrink-0"
                         style={{
                             fontSize: Math.max(8, cellSize - 3),
                             width: Math.max(18, cellSize * 1.8),
@@ -121,7 +121,7 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
                             <div key={monthIdx} className="flex flex-col flex-shrink-0">
                                 {/* Month label */}
                                 <div
-                                    className="text-slate-600 text-center mb-1 font-medium"
+                                    className="text-[#5f5477] text-center mb-1 font-medium"
                                     style={{ fontSize: Math.max(8, cellSize - 2), height: cellSize + gap }}
                                 >
                                     {monthData.month}
@@ -164,11 +164,11 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
             </div>
 
             {/* Legend */}
-            <div className="mt-3 flex items-center text-slate-500 justify-end" style={{ fontSize: Math.max(9, cellSize - 3) }}>
+            <div className="mt-3 flex items-center text-[#5f5477] justify-end" style={{ fontSize: Math.max(9, cellSize - 3) }}>
                 <span className="mr-2">Less</span>
                 <div className="flex gap-1">
-                    <div className="bg-white border border-[#ebbcfc] rounded-sm" style={{ width: cellPx, height: cellPx }} />
-                    <div className="bg-[#cadbfc] rounded-sm" style={{ width: cellPx, height: cellPx }} />
+                    <div className="bg-[#f9eafe] border border-[#ebbcfc]/60 rounded-sm" style={{ width: cellPx, height: cellPx }} />
+                    <div className="bg-[#feecf5] rounded-sm" style={{ width: cellPx, height: cellPx }} />
                     <div className="bg-[#ebbcfc] rounded-sm" style={{ width: cellPx, height: cellPx }} />
                     <div className="bg-[#ff0061] rounded-sm" style={{ width: cellPx, height: cellPx }} />
                 </div>
