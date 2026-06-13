@@ -28,20 +28,20 @@ const GoalList: React.FC<GoalListProps> = ({
                 {[...Array(4)].map((_, i) => (
                     <div
                         key={i}
-                        className="bg-white/70 rounded-xl border border-[#ebbcfc]/70 p-4 animate-pulse"
+                        className="bg-surface/70 rounded-xl border border-brand-orchid/70 p-4 animate-pulse"
                     >
                         <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-[#f9eafe] rounded-lg" />
+                                <div className="w-8 h-8 bg-brand-lilac rounded-lg" />
                                 <div className="space-y-1">
-                                    <div className="w-24 h-4 bg-[#f9eafe] rounded" />
-                                    <div className="w-16 h-3 bg-[#f9eafe] rounded" />
+                                    <div className="w-24 h-4 bg-brand-lilac rounded" />
+                                    <div className="w-16 h-3 bg-brand-lilac rounded" />
                                 </div>
                             </div>
-                            <div className="w-16 h-5 bg-[#f9eafe] rounded-full" />
+                            <div className="w-16 h-5 bg-brand-lilac rounded-full" />
                         </div>
-                        <div className="w-full h-3 bg-[#f9eafe] rounded-full mb-3" />
-                        <div className="w-32 h-3 bg-[#f9eafe] rounded" />
+                        <div className="w-full h-3 bg-brand-lilac rounded-full mb-3" />
+                        <div className="w-32 h-3 bg-brand-lilac rounded" />
                     </div>
                 ))}
             </div>
@@ -51,10 +51,10 @@ const GoalList: React.FC<GoalListProps> = ({
     if (goals.length === 0) {
         return (
             <div className="text-center py-12">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#f9eafe] mb-4">
-                    <Target className="w-8 h-8 text-[#ff0061]" />
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-lilac mb-4">
+                    <Target className="w-8 h-8 text-brand-punch" />
                 </div>
-                <p className="text-slate-600">{emptyMessage}</p>
+                <p className="text-ink-muted">{emptyMessage}</p>
             </div>
         );
     }

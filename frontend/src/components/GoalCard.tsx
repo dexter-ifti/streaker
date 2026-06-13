@@ -22,15 +22,15 @@ const GoalCard: React.FC<GoalCardProps> = ({
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'ACTIVE':
-                return 'bg-[#cadbfc]/60 text-slate-800 border-[#cadbfc]';
+                return 'bg-brand-ice/60 text-ink border-brand-ice';
             case 'COMPLETED':
-                return 'bg-[#ff0061]/15 text-[#ff0061] border-[#ff0061]/40';
+                return 'bg-brand-punch/15 text-brand-punch border-brand-punch/40';
             case 'FAILED':
-                return 'bg-[#feecf5] text-slate-700 border-[#ebbcfc]/60';
+                return 'bg-brand-blush text-ink border-brand-orchid/60';
             case 'PAUSED':
-                return 'bg-[#f9eafe] text-slate-700 border-[#ebbcfc]/70';
+                return 'bg-brand-lilac text-ink border-brand-orchid/70';
             default:
-                return 'bg-white/70 text-slate-700 border-[#ebbcfc]/60';
+                return 'bg-surface/70 text-ink border-brand-orchid/60';
         }
     };
 
@@ -64,14 +64,14 @@ const GoalCard: React.FC<GoalCardProps> = ({
     const isActive = goal.status === 'ACTIVE';
 
     return (
-        <div className="bg-white/75 backdrop-blur-xl rounded-xl border border-[#ebbcfc]/70 p-4 hover:border-[#ff0061]/50 transition-all">
+        <div className="bg-surface/75 backdrop-blur-xl rounded-xl border border-brand-orchid/70 p-4 hover:border-brand-punch/50 transition-all">
             <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
-                    <div className="p-2 rounded-lg bg-[#f9eafe]">
-                        <Target className="w-4 h-4 text-[#ff0061]" />
+                    <div className="p-2 rounded-lg bg-brand-lilac">
+                        <Target className="w-4 h-4 text-brand-punch" />
                     </div>
                     <div>
-                        <h3 className="font-semibold text-slate-900 text-sm">{goal.name}</h3>
+                        <h3 className="font-semibold text-ink text-sm">{goal.name}</h3>
                         {goal.category && (
                             <span className={`text-xs px-2 py-0.5 rounded-full border ${getCategoryBgClass(goal.category)}`}>
                                 {goal.category}
@@ -85,7 +85,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
             </div>
 
             {goal.description && (
-                <p className="text-slate-600 text-xs mb-3 line-clamp-2">{goal.description}</p>
+                <p className="text-ink-muted text-xs mb-3 line-clamp-2">{goal.description}</p>
             )}
 
             <div className="mb-3">
@@ -97,7 +97,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
                 />
             </div>
 
-            <div className="flex items-center gap-3 text-xs text-slate-600 mb-3">
+            <div className="flex items-center gap-3 text-xs text-ink-muted mb-3">
                 <div className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     <span>{getPeriodLabel(goal.period)}</span>
@@ -112,11 +112,11 @@ const GoalCard: React.FC<GoalCardProps> = ({
                 )}
             </div>
 
-            <div className="flex items-center gap-2 pt-2 border-t border-[#ebbcfc]/70">
+            <div className="flex items-center gap-2 pt-2 border-t border-brand-orchid/70">
                 {isActive && onIncrementProgress && (
                     <button
                         onClick={() => onIncrementProgress(goal.id)}
-                        className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-[#ff0061]/15 text-[#ff0061] rounded-lg hover:bg-[#feecf5] transition-colors text-xs"
+                        className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-brand-punch/15 text-brand-punch rounded-lg hover:bg-brand-blush transition-colors text-xs"
                     >
                         <Plus className="w-3 h-3" />
                         Progress
@@ -125,7 +125,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
                 {onTogglePause && goal.status !== 'COMPLETED' && goal.status !== 'FAILED' && (
                     <button
                         onClick={() => onTogglePause(goal.id, goal.status === 'PAUSED')}
-                        className="p-1.5 rounded-lg bg-[#f9eafe] text-slate-600 hover:text-[#ff0061] hover:bg-[#ebbcfc] transition-colors"
+                        className="p-1.5 rounded-lg bg-brand-lilac text-ink-muted hover:text-brand-punch hover:bg-brand-orchid transition-colors"
                         title={goal.status === 'PAUSED' ? 'Resume' : 'Pause'}
                     >
                         {goal.status === 'PAUSED' ? <Play className="w-3 h-3" /> : <Pause className="w-3 h-3" />}
@@ -134,7 +134,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
                 {onEdit && (
                     <button
                         onClick={() => onEdit(goal)}
-                        className="p-1.5 rounded-lg bg-[#f9eafe] text-slate-600 hover:text-[#ff0061] hover:bg-[#ebbcfc] transition-colors"
+                        className="p-1.5 rounded-lg bg-brand-lilac text-ink-muted hover:text-brand-punch hover:bg-brand-orchid transition-colors"
                         title="Edit"
                     >
                         <Edit2 className="w-3 h-3" />
@@ -143,7 +143,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
                 {onDelete && (
                     <button
                         onClick={() => onDelete(goal.id)}
-                        className="p-1.5 rounded-lg bg-[#f9eafe] text-slate-600 hover:text-[#ff0061] hover:bg-[#ebbcfc] transition-colors"
+                        className="p-1.5 rounded-lg bg-brand-lilac text-ink-muted hover:text-brand-punch hover:bg-brand-orchid transition-colors"
                         title="Delete"
                     >
                         <Trash2 className="w-3 h-3" />

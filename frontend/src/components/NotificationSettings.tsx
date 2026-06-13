@@ -68,8 +68,8 @@ export default function NotificationSettings() {
     if (isLoading) {
         return (
             <section className="streaker-panel p-6 sm:p-8 animate-pulse" aria-label="Notifications loading">
-                <div className="h-5 bg-[#f9eafe] rounded w-48 mb-3" />
-                <div className="h-4 bg-[#f9eafe] rounded w-64" />
+                <div className="h-5 bg-brand-lilac rounded w-48 mb-3" />
+                <div className="h-4 bg-brand-lilac rounded w-64" />
             </section>
         );
     }
@@ -77,19 +77,19 @@ export default function NotificationSettings() {
     return (
         <section className="streaker-panel p-6 sm:p-8 space-y-6" aria-label="Notifications">
             <div className="flex items-start gap-3">
-                <Bell className="w-5 h-5 text-[#ff0061] mt-0.5 flex-shrink-0" aria-hidden="true" />
+                <Bell className="w-5 h-5 text-brand-punch mt-0.5 flex-shrink-0" aria-hidden="true" />
                 <div>
-                    <h2 className="text-xl font-bold text-[#1f1b2d] tracking-[-0.01em]">Notifications</h2>
-                    <p className="mt-1 text-sm text-[#5f5477]">A gentle nudge before you break the chain.</p>
+                    <h2 className="text-xl font-bold text-ink tracking-[-0.01em]">Notifications</h2>
+                    <p className="mt-1 text-sm text-ink-muted">A gentle nudge before you break the chain.</p>
                 </div>
             </div>
 
             {permissionStatus === 'unsupported' && (
                 <div
-                    className="flex items-center gap-3 p-3 rounded-xl bg-[#feecf5] border border-[#ff0061]/20 text-sm text-[#1f1b2d]"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-brand-blush border border-brand-punch/20 text-sm text-ink"
                     role="status"
                 >
-                    <AlertCircle className="w-4 h-4 text-[#ff0061] flex-shrink-0" aria-hidden="true" />
+                    <AlertCircle className="w-4 h-4 text-brand-punch flex-shrink-0" aria-hidden="true" />
                     <span>Your browser doesn't support notifications.</span>
                 </div>
             )}
@@ -107,40 +107,40 @@ export default function NotificationSettings() {
 
             {permissionStatus === 'granted' && (
                 <div
-                    className="flex items-center gap-3 p-3 rounded-xl bg-[#feecf5] border border-[#ff0061]/20 text-sm text-[#1f1b2d]"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-brand-blush border border-brand-punch/20 text-sm text-ink"
                     role="status"
                 >
-                    <CheckCircle2 className="w-4 h-4 text-[#ff0061] flex-shrink-0" aria-hidden="true" />
+                    <CheckCircle2 className="w-4 h-4 text-brand-punch flex-shrink-0" aria-hidden="true" />
                     <span>Browser notifications are on.</span>
                 </div>
             )}
 
             {permissionStatus === 'denied' && (
                 <div
-                    className="flex items-center gap-3 p-3 rounded-xl bg-white border border-[#ff0061]/40 text-sm text-[#1f1b2d]"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-surface border border-brand-punch/40 text-sm text-ink"
                     role="alert"
                 >
-                    <BellOff className="w-4 h-4 text-[#ff0061] flex-shrink-0" aria-hidden="true" />
+                    <BellOff className="w-4 h-4 text-brand-punch flex-shrink-0" aria-hidden="true" />
                     <span>Notifications are blocked. Enable them in your browser's site settings.</span>
                 </div>
             )}
 
-            <div className="flex items-center justify-between py-4 border-y border-[#ebbcfc]/60">
+            <div className="flex items-center justify-between py-4 border-y border-brand-orchid/60">
                 <div>
-                    <p className="text-sm font-medium text-[#1f1b2d]">Daily reminder</p>
-                    <p className="text-xs text-[#5f5477] mt-0.5">Nudge me if I haven't logged anything yet.</p>
+                    <p className="text-sm font-medium text-ink">Daily reminder</p>
+                    <p className="text-xs text-ink-muted mt-0.5">Nudge me if I haven't logged anything yet.</p>
                 </div>
                 <button
                     onClick={() => setEnabled((v) => !v)}
                     className={`relative w-12 h-6 rounded-full transition-colors duration-200 focus:outline-none focus-visible:shadow-[var(--shadow-magenta-halo)] ${
-                        enabled ? 'bg-[#ff0061]' : 'bg-[#ebbcfc]'
+                        enabled ? 'bg-brand-punch' : 'bg-brand-orchid'
                     }`}
                     aria-label="Toggle daily reminder"
                     aria-pressed={enabled}
                     type="button"
                 >
                     <span
-                        className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-200 ${
+                        className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-surface shadow-md transition-transform duration-200 ${
                             enabled ? 'translate-x-6' : 'translate-x-0'
                         }`}
                     />
@@ -148,8 +148,8 @@ export default function NotificationSettings() {
             </div>
 
             <div className={`space-y-3 transition-opacity duration-200 ${!enabled ? 'opacity-40 pointer-events-none' : ''}`}>
-                <div className="flex items-center gap-2 text-sm font-medium text-[#1f1b2d]">
-                    <Clock className="w-4 h-4 text-[#ff0061]" aria-hidden="true" />
+                <div className="flex items-center gap-2 text-sm font-medium text-ink">
+                    <Clock className="w-4 h-4 text-brand-punch" aria-hidden="true" />
                     <span>Reminder time</span>
                 </div>
                 <div className="flex items-center gap-3">
@@ -165,7 +165,7 @@ export default function NotificationSettings() {
                             </option>
                         ))}
                     </select>
-                    <span className="text-[#5f5477] font-bold">:</span>
+                    <span className="text-ink-muted font-bold">:</span>
                     <select
                         value={minute}
                         onChange={(e) => setMinute(e.target.value)}
@@ -178,9 +178,9 @@ export default function NotificationSettings() {
                             </option>
                         ))}
                     </select>
-                    <div className="text-xs text-[#5f5477] min-w-[88px] text-right">{hour12Label()}</div>
+                    <div className="text-xs text-ink-muted min-w-[88px] text-right">{hour12Label()}</div>
                 </div>
-                <p className="text-xs text-[#5f5477]">
+                <p className="text-xs text-ink-muted">
                     You'll be notified at {hour}:{minute} local time if you haven't logged anything yet.
                 </p>
             </div>

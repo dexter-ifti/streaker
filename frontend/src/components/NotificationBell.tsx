@@ -40,8 +40,8 @@ export default function NotificationBell() {
                 onClick={() => setOpen((v) => !v)}
                 aria-label="Streak reminder notifications"
                 className={`relative p-2 rounded-xl transition-all duration-200 ${showDot
-                    ? 'text-[#ff0061] hover:bg-[#ff0061]/10'
-                    : 'text-slate-600 hover:text-[#ff0061] hover:bg-[#f9eafe]'
+                    ? 'text-brand-punch hover:bg-brand-punch/10'
+                    : 'text-ink-muted hover:text-brand-punch hover:bg-brand-lilac'
                     }`}
             >
                 {Notification.permission === 'denied' || !notificationsEnabled ? (
@@ -52,20 +52,20 @@ export default function NotificationBell() {
 
                 {/* Red dot indicator */}
                 {showDot && (
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#ff0061] rounded-full ring-2 ring-[#feecf5] animate-pulse" />
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-punch rounded-full ring-2 ring-brand-blush animate-pulse" />
                 )}
             </button>
 
             {/* Popover */}
             {open && (
                 <div className="absolute right-0 top-full mt-2 w-72 z-[200] animate-fade-in-up">
-                    <div className="rounded-2xl bg-white border border-[#ebbcfc]/80 shadow-2xl overflow-hidden">
+                    <div className="rounded-2xl bg-surface border border-brand-orchid/80 shadow-2xl overflow-hidden">
                         {/* Popover header */}
-                        <div className="flex items-center justify-between px-4 py-3 border-b border-[#ebbcfc]/70">
-                            <span className="text-slate-900 font-semibold text-sm">Streak Reminder</span>
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-brand-orchid/70">
+                            <span className="text-ink font-semibold text-sm">Streak Reminder</span>
                             <button
                                 onClick={() => setOpen(false)}
-                                className="text-slate-500 hover:text-[#ff0061] transition-colors"
+                                className="text-ink-muted hover:text-brand-punch transition-colors"
                             >
                                 <X className="w-4 h-4" />
                             </button>
@@ -75,31 +75,31 @@ export default function NotificationBell() {
                         <div className="p-4 space-y-3">
                             {/* Streak badge */}
                             {streak > 0 && (
-                                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#feecf5] border border-[#ebbcfc]/70">
-                                    <Flame className="w-5 h-5 text-[#ff0061] flex-shrink-0" />
-                                    <span className="text-slate-800 font-semibold text-sm">{streak}-day streak active</span>
+                                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-blush border border-brand-orchid/70">
+                                    <Flame className="w-5 h-5 text-brand-punch flex-shrink-0" />
+                                    <span className="text-ink font-semibold text-sm">{streak}-day streak active</span>
                                 </div>
                             )}
 
                             {/* Status message */}
                             {!hasActivityToday && streak > 0 ? (
-                                <p className="text-slate-700 text-sm leading-relaxed">
+                                <p className="text-ink text-sm leading-relaxed">
                                     ⚠️ You haven&apos;t logged an activity today. Complete one before midnight to keep your{' '}
-                                    <strong className="text-[#ff0061]">{streak}-day streak</strong>!
+                                    <strong className="text-brand-punch">{streak}-day streak</strong>!
                                 </p>
                             ) : hasActivityToday ? (
-                                <p className="text-[#ff0061] text-sm">
+                                <p className="text-brand-punch text-sm">
                                     ✅ Great job! You&apos;ve already completed an activity today.
                                 </p>
                             ) : (
-                                <p className="text-slate-600 text-sm">
+                                <p className="text-ink-muted text-sm">
                                     Start your first activity to begin building a streak!
                                 </p>
                             )}
 
                             {/* Permission status */}
                             {typeof Notification !== 'undefined' && Notification.permission === 'denied' && (
-                                <p className="text-[#ff0061] text-xs mt-2">
+                                <p className="text-brand-punch text-xs mt-2">
                                     🔕 Notifications are blocked in your browser. Enable them in site settings.
                                 </p>
                             )}
@@ -107,7 +107,7 @@ export default function NotificationBell() {
                             {typeof Notification !== 'undefined' &&
                                 Notification.permission === 'granted' &&
                                 preference?.enabled && (
-                                    <p className="text-slate-500 text-xs">
+                                    <p className="text-ink-muted text-xs">
                                         📅 Reminder set for {preference.reminderTime} daily.
                                     </p>
                                 )}

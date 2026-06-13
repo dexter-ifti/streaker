@@ -39,37 +39,37 @@ const BadgeDisplay: React.FC<BadgeDisplayProps> = ({
         switch (rarity) {
             case 'common':
                 return {
-                    bg: 'from-white/75 to-[#f9eafe]/80',
-                    border: 'border-[#ebbcfc]/70',
-                    text: 'text-slate-700',
+                    bg: 'from-white/75 to-brand-lilac/80',
+                    border: 'border-brand-orchid/70',
+                    text: 'text-ink',
                     glow: ''
                 };
             case 'rare':
                 return {
-                    bg: 'from-[#cadbfc]/70 to-[#f9eafe]/80',
-                    border: 'border-[#cadbfc]',
-                    text: 'text-slate-800',
-                    glow: 'shadow-[#cadbfc]/35'
+                    bg: 'from-brand-ice/70 to-brand-lilac/80',
+                    border: 'border-brand-ice',
+                    text: 'text-ink',
+                    glow: 'shadow-brand-ice/35'
                 };
             case 'epic':
                 return {
-                    bg: 'from-[#f9eafe]/80 to-[#ebbcfc]/80',
-                    border: 'border-[#ebbcfc]',
-                    text: 'text-slate-800',
-                    glow: 'shadow-[#ebbcfc]/35'
+                    bg: 'from-brand-lilac/80 to-brand-orchid/80',
+                    border: 'border-brand-orchid',
+                    text: 'text-ink',
+                    glow: 'shadow-brand-orchid/35'
                 };
             case 'legendary':
                 return {
-                    bg: 'from-[#ebbcfc]/80 to-[#ff0061]/25',
-                    border: 'border-[#ff0061]/35',
-                    text: 'text-[#ff0061]',
-                    glow: 'shadow-[#ff0061]/30'
+                    bg: 'from-brand-orchid/80 to-brand-punch/25',
+                    border: 'border-brand-punch/35',
+                    text: 'text-brand-punch',
+                    glow: 'shadow-brand-punch/30'
                 };
             default:
                 return {
-                    bg: 'from-white/75 to-[#f9eafe]/80',
-                    border: 'border-[#ebbcfc]/70',
-                    text: 'text-slate-700',
+                    bg: 'from-white/75 to-brand-lilac/80',
+                    border: 'border-brand-orchid/70',
+                    text: 'text-ink',
                     glow: ''
                 };
         }
@@ -83,7 +83,7 @@ const BadgeDisplay: React.FC<BadgeDisplayProps> = ({
                 {[...Array(8)].map((_, i) => (
                     <div
                         key={i}
-                        className="aspect-square bg-white/70 rounded-xl border border-[#ebbcfc]/70 animate-pulse"
+                        className="aspect-square bg-surface/70 rounded-xl border border-brand-orchid/70 animate-pulse"
                     />
                 ))}
             </div>
@@ -93,7 +93,7 @@ const BadgeDisplay: React.FC<BadgeDisplayProps> = ({
     if (allBadges.length === 0) {
         return (
             <div className="text-center py-8">
-                <p className="text-slate-600">No badges available yet.</p>
+                <p className="text-ink-muted">No badges available yet.</p>
             </div>
         );
     }
@@ -117,7 +117,7 @@ const BadgeDisplay: React.FC<BadgeDisplayProps> = ({
                                 transition-all duration-200
                                 ${isEarned
                                     ? `bg-gradient-to-br ${colors.bg} ${colors.border} ${colors.glow} shadow-lg hover:scale-105`
-                                    : 'bg-white/55 border-[#ebbcfc]/50 opacity-50'
+                                    : 'bg-surface/55 border-brand-orchid/50 opacity-50'
                                 }
                             `}
                         >
@@ -126,23 +126,23 @@ const BadgeDisplay: React.FC<BadgeDisplayProps> = ({
                                     {getIcon(badge.icon)}
                                 </div>
                             ) : (
-                                <Lock className="w-4 h-4 text-slate-400" />
+                                <Lock className="w-4 h-4 text-ink-muted" />
                             )}
                         </div>
 
                         {/* Tooltip */}
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-white rounded-lg border border-[#ebbcfc] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 pointer-events-none">
-                            <p className={`text-xs font-semibold ${isEarned ? colors.text : 'text-slate-500'}`}>
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-surface rounded-lg border border-brand-orchid opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 pointer-events-none">
+                            <p className={`text-xs font-semibold ${isEarned ? colors.text : 'text-ink-muted'}`}>
                                 {badge.name}
                             </p>
-                            <p className="text-xs text-slate-600 mt-0.5">
+                            <p className="text-xs text-ink-muted mt-0.5">
                                 {badge.description}
                             </p>
-                            <p className={`text-xs mt-1 capitalize ${isEarned ? 'text-[#ff0061]' : 'text-slate-500'}`}>
+                            <p className={`text-xs mt-1 capitalize ${isEarned ? 'text-brand-punch' : 'text-ink-muted'}`}>
                                 {badge.rarity} {isEarned ? '- Earned!' : '- Locked'}
                             </p>
                             {earnedBadge?.earnedAt && (
-                                <p className="text-xs text-slate-500 mt-0.5">
+                                <p className="text-xs text-ink-muted mt-0.5">
                                     {new Date(earnedBadge.earnedAt).toLocaleDateString()}
                                 </p>
                             )}

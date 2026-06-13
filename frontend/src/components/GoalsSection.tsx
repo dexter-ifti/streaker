@@ -134,8 +134,8 @@ const GoalsSection: React.FC = () => {
             {/* Badges Section */}
             <div className="mb-8">
                 <div className="flex items-baseline justify-between mb-4">
-                    <h3 className="text-xl font-bold text-[#1f1b2d] tracking-[-0.01em]">Achievements</h3>
-                    <span className="text-sm text-[#5f5477] font-medium">
+                    <h3 className="text-xl font-bold text-ink tracking-[-0.01em]">Achievements</h3>
+                    <span className="text-sm text-ink-muted font-medium">
                         {userBadges.length} of {allBadges.length}
                     </span>
                 </div>
@@ -149,8 +149,8 @@ const GoalsSection: React.FC = () => {
             {/* Goals Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                 <div>
-                    <h3 className="text-xl font-bold text-[#1f1b2d] tracking-[-0.01em]">Goals</h3>
-                    <p className="mt-1 text-sm text-[#5f5477]">What you're chaining toward.</p>
+                    <h3 className="text-xl font-bold text-ink tracking-[-0.01em]">Goals</h3>
+                    <p className="mt-1 text-sm text-ink-muted">What you're chaining toward.</p>
                 </div>
                 <div className="flex gap-2">
                     <button
@@ -183,8 +183,8 @@ const GoalsSection: React.FC = () => {
                         onClick={() => setStatusFilter(tab.value)}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium tracking-tight whitespace-nowrap transition-colors border-2 ${
                             statusFilter === tab.value
-                                ? 'bg-[#ff0061]/15 text-[#ff0061] border-[#ebbcfc]'
-                                : 'bg-[#f9eafe] text-[#1f1b2d] border-transparent hover:bg-[#ebbcfc]'
+                                ? 'bg-brand-punch/15 text-brand-punch border-brand-orchid'
+                                : 'bg-brand-lilac text-ink border-transparent hover:bg-brand-orchid'
                         }`}
                         type="button"
                         aria-pressed={statusFilter === tab.value}
@@ -223,18 +223,18 @@ const GoalsSection: React.FC = () => {
 
             {/* Templates Modal */}
             {isTemplatesOpen && (
-                <div className="fixed inset-0 bg-[#1f1b2d]/45 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-2xl border border-[#ebbcfc] w-full max-w-2xl max-h-[90vh] overflow-hidden">
-                        <div className="flex items-center justify-between p-4 border-b border-[#ebbcfc]">
+                <div className="fixed inset-0 bg-ink/45 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-surface rounded-2xl border border-brand-orchid w-full max-w-2xl max-h-[90vh] overflow-hidden">
+                        <div className="flex items-center justify-between p-4 border-b border-brand-orchid">
                             <div className="flex items-center gap-2">
-                                <Layout className="w-5 h-5 text-[#ff0061]" />
-                                <h2 className="text-lg font-semibold text-slate-900">Goal Templates</h2>
+                                <Layout className="w-5 h-5 text-brand-punch" />
+                                <h2 className="text-lg font-semibold text-ink">Goal Templates</h2>
                             </div>
                             <button
                                 onClick={() => setIsTemplatesOpen(false)}
-                                className="p-1 rounded-lg hover:bg-[#f9eafe] transition-colors"
+                                className="p-1 rounded-lg hover:bg-brand-lilac transition-colors"
                             >
-                                <X className="w-5 h-5 text-slate-500" />
+                                <X className="w-5 h-5 text-ink-muted" />
                             </button>
                         </div>
                         <div className="p-4 overflow-y-auto max-h-[calc(90vh-80px)]">
@@ -243,12 +243,12 @@ const GoalsSection: React.FC = () => {
                                     {[...Array(4)].map((_, i) => (
                                         <div
                                             key={i}
-                                            className="h-24 bg-[#f9eafe] rounded-xl animate-pulse"
+                                            className="h-24 bg-brand-lilac rounded-xl animate-pulse"
                                         />
                                     ))}
                                 </div>
                             ) : templates.length === 0 ? (
-                                <p className="text-center text-slate-600 py-8">
+                                <p className="text-center text-ink-muted py-8">
                                     No templates available.
                                 </p>
                             ) : (
