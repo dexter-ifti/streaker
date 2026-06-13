@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../utils/auth';
 import FeedbackForm from './FeedbackForm';
 import NotificationBell from './NotificationBell';
+import ThemeToggle from './ThemeToggle';
 
 const Header: React.FC = () => {
     const { authUser, logout } = useAuth();
@@ -20,15 +21,15 @@ const Header: React.FC = () => {
     };
 
     const navLinkClass = (path: string) =>
-        `streaker-btn-ghost relative ${location.pathname === path ? 'text-[#1f1b2d]' : ''}`;
+        `streaker-btn-ghost relative ${location.pathname === path ? 'text-ink' : ''}`;
 
     const isActive = (path: string) => location.pathname === path;
 
     return (
         <header
-            className="sticky top-0 z-50 border-b border-[#ebbcfc]/60"
+            className="sticky top-0 z-50 border-b border-brand-orchid/60"
             style={{
-                background: 'rgba(255, 255, 255, 0.78)',
+                background: 'rgb(var(--c-surface) / 0.78)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
             }}
@@ -41,18 +42,19 @@ const Header: React.FC = () => {
                         aria-label="Streaker home"
                     >
                         <span
-                            className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#ff0061] text-white"
+                            className="flex items-center justify-center w-9 h-9 rounded-xl bg-brand-punch text-white"
                             aria-hidden="true"
                         >
                             <Flame className="h-5 w-5" strokeWidth={2.25} />
                         </span>
-                        <span className="text-xl sm:text-2xl font-bold text-[#1f1b2d] tracking-[-0.01em]">
+                        <span className="text-xl sm:text-2xl font-bold text-ink tracking-[-0.01em]">
                             Streaker
                         </span>
                     </Link>
 
                     {/* Desktop Menu */}
                     <div className="hidden sm:flex items-center gap-1">
+                        <ThemeToggle />
                         <button
                             onClick={() => setIsFeedbackOpen(true)}
                             className="streaker-btn-ghost"
@@ -69,7 +71,7 @@ const Header: React.FC = () => {
                                     <User className="h-4 w-4" aria-hidden="true" />
                                     <span>Profile</span>
                                     {isActive('/user') && (
-                                        <span className="absolute left-3 right-3 -bottom-[3px] h-[2px] bg-[#ff0061] rounded-full" />
+                                        <span className="absolute left-3 right-3 -bottom-[3px] h-[2px] bg-brand-punch rounded-full" />
                                     )}
                                 </Link>
                                 <button
@@ -93,8 +95,9 @@ const Header: React.FC = () => {
                         )}
                     </div>
 
-                    {/* Mobile: Bell + Hamburger always visible */}
+                    {/* Mobile: Theme + Bell + Hamburger always visible */}
                     <div className="sm:hidden flex items-center gap-1">
+                        <ThemeToggle />
                         {authUser && <NotificationBell />}
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -114,7 +117,7 @@ const Header: React.FC = () => {
 
                 {/* Mobile Menu Panel */}
                 {isMobileMenuOpen && (
-                    <div className="sm:hidden mt-3 pt-3 border-t border-[#ebbcfc]/60 animate-fade-in-up">
+                    <div className="sm:hidden mt-3 pt-3 border-t border-brand-orchid/60 animate-fade-in-up">
                         {authUser ? (
                             <div className="flex flex-col gap-1">
                                 <button
