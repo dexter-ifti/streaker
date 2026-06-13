@@ -4,6 +4,7 @@ import ActivityForm from './ActivityForm'
 import ActivityList from './ActivityList'
 import CategoryFilter from './CategoryFilter'
 import CategoryStatsCard from './CategoryStatsCard'
+import ThemeToggle from './ThemeToggle'
 
 export {
     StreakCounter,
@@ -11,5 +12,6 @@ export {
     ActivityForm,
     ActivityList,
     CategoryFilter,
-    CategoryStatsCard
+    CategoryStatsCard,
+    ThemeToggle
 }

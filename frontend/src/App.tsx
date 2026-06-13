@@ -128,7 +128,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen text-[#1f1b2d]">
+    <div className="min-h-screen text-ink">
       <Header />
       <InstallPrompt />
 
@@ -137,7 +137,7 @@ function App() {
           <div className="flex justify-center items-center h-64">
             <div className="text-center space-y-4">
               <LoadingSpinner />
-              <p className="text-[#5f5477]">Loading your progress…</p>
+              <p className="text-ink-muted">Loading your progress…</p>
             </div>
           </div>
         ) : (

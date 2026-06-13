@@ -8,6 +8,7 @@ import './index.css';
 import Login from './pages/Login.tsx';
 import Register from './pages/Register.tsx';
 import { AuthProvider } from './utils/auth.tsx';
+import { ThemeProvider, useTheme } from './utils/theme.tsx';
 import Landing from './pages/Landing.tsx';
 import Profile from './pages/Profile.tsx';
 import FeedbackView from './pages/FeedbackView.tsx';
@@ -30,66 +31,56 @@ if ('serviceWorker' in navigator) {
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
+// Toasts follow the active theme so they sit on the right surface in both modes.
+const ThemedToaster = () => {
+  const { theme } = useTheme();
+  return (
+    <ToastContainer
+      position="top-right"
+      autoClose={3000}
+      hideProgressBar={false}
+      newestOnTop
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme={theme}
+    />
+  );
+};
+
+const AppShell = () => (
+  <QueryClientProvider client={queryClient}>
+    <Router>
+      <Routes>
+        <Route path='/' element={<Landing />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='/home' element={<App />} />
+        <Route path='/user' element={<Profile />} />
+        <Route path="/feedback" element={<FeedbackView />} />
+      </Routes>
+      <ThemedToaster />
+    </Router>
+    <Analytics />
+  </QueryClientProvider>
+);
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {clientId ? (
-      <GoogleOAuthProvider clientId={clientId}>
+    <ThemeProvider>
+      {clientId ? (
+        <GoogleOAuthProvider clientId={clientId}>
+          <AuthProvider>
+            <AppShell />
+          </AuthProvider>
+        </GoogleOAuthProvider>
+      ) : (
         <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <Router>
-              <Routes>
-                <Route path='/' element={<Landing />} />
-                <Route path='/login' element={<Login />} />
-                <Route path='/register' element={<Register />} />
-                <Route path='/home' element={<App />} />
-                <Route path='/user' element={<Profile />} />
-                <Route path="/feedback" element={<FeedbackView />} />
-              </Routes>
-              <ToastContainer
-                position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme='light'
-              />
-            </Router>
-          </QueryClientProvider>
-          <Analytics />
+          <AppShell />
         </AuthProvider>
-      </GoogleOAuthProvider>
-    ) : (
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <Router>
-            <Routes>
-              <Route path='/' element={<Landing />} />
-              <Route path='/login' element={<Login />} />
-              <Route path='/register' element={<Register />} />
-              <Route path='/home' element={<App />} />
-              <Route path='/user' element={<Profile />} />
-              <Route path="/feedback" element={<FeedbackView />} />
-            </Routes>
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme='light'
-            />
-          </Router>
-          <Analytics />
-        </QueryClientProvider>
-      </AuthProvider>
-    )}
+      )}
+    </ThemeProvider>
   </StrictMode>
 );

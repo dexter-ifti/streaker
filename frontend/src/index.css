@@ -5,13 +5,28 @@
 @tailwind utilities;
 
 :root {
-    --brand-ice: #cadbfc;
-    --brand-blush: #feecf5;
-    --brand-lilac: #f9eafe;
-    --brand-orchid: #ebbcfc;
-    --brand-punch: #ff0061;
-    --text-primary: #1f1b2d;
-    --text-muted: #5f5477;
+    /* Brand tokens as channel triplets (space-separated RGB) so Tailwind can apply
+       alpha via rgb(var(--c-x) / <alpha-value>). The .dark block below flips these,
+       and every named alias / component class derives from them. */
+    --c-ink: 31 27 45;
+    --c-ink-muted: 95 84 119;
+    --c-surface: 255 255 255;
+    --c-punch: 255 0 97;
+    --c-orchid: 235 188 252;
+    --c-lilac: 249 234 254;
+    --c-blush: 254 236 245;
+    --c-ice: 202 219 252;
+
+    /* Named aliases used by the component classes in this file. */
+    --brand-ice: rgb(var(--c-ice));
+    --brand-blush: rgb(var(--c-blush));
+    --brand-lilac: rgb(var(--c-lilac));
+    --brand-orchid: rgb(var(--c-orchid));
+    --brand-punch: rgb(var(--c-punch));
+    --text-primary: rgb(var(--c-ink));
+    --text-muted: rgb(var(--c-ink-muted));
+    --surface-solid: rgb(var(--c-surface));
+
     --surface: rgba(254, 236, 245, 0.78);
     --surface-strong: rgba(202, 219, 252, 0.9);
     --ring: rgba(255, 0, 97, 0.45);
@@ -21,14 +36,51 @@
     --shadow-magenta-halo: 0 0 0 4px rgba(255, 0, 97, 0.18);
     --shadow-streak-glow: 0 0 28px rgba(255, 0, 97, 0.35);
 
+    --scrollbar-track: rgba(202, 219, 252, 0.45);
+
+    --body-gradient:
+        radial-gradient(circle at 15% 10%, rgba(235, 188, 252, 0.45), transparent 45%),
+        radial-gradient(circle at 80% 20%, rgba(202, 219, 252, 0.55), transparent 42%),
+        linear-gradient(130deg, var(--brand-blush), var(--brand-lilac) 45%, var(--brand-ice));
+
     --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+
+    color-scheme: light;
+}
+
+/* Warm purple-ink dark theme: deep purple-tinted near-black surfaces, faint
+   magenta/purple glow, magenta stays the hero. Only the triplets + surface-level
+   tokens change; named aliases recompute automatically. */
+.dark {
+    --c-ink: 244 241 250;
+    --c-ink-muted: 178 169 200;
+    --c-surface: 35 32 50;
+    --c-punch: 255 0 97;
+    --c-orchid: 70 61 99;
+    --c-lilac: 44 39 64;
+    --c-blush: 47 34 45;
+    --c-ice: 34 41 63;
+
+    --surface: rgba(38, 33, 56, 0.72);
+    --surface-strong: rgba(26, 22, 40, 0.85);
+
+    --shadow-panel-rest: 0 8px 24px -12px rgba(0, 0, 0, 0.55);
+    --shadow-panel-lift: 0 16px 40px -16px rgba(0, 0, 0, 0.65);
+
+    --scrollbar-track: rgba(70, 61, 99, 0.4);
+
+    --body-gradient:
+        radial-gradient(circle at 15% 10%, rgba(255, 0, 97, 0.12), transparent 45%),
+        radial-gradient(circle at 80% 20%, rgba(70, 61, 99, 0.45), transparent 42%),
+        linear-gradient(130deg, #161320, #1b1726 45%, #14111d);
+
+    color-scheme: dark;
 }
 
 body {
     font-family: 'Space Grotesk', sans-serif;
-    background: radial-gradient(circle at 15% 10%, rgba(235, 188, 252, 0.45), transparent 45%),
-        radial-gradient(circle at 80% 20%, rgba(202, 219, 252, 0.55), transparent 42%),
-        linear-gradient(130deg, var(--brand-blush), var(--brand-lilac) 45%, var(--brand-ice));
+    background: var(--body-gradient);
+    background-attachment: fixed;
     color: var(--text-primary);
     min-height: 100vh;
 }
@@ -172,7 +224,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(202, 219, 252, 0.45);
+    background: var(--scrollbar-track);
     border-radius: 4px;
 }
 
@@ -223,13 +275,13 @@ select:focus-visible,
 
 @layer components {
     .streaker-panel {
-        background: #ffffff;
+        background: var(--surface-solid);
         border-radius: 16px;
         box-shadow: var(--shadow-panel-rest);
     }
 
     .streaker-panel-interactive {
-        background: #ffffff;
+        background: var(--surface-solid);
         border-radius: 16px;
         box-shadow: var(--shadow-panel-rest);
         transition: box-shadow 220ms var(--ease-out-quint);
@@ -287,11 +339,12 @@ select:focus-visible,
 
     .streaker-btn-ghost:hover {
         color: var(--text-primary);
-        background: rgba(249, 234, 254, 0.6);
+        background: rgb(var(--c-lilac) / 0.6);
     }
 
     .streaker-input {
-        @apply w-full px-4 py-3 rounded-xl bg-white text-base;
+        @apply w-full px-4 py-3 rounded-xl text-base;
+        background: var(--surface-solid);
         color: var(--text-primary);
         border: 1px solid var(--brand-orchid);
         transition: border-color 180ms var(--ease-out-quint), box-shadow 180ms var(--ease-out-quint);
@@ -316,12 +369,14 @@ select:focus-visible,
 
     /* Legacy aliases used elsewhere; kept until those surfaces are polished. */
     .ui-panel {
-        @apply bg-white border border-transparent rounded-2xl;
+        @apply border border-transparent rounded-2xl;
+        background: var(--surface-solid);
         box-shadow: var(--shadow-panel-rest);
     }
 
     .ui-input {
-        @apply w-full px-4 py-4 border rounded-xl bg-white;
+        @apply w-full px-4 py-4 border rounded-xl;
+        background: var(--surface-solid);
         color: var(--text-primary);
         border-color: var(--brand-orchid);
     }
@@ -334,7 +389,8 @@ select:focus-visible,
     }
 
     .ui-input-muted {
-        @apply w-full px-4 py-4 border rounded-xl bg-white;
+        @apply w-full px-4 py-4 border rounded-xl;
+        background: var(--surface-solid);
         color: var(--text-primary);
         border-color: var(--brand-orchid);
     }
