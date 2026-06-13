@@ -1,43 +1,40 @@
-import { useEffect, useState, useRef } from 'react';
-import { format, eachDayOfInterval, startOfMonth, endOfMonth, getDay } from 'date-fns';
+import { useEffect, useState, useRef, useMemo } from 'react';
+import { format } from 'date-fns';
 
 interface HeatMapProps {
     data: { date: string; count: number }[];
 }
 
+interface DayCell {
+    date: Date;
+    dateStr: string;
+    isToday: boolean;
+}
+
+const DAY_ROW_LABELS: Record<number, string> = { 1: 'Mon', 3: 'Wed', 5: 'Fri' };
+const LABEL_WIDTH = 32;
+
 const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const [monthsData, setMonthsData] = useState<{ month: string; days: Date[] }[]>([]);
-    const [activityMap, setActivityMap] = useState<Map<string, number>>(new Map());
-    const [cellSize, setCellSize] = useState(14); // px
-    const [monthsToShow, setMonthsToShow] = useState(12);
+    const [cellSize, setCellSize] = useState(14);
+    const [weeksToShow, setWeeksToShow] = useState(53);
 
-    // Compute cell size and month count from the actual container width
     useEffect(() => {
         const compute = () => {
-            const width = containerRef.current?.offsetWidth ?? window.innerWidth;
+            const width = containerRef.current?.offsetWidth ?? 800;
+            let weeks: number;
+            if (width < 360) weeks = 22;
+            else if (width < 480) weeks = 28;
+            else if (width < 640) weeks = 36;
+            else if (width < 768) weeks = 44;
+            else weeks = 53;
 
-            // Rough heuristics: each month column ≈ 6 cells + 1 gap
-            // Cell sizes: xs=9, sm=11, md=13, lg=15
-            if (width < 360) {
-                setCellSize(8);
-                setMonthsToShow(5);
-            } else if (width < 480) {
-                setCellSize(9);
-                setMonthsToShow(6);
-            } else if (width < 640) {
-                setCellSize(10);
-                setMonthsToShow(7);
-            } else if (width < 768) {
-                setCellSize(11);
-                setMonthsToShow(8);
-            } else if (width < 1024) {
-                setCellSize(12);
-                setMonthsToShow(10);
-            } else {
-                setCellSize(14);
-                setMonthsToShow(12);
-            }
+            const gap = 3;
+            const available = width - LABEL_WIDTH - (weeks - 1) * gap - 4;
+            const cell = Math.max(9, Math.min(18, Math.floor(available / weeks)));
+
+            setWeeksToShow(weeks);
+            setCellSize(cell);
         };
 
         compute();
@@ -46,133 +43,172 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
         return () => observer.disconnect();
     }, []);
 
-    useEffect(() => {
-        const newMonthsData: { month: string; days: Date[] }[] = [];
+    const activityMap = useMemo(() => {
+        const m = new Map<string, number>();
+        data.forEach(({ date, count }) => m.set(date, count));
+        return m;
+    }, [data]);
 
-        for (let i = 0; i < monthsToShow; i++) {
-            const currentDate = new Date();
-            currentDate.setMonth(currentDate.getMonth() - i);
+    const { weeks, monthLabels } = useMemo(() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayMs = today.getTime();
 
-            const firstDay = startOfMonth(currentDate);
-            const lastDay = endOfMonth(currentDate);
-            const days = eachDayOfInterval({ start: firstDay, end: lastDay });
-            const monthName = format(firstDay, 'MMM');
-            newMonthsData.unshift({ month: monthName, days });
+        const currentSunday = new Date(today);
+        currentSunday.setDate(today.getDate() - today.getDay());
+
+        const startSunday = new Date(currentSunday);
+        startSunday.setDate(currentSunday.getDate() - (weeksToShow - 1) * 7);
+
+        const computedWeeks: Array<Array<DayCell | null>> = [];
+        const computedMonthLabels: Array<string | null> = [];
+        let prevMonth = -1;
+
+        for (let w = 0; w < weeksToShow; w++) {
+            const week: Array<DayCell | null> = [];
+            for (let d = 0; d < 7; d++) {
+                const date = new Date(startSunday);
+                date.setDate(startSunday.getDate() + w * 7 + d);
+                date.setHours(0, 0, 0, 0);
+                const dateMs = date.getTime();
+                if (dateMs > todayMs) {
+                    week.push(null);
+                } else {
+                    week.push({
+                        date,
+                        dateStr: format(date, 'yyyy-MM-dd'),
+                        isToday: dateMs === todayMs,
+                    });
+                }
+            }
+            computedWeeks.push(week);
+
+            const sunday = new Date(startSunday);
+            sunday.setDate(startSunday.getDate() + w * 7);
+            const monthOfWeek = sunday.getMonth();
+            computedMonthLabels.push(monthOfWeek !== prevMonth ? format(sunday, 'MMM') : null);
+            prevMonth = monthOfWeek;
         }
 
-        setMonthsData(newMonthsData);
-
-        const newActivityMap = new Map<string, number>();
-        data.forEach(({ date, count }) => {
-            newActivityMap.set(date, count);
-        });
-        setActivityMap(newActivityMap);
-    }, [data, monthsToShow]);
+        return { weeks: computedWeeks, monthLabels: computedMonthLabels };
+    }, [weeksToShow]);
 
     const getColorClass = (count: number): string => {
-        if (count === 0) return 'bg-[#f9eafe] border border-[#ebbcfc]/60';
-        if (count <= 2) return 'bg-[#feecf5]';
-        if (count <= 4) return 'bg-[#ebbcfc]';
+        if (count === 0) return 'bg-[#f9eafe]';
+        if (count === 1) return 'bg-[#ebbcfc]';
+        if (count <= 3) return 'bg-[#ff0061]/55';
         return 'bg-[#ff0061]';
     };
 
-    const getDayMatrix = (days: Date[]) => {
-        const matrix: (Date | null)[][] = Array(7).fill(null).map(() => Array(6).fill(null));
-        days.forEach(day => {
-            const dayOfWeek = getDay(day);
-            const firstDayOfMonthWeekday = getDay(startOfMonth(day));
-            const dayOfMonth = parseInt(format(day, 'd'));
-            const weekInMonth = Math.floor((dayOfMonth - 1 + firstDayOfMonthWeekday) / 7);
-            matrix[dayOfWeek][weekInMonth] = day;
-        });
-        return matrix;
-    };
-
-    const gap = Math.max(2, Math.floor(cellSize / 6)); // proportional gap
+    const gap = Math.max(3, Math.floor(cellSize / 5));
     const cellPx = `${cellSize}px`;
     const gapPx = `${gap}px`;
+    const labelFontPx = Math.max(10, cellSize - 4);
+    const monthLabelHeight = labelFontPx + 6;
+    const cellRadius = Math.max(2, Math.floor(cellSize / 6));
 
     return (
         <div ref={containerRef} className="w-full text-[#5f5477]">
-            {/* Scrollable only when content truly can't fit */}
-            <div className="overflow-x-auto overflow-y-hidden">
-                <div className="flex" style={{ gap: gapPx }}>
-                    {/* Day-of-week labels */}
-                    <div
-                        className="flex flex-col justify-around text-[#5f5477] flex-shrink-0"
-                        style={{
-                            fontSize: Math.max(8, cellSize - 3),
-                            width: Math.max(18, cellSize * 1.8),
-                            paddingTop: cellSize + gap + 4, // offset for month label
-                            gap: gapPx,
-                        }}
-                    >
-                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-                            <span key={i} style={{ height: cellPx, lineHeight: cellPx, display: 'block', textAlign: 'right' }}>
-                                {d}
-                            </span>
-                        ))}
-                    </div>
+            <div className="flex" style={{ gap: gapPx }}>
+                <div
+                    className="flex flex-col flex-shrink-0"
+                    style={{
+                        width: LABEL_WIDTH,
+                        paddingTop: monthLabelHeight + gap,
+                        gap: gapPx,
+                        fontSize: labelFontPx,
+                    }}
+                >
+                    {Array.from({ length: 7 }).map((_, i) => (
+                        <span
+                            key={i}
+                            style={{
+                                height: cellPx,
+                                lineHeight: cellPx,
+                                textAlign: 'right',
+                                paddingRight: 6,
+                                display: 'block',
+                            }}
+                        >
+                            {DAY_ROW_LABELS[i] ?? ''}
+                        </span>
+                    ))}
+                </div>
 
-                    {/* Month columns */}
-                    {monthsData.map((monthData, monthIdx) => {
-                        const dayMatrix = getDayMatrix(monthData.days);
-                        return (
-                            <div key={monthIdx} className="flex flex-col flex-shrink-0">
-                                {/* Month label */}
-                                <div
-                                    className="text-[#5f5477] text-center mb-1 font-medium"
-                                    style={{ fontSize: Math.max(8, cellSize - 2), height: cellSize + gap }}
-                                >
-                                    {monthData.month}
-                                </div>
-
-                                {/* Day rows */}
-                                <div className="flex flex-col" style={{ gap: gapPx }}>
-                                    {Array(7).fill(0).map((_, rowIdx) => (
-                                        <div key={rowIdx} className="flex" style={{ gap: gapPx }}>
-                                            {Array(6).fill(0).map((_, colIdx) => {
-                                                const day = dayMatrix[rowIdx][colIdx];
-
-                                                if (!day) return (
-                                                    <div
-                                                        key={colIdx}
-                                                        style={{ width: cellPx, height: cellPx }}
-                                                        className="opacity-0 flex-shrink-0"
-                                                    />
-                                                );
-
-                                                const dateStr = format(day, 'yyyy-MM-dd');
-                                                const count = activityMap.get(dateStr) || 0;
-
-                                                return (
-                                                    <div
-                                                        key={colIdx}
-                                                        style={{ width: cellPx, height: cellPx, borderRadius: Math.max(1, cellSize / 8) }}
-                                                        className={`flex-shrink-0 ${getColorClass(count)} transition-colors duration-200 hover:ring-1 hover:ring-[#ff0061]/60 cursor-default`}
-                                                        title={`${format(day, 'MMM d, yyyy')}: ${count} ${count === 1 ? 'activity' : 'activities'}`}
-                                                    />
-                                                );
-                                            })}
-                                        </div>
-                                    ))}
-                                </div>
+                <div className="flex min-w-0" style={{ gap: gapPx }}>
+                    {weeks.map((week, wIdx) => (
+                        <div key={wIdx} className="flex flex-col" style={{ gap: gapPx }}>
+                            <div
+                                className="text-[#5f5477] font-medium tracking-tight whitespace-nowrap"
+                                style={{
+                                    fontSize: labelFontPx,
+                                    height: monthLabelHeight,
+                                    lineHeight: `${monthLabelHeight}px`,
+                                }}
+                            >
+                                {monthLabels[wIdx] ?? ''}
                             </div>
-                        );
-                    })}
+                            {week.map((cell, dIdx) => {
+                                if (!cell) {
+                                    return (
+                                        <div
+                                            key={dIdx}
+                                            style={{ width: cellPx, height: cellPx }}
+                                            className="flex-shrink-0 opacity-0"
+                                            aria-hidden="true"
+                                        />
+                                    );
+                                }
+                                const count = activityMap.get(cell.dateStr) || 0;
+                                const titleSuffix = count === 0
+                                    ? 'nothing logged'
+                                    : `${count} ${count === 1 ? 'activity' : 'activities'} completed`;
+                                return (
+                                    <div
+                                        key={dIdx}
+                                        style={{
+                                            width: cellPx,
+                                            height: cellPx,
+                                            borderRadius: cellRadius,
+                                        }}
+                                        className={`flex-shrink-0 ${getColorClass(count)} ${
+                                            cell.isToday
+                                                ? 'ring-2 ring-[#ff0061]/45 ring-offset-1 ring-offset-white'
+                                                : ''
+                                        } transition-colors duration-150 hover:ring-2 hover:ring-[#ff0061]/60 cursor-default`}
+                                        title={`${format(cell.date, 'EEE, MMM d, yyyy')} · ${titleSuffix}`}
+                                    />
+                                );
+                            })}
+                        </div>
+                    ))}
                 </div>
             </div>
 
-            {/* Legend */}
-            <div className="mt-3 flex items-center text-[#5f5477] justify-end" style={{ fontSize: Math.max(9, cellSize - 3) }}>
-                <span className="mr-2">Less</span>
-                <div className="flex gap-1">
-                    <div className="bg-[#f9eafe] border border-[#ebbcfc]/60 rounded-sm" style={{ width: cellPx, height: cellPx }} />
-                    <div className="bg-[#feecf5] rounded-sm" style={{ width: cellPx, height: cellPx }} />
-                    <div className="bg-[#ebbcfc] rounded-sm" style={{ width: cellPx, height: cellPx }} />
-                    <div className="bg-[#ff0061] rounded-sm" style={{ width: cellPx, height: cellPx }} />
+            <div
+                className="mt-4 flex items-center text-[#5f5477] justify-end gap-2"
+                style={{ fontSize: labelFontPx }}
+            >
+                <span>Less</span>
+                <div className="flex" style={{ gap: gapPx }}>
+                    <div
+                        className="bg-[#f9eafe]"
+                        style={{ width: cellPx, height: cellPx, borderRadius: cellRadius }}
+                    />
+                    <div
+                        className="bg-[#ebbcfc]"
+                        style={{ width: cellPx, height: cellPx, borderRadius: cellRadius }}
+                    />
+                    <div
+                        className="bg-[#ff0061]/55"
+                        style={{ width: cellPx, height: cellPx, borderRadius: cellRadius }}
+                    />
+                    <div
+                        className="bg-[#ff0061]"
+                        style={{ width: cellPx, height: cellPx, borderRadius: cellRadius }}
+                    />
                 </div>
-                <span className="ml-2">More</span>
+                <span>More</span>
             </div>
         </div>
     );
