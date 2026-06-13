@@ -46,9 +46,9 @@ const FeedbackView: React.FC = () => {
     : feedbacks.filter(feedback => feedback.type === filter);
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(235,188,252,0.45),_transparent_42%),linear-gradient(130deg,_#feecf5,_#f9eafe_45%,_#cadbfc)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(235,188,252,0.45),_transparent_42%),linear-gradient(130deg,_rgb(var(--c-blush)),_rgb(var(--c-lilac))_45%,_rgb(var(--c-ice)))]">
       <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-slate-900 mb-8">Feedback Dashboard</h1>
+      <h1 className="text-3xl font-bold text-ink mb-8">Feedback Dashboard</h1>
       
       <div className="mb-6">
         <div className="flex gap-4">
@@ -58,8 +58,8 @@ const FeedbackView: React.FC = () => {
               onClick={() => setFilter(option as typeof filter)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 filter === option
-                  ? 'bg-[#ff0061]/15 text-[#ff0061] border border-[#ff0061]/30'
-                  : 'bg-white/80 text-slate-600 border border-[#ebbcfc]/70 hover:bg-[#f9eafe]'
+                  ? 'bg-brand-punch/15 text-brand-punch border border-brand-punch/30'
+                  : 'bg-surface/80 text-ink-muted border border-brand-orchid/70 hover:bg-brand-lilac'
               }`}
             >
               {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -70,14 +70,14 @@ const FeedbackView: React.FC = () => {
 
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ff0061]"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-punch"></div>
         </div>
       ) : error ? (
-        <div className="bg-[#feecf5] border border-[#ebbcfc] rounded-lg p-4 text-slate-700">
+        <div className="bg-brand-blush border border-brand-orchid rounded-lg p-4 text-ink">
           {error}
         </div>
       ) : filteredFeedbacks.length === 0 ? (
-        <div className="text-center text-slate-500 py-12">
+        <div className="text-center text-ink-muted py-12">
           No feedbacks found.
         </div>
       ) : (

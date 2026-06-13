@@ -7,6 +7,7 @@ import { LoginInput, loginSchema } from '@ifti_taha/streaker-common';
 import { toast } from 'react-toastify';
 import { useGoogleLogin } from '@react-oauth/google';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
+import ThemeToggle from '../components/ThemeToggle';
 
 const Login: React.FC = () => {
     const { login, authUser } = useAuth();
@@ -161,33 +162,34 @@ const Login: React.FC = () => {
     });
 
     return (
-        <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(235,188,252,0.45),_transparent_42%),linear-gradient(130deg,_#feecf5,_#f9eafe_45%,_#cadbfc)] flex flex-col">
-            <header className="px-6 sm:px-10 py-6">
+        <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(235,188,252,0.45),_transparent_42%),linear-gradient(130deg,_rgb(var(--c-blush)),_rgb(var(--c-lilac))_45%,_rgb(var(--c-ice)))] flex flex-col">
+            <header className="px-6 sm:px-10 py-6 flex items-center justify-between">
                 <Link
                     to="/"
-                    className="inline-flex items-center gap-2 text-[#1f1b2d] font-bold tracking-[-0.02em] text-xl focus:outline-none focus-visible:shadow-[var(--shadow-magenta-halo)] rounded-md"
+                    className="inline-flex items-center gap-2 text-ink font-bold tracking-[-0.02em] text-xl focus:outline-none focus-visible:shadow-[var(--shadow-magenta-halo)] rounded-md"
                 >
-                    <span className="inline-flex w-7 h-7 rounded-full bg-[#ff0061] items-center justify-center">
+                    <span className="inline-flex w-7 h-7 rounded-full bg-brand-punch items-center justify-center">
                         <Flame className="w-3.5 h-3.5 text-white" aria-hidden="true" />
                     </span>
                     Streaker
                 </Link>
+                <ThemeToggle />
             </header>
 
             <main className="flex-1 flex items-center justify-center px-4 sm:px-6 py-8">
                 <div className="w-full max-w-md space-y-6 animate-fade-in-up">
                     <div className="text-center space-y-2">
                         <h1
-                            className="text-3xl sm:text-4xl font-bold text-[#1f1b2d] tracking-[-0.03em]"
+                            className="text-3xl sm:text-4xl font-bold text-ink tracking-[-0.03em]"
                             style={{ textWrap: 'balance' as React.CSSProperties['textWrap'] }}
                         >
                             Sign in to keep the chain.
                         </h1>
-                        <p className="text-[#5f5477]">
+                        <p className="text-ink-muted">
                             Don't have an account?{' '}
                             <Link
                                 to="/register"
-                                className="font-medium text-[#ff0061] hover:underline focus:outline-none focus-visible:shadow-[var(--shadow-magenta-halo)] rounded-sm"
+                                className="font-medium text-brand-punch hover:underline focus:outline-none focus-visible:shadow-[var(--shadow-magenta-halo)] rounded-sm"
                             >
                                 Create one
                             </Link>
@@ -196,10 +198,10 @@ const Login: React.FC = () => {
 
                     {error && (
                         <div
-                            className="flex items-start gap-3 p-3 rounded-xl bg-white border border-[#ff0061]/40 text-sm text-[#1f1b2d]"
+                            className="flex items-start gap-3 p-3 rounded-xl bg-surface border border-brand-punch/40 text-sm text-ink"
                             role="alert"
                         >
-                            <AlertCircle className="w-4 h-4 text-[#ff0061] mt-0.5 flex-shrink-0" aria-hidden="true" />
+                            <AlertCircle className="w-4 h-4 text-brand-punch mt-0.5 flex-shrink-0" aria-hidden="true" />
                             <span>{error}</span>
                         </div>
                     )}
@@ -207,7 +209,7 @@ const Login: React.FC = () => {
                     <section className="streaker-panel p-6 sm:p-8">
                         <form className="space-y-5" onSubmit={handleSubmit} noValidate>
                             <div className="space-y-1.5">
-                                <label htmlFor="email" className="block text-sm font-medium text-[#1f1b2d]">
+                                <label htmlFor="email" className="block text-sm font-medium text-ink">
                                     Email
                                 </label>
                                 <input
@@ -224,7 +226,7 @@ const Login: React.FC = () => {
                                     aria-invalid={!!validationErrors.email}
                                 />
                                 {validationErrors.email && (
-                                    <p id="email-error" className="flex items-center gap-1.5 text-xs text-[#ff0061]">
+                                    <p id="email-error" className="flex items-center gap-1.5 text-xs text-brand-punch">
                                         <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" />
                                         {validationErrors.email}
                                     </p>
@@ -232,7 +234,7 @@ const Login: React.FC = () => {
                             </div>
 
                             <div className="space-y-1.5">
-                                <label htmlFor="password" className="block text-sm font-medium text-[#1f1b2d]">
+                                <label htmlFor="password" className="block text-sm font-medium text-ink">
                                     Password
                                 </label>
                                 <div className="relative">
@@ -252,7 +254,7 @@ const Login: React.FC = () => {
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword((v) => !v)}
-                                        className="absolute inset-y-0 right-3 my-auto h-8 w-8 inline-flex items-center justify-center rounded-md text-[#5f5477] hover:text-[#1f1b2d] hover:bg-[#f9eafe] focus:outline-none focus-visible:shadow-[var(--shadow-magenta-halo)] transition-colors"
+                                        className="absolute inset-y-0 right-3 my-auto h-8 w-8 inline-flex items-center justify-center rounded-md text-ink-muted hover:text-ink hover:bg-brand-lilac focus:outline-none focus-visible:shadow-[var(--shadow-magenta-halo)] transition-colors"
                                         aria-label={showPassword ? 'Hide password' : 'Show password'}
                                         aria-pressed={showPassword}
                                     >
@@ -260,7 +262,7 @@ const Login: React.FC = () => {
                                     </button>
                                 </div>
                                 {validationErrors.password && (
-                                    <p id="password-error" className="flex items-center gap-1.5 text-xs text-[#ff0061]">
+                                    <p id="password-error" className="flex items-center gap-1.5 text-xs text-brand-punch">
                                         <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" />
                                         {validationErrors.password}
                                     </p>
@@ -272,9 +274,9 @@ const Login: React.FC = () => {
                                     id="remember-me"
                                     name="remember-me"
                                     type="checkbox"
-                                    className="h-4 w-4 rounded border-[#ebbcfc] text-[#ff0061] accent-[#ff0061] focus:outline-none focus-visible:shadow-[var(--shadow-magenta-halo)]"
+                                    className="h-4 w-4 rounded border-brand-orchid text-brand-punch accent-brand-punch focus:outline-none focus-visible:shadow-[var(--shadow-magenta-halo)]"
                                 />
-                                <label htmlFor="remember-me" className="ml-2 block text-sm text-[#5f5477]">
+                                <label htmlFor="remember-me" className="ml-2 block text-sm text-ink-muted">
                                     Remember me on this device
                                 </label>
                             </div>
@@ -316,10 +318,10 @@ const Login: React.FC = () => {
 
                             <div className="relative" role="separator">
                                 <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-t border-[#ebbcfc]" />
+                                    <div className="w-full border-t border-brand-orchid" />
                                 </div>
                                 <div className="relative flex justify-center text-xs">
-                                    <span className="px-3 bg-white text-[#5f5477] uppercase tracking-wide">
+                                    <span className="px-3 bg-surface text-ink-muted uppercase tracking-wide">
                                         or
                                     </span>
                                 </div>
