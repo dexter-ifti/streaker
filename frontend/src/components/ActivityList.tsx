@@ -62,7 +62,7 @@ const ActivityList = ({
   if (!activities || activities.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-[#5f5477] text-sm">No activities yet. Add one above to start your chain.</p>
+        <p className="text-ink-muted text-sm">No activities yet. Add one above to start your chain.</p>
       </div>
     );
   }
@@ -76,16 +76,16 @@ const ActivityList = ({
         return (
           <div key={activity.id}>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-semibold text-[#1f1b2d]">
+              <h3 className="text-sm font-semibold text-ink">
                 {new Date(activity.date || activity.createdAt).toLocaleDateString(undefined, {
                   weekday: 'short',
                   month: 'short',
                   day: 'numeric',
                 })}
               </h3>
-              <div className="flex items-center gap-2 text-xs text-[#5f5477]">
+              <div className="flex items-center gap-2 text-xs text-ink-muted">
                 {completedCount > 0 && (
-                  <span className="font-medium text-[#1f1b2d]">
+                  <span className="font-medium text-ink">
                     {completedCount}/{totalCount} done
                   </span>
                 )}
@@ -102,8 +102,8 @@ const ActivityList = ({
                     key={index}
                     className={`flex items-center justify-between p-3 rounded-xl border transition-colors ${
                       isCompleted
-                        ? 'bg-[#ff0061]/8 border-[#ff0061]/25'
-                        : 'bg-white border-[#ebbcfc]/60'
+                        ? 'bg-brand-punch/8 border-brand-punch/25'
+                        : 'bg-surface border-brand-orchid/60'
                     }`}
                   >
                     {isCurrentlyEditing(activity.id, index) ? (
@@ -120,7 +120,7 @@ const ActivityList = ({
                         <button
                           onClick={() => handleSave(activity.id, index)}
                           disabled={isUpdating}
-                          className="p-2 text-[#ff0061] hover:bg-[#feecf5] rounded-lg transition-colors disabled:opacity-50"
+                          className="p-2 text-brand-punch hover:bg-brand-blush rounded-lg transition-colors disabled:opacity-50"
                           title="Save"
                           type="button"
                         >
@@ -129,7 +129,7 @@ const ActivityList = ({
                         <button
                           onClick={handleCancel}
                           disabled={isUpdating}
-                          className="p-2 text-[#5f5477] hover:bg-[#f9eafe] rounded-lg transition-colors disabled:opacity-50"
+                          className="p-2 text-ink-muted hover:bg-brand-lilac rounded-lg transition-colors disabled:opacity-50"
                           title="Cancel"
                           type="button"
                         >
@@ -144,8 +144,8 @@ const ActivityList = ({
                             disabled={isToggling || isDeleting || isUpdating || editingItem !== null}
                             className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors disabled:opacity-50 flex-shrink-0 ${
                               isCompleted
-                                ? 'bg-[#ff0061] border-[#ff0061] text-white'
-                                : 'bg-white border-[#ebbcfc] hover:border-[#ff0061]'
+                                ? 'bg-brand-punch border-brand-punch text-white'
+                                : 'bg-surface border-brand-orchid hover:border-brand-punch'
                             }`}
                             title={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
                             type="button"
@@ -155,7 +155,7 @@ const ActivityList = ({
                           </button>
                           <span
                             className={`text-sm sm:text-base truncate ${
-                              isCompleted ? 'text-[#5f5477] line-through' : 'text-[#1f1b2d]'
+                              isCompleted ? 'text-ink-muted line-through' : 'text-ink'
                             }`}
                           >
                             {desc}
@@ -168,7 +168,7 @@ const ActivityList = ({
                           <button
                             onClick={() => handleEdit(activity.id, index, desc)}
                             disabled={isUpdating || isDeleting || isToggling || editingItem !== null}
-                            className="p-2 text-[#5f5477] hover:text-[#1f1b2d] hover:bg-[#f9eafe] rounded-lg transition-colors disabled:opacity-50"
+                            className="p-2 text-ink-muted hover:text-ink hover:bg-brand-lilac rounded-lg transition-colors disabled:opacity-50"
                             title="Edit"
                             type="button"
                             aria-label="Edit item"
@@ -178,7 +178,7 @@ const ActivityList = ({
                           <button
                             onClick={() => onDeleteItem(activity.id, index)}
                             disabled={isDeleting || isUpdating || isToggling || editingItem !== null}
-                            className="p-2 text-[#5f5477] hover:text-[#ff0061] hover:bg-[#feecf5] rounded-lg transition-colors disabled:opacity-50"
+                            className="p-2 text-ink-muted hover:text-brand-punch hover:bg-brand-blush rounded-lg transition-colors disabled:opacity-50"
                             title="Delete"
                             type="button"
                             aria-label="Delete item"

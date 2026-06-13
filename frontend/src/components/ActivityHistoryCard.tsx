@@ -63,27 +63,27 @@ export const ActivityHistoryCard = ({ heatmapData }: ActivityHistoryCardProps) =
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 mb-6">
         <div className="min-w-0">
-          <h2 className="text-xl sm:text-2xl font-bold text-[#1f1b2d] tracking-[-0.01em]">
+          <h2 className="text-xl sm:text-2xl font-bold text-ink tracking-[-0.01em]">
             Past 12 months
           </h2>
-          <p className="mt-2 text-sm text-[#5f5477] flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+          <p className="mt-2 text-sm text-ink-muted flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
             <span>
-              <span className="text-[#1f1b2d] font-semibold tabular-nums">
+              <span className="text-ink font-semibold tabular-nums">
                 {metrics.totalActiveDays}
               </span>{' '}
               active days
             </span>
-            <span className="text-[#ebbcfc]" aria-hidden="true">·</span>
+            <span className="text-brand-orchid" aria-hidden="true">·</span>
             <span>
-              <span className="text-[#1f1b2d] font-semibold tabular-nums">
+              <span className="text-ink font-semibold tabular-nums">
                 {metrics.activityRate}%
               </span>{' '}
               of days
             </span>
-            <span className="text-[#ebbcfc]" aria-hidden="true">·</span>
+            <span className="text-brand-orchid" aria-hidden="true">·</span>
             <span>
               active in{' '}
-              <span className="text-[#1f1b2d] font-semibold tabular-nums">
+              <span className="text-ink font-semibold tabular-nums">
                 {metrics.activeMonths}
               </span>{' '}
               months
@@ -96,9 +96,9 @@ export const ActivityHistoryCard = ({ heatmapData }: ActivityHistoryCardProps) =
           aria-label={`This week: ${metrics.weekDone} of 7 days logged`}
         >
           <div className="flex items-center justify-between sm:justify-end gap-2 mb-2">
-            <span className="text-xs font-medium text-[#5f5477]">This week</span>
-            <span className="text-xs tabular-nums text-[#1f1b2d] font-semibold">
-              {metrics.weekDone}<span className="text-[#5f5477] font-normal">/7</span>
+            <span className="text-xs font-medium text-ink-muted">This week</span>
+            <span className="text-xs tabular-nums text-ink font-semibold">
+              {metrics.weekDone}<span className="text-ink-muted font-normal">/7</span>
             </span>
           </div>
           <div className="flex gap-1.5" aria-hidden="true">
@@ -107,13 +107,13 @@ export const ActivityHistoryCard = ({ heatmapData }: ActivityHistoryCardProps) =
               const pending = !done && d.loggedCount > 0;
               let cellClass: string;
               if (done) {
-                cellClass = 'bg-[#ff0061]';
+                cellClass = 'bg-brand-punch';
               } else if (pending) {
-                cellClass = 'bg-[#ebbcfc]';
+                cellClass = 'bg-brand-orchid';
               } else if (d.isFuture) {
-                cellClass = 'bg-[#f9eafe]';
+                cellClass = 'bg-brand-lilac';
               } else {
-                cellClass = 'bg-transparent border-2 border-dashed border-[#ebbcfc]';
+                cellClass = 'bg-transparent border-2 border-dashed border-brand-orchid';
               }
               let titleSuffix: string;
               if (d.isFuture) {
@@ -129,11 +129,11 @@ export const ActivityHistoryCard = ({ heatmapData }: ActivityHistoryCardProps) =
                 <div key={i} className="flex flex-col items-center gap-1">
                   <div
                     className={`w-6 h-6 rounded-md ${cellClass} ${
-                      d.isToday ? 'ring-2 ring-[#ff0061]/45 ring-offset-1 ring-offset-white' : ''
+                      d.isToday ? 'ring-2 ring-brand-punch/45 ring-offset-1 ring-offset-white' : ''
                     }`}
                     title={`${format(d.date, 'EEE, MMM d')}${titleSuffix}`}
                   />
-                  <span className="text-[10px] text-[#5f5477] tabular-nums">
+                  <span className="text-[10px] text-ink-muted tabular-nums">
                     {DAY_INITIALS[i]}
                   </span>
                 </div>

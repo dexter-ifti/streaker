@@ -15,8 +15,8 @@ export const StreakHero = ({
   loggedToday,
   onLogActivity,
 }: StreakHeroProps) => {
-  const countColor = loggedToday ? 'text-[#ff0061]' : 'text-[#1f1b2d]';
-  const flameColor = loggedToday ? 'text-[#ff0061]' : 'text-[#5f5477]';
+  const countColor = loggedToday ? 'text-brand-punch' : 'text-ink';
+  const flameColor = loggedToday ? 'text-brand-punch' : 'text-ink-muted';
 
   return (
     <section
@@ -24,7 +24,7 @@ export const StreakHero = ({
       aria-label="Streak status"
     >
       {userName && (
-        <p className="text-sm font-medium text-[#5f5477] tracking-[0.01em]">
+        <p className="text-sm font-medium text-ink-muted tracking-[0.01em]">
           Hi, {userName}.
         </p>
       )}
@@ -42,11 +42,11 @@ export const StreakHero = ({
         </span>
       </div>
 
-      <p className="mt-2 text-base sm:text-lg font-medium text-[#1f1b2d]">
+      <p className="mt-2 text-base sm:text-lg font-medium text-ink">
         {currentStreak === 1 ? 'Day streak' : 'Day streak'}
       </p>
 
-      <p className="mt-4 text-sm sm:text-base text-[#5f5477] max-w-md mx-auto leading-relaxed">
+      <p className="mt-4 text-sm sm:text-base text-ink-muted max-w-md mx-auto leading-relaxed">
         {loggedToday
           ? "Today's box is ticked. Calm and consistent — same time tomorrow."
           : currentStreak === 0
@@ -55,8 +55,8 @@ export const StreakHero = ({
       </p>
 
       <div className="mt-6 flex items-center justify-center gap-2 flex-wrap">
-        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#f9eafe] text-sm font-medium text-[#1f1b2d]">
-          <span className="text-[#5f5477]">Best</span>
+        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-lilac text-sm font-medium text-ink">
+          <span className="text-ink-muted">Best</span>
           <span>{longestStreak} {longestStreak === 1 ? 'day' : 'days'}</span>
         </span>
 

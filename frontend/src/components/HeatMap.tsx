@@ -94,10 +94,10 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
     }, [weeksToShow]);
 
     const getColorClass = (count: number): string => {
-        if (count === 0) return 'bg-[#f9eafe]';
-        if (count === 1) return 'bg-[#ebbcfc]';
-        if (count <= 3) return 'bg-[#ff0061]/55';
-        return 'bg-[#ff0061]';
+        if (count === 0) return 'bg-brand-lilac';
+        if (count === 1) return 'bg-brand-orchid';
+        if (count <= 3) return 'bg-brand-punch/55';
+        return 'bg-brand-punch';
     };
 
     const gap = Math.max(3, Math.floor(cellSize / 5));
@@ -108,7 +108,7 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
     const cellRadius = Math.max(2, Math.floor(cellSize / 6));
 
     return (
-        <div ref={containerRef} className="w-full text-[#5f5477]">
+        <div ref={containerRef} className="w-full text-ink-muted">
             <div className="flex" style={{ gap: gapPx }}>
                 <div
                     className="flex flex-col flex-shrink-0"
@@ -139,7 +139,7 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
                     {weeks.map((week, wIdx) => (
                         <div key={wIdx} className="flex flex-col" style={{ gap: gapPx }}>
                             <div
-                                className="text-[#5f5477] font-medium tracking-tight whitespace-nowrap"
+                                className="text-ink-muted font-medium tracking-tight whitespace-nowrap"
                                 style={{
                                     fontSize: labelFontPx,
                                     height: monthLabelHeight,
@@ -173,9 +173,9 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
                                         }}
                                         className={`flex-shrink-0 ${getColorClass(count)} ${
                                             cell.isToday
-                                                ? 'ring-2 ring-[#ff0061]/45 ring-offset-1 ring-offset-white'
+                                                ? 'ring-2 ring-brand-punch/45 ring-offset-1 ring-offset-white'
                                                 : ''
-                                        } transition-colors duration-150 hover:ring-2 hover:ring-[#ff0061]/60 cursor-default`}
+                                        } transition-colors duration-150 hover:ring-2 hover:ring-brand-punch/60 cursor-default`}
                                         title={`${format(cell.date, 'EEE, MMM d, yyyy')} · ${titleSuffix}`}
                                     />
                                 );
@@ -186,25 +186,25 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
             </div>
 
             <div
-                className="mt-4 flex items-center text-[#5f5477] justify-end gap-2"
+                className="mt-4 flex items-center text-ink-muted justify-end gap-2"
                 style={{ fontSize: labelFontPx }}
             >
                 <span>Less</span>
                 <div className="flex" style={{ gap: gapPx }}>
                     <div
-                        className="bg-[#f9eafe]"
+                        className="bg-brand-lilac"
                         style={{ width: cellPx, height: cellPx, borderRadius: cellRadius }}
                     />
                     <div
-                        className="bg-[#ebbcfc]"
+                        className="bg-brand-orchid"
                         style={{ width: cellPx, height: cellPx, borderRadius: cellRadius }}
                     />
                     <div
-                        className="bg-[#ff0061]/55"
+                        className="bg-brand-punch/55"
                         style={{ width: cellPx, height: cellPx, borderRadius: cellRadius }}
                     />
                     <div
-                        className="bg-[#ff0061]"
+                        className="bg-brand-punch"
                         style={{ width: cellPx, height: cellPx, borderRadius: cellRadius }}
                     />
                 </div>

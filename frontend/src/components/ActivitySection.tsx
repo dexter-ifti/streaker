@@ -159,10 +159,10 @@ export const ActivitySection = ({
 
       <section className="streaker-panel p-6 sm:p-8" aria-label="Today's activities">
         <div className="mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-[#1f1b2d] tracking-[-0.01em]">
+          <h2 className="text-xl sm:text-2xl font-bold text-ink tracking-[-0.01em]">
             Today's activities
           </h2>
-          <p className="mt-1 text-sm text-[#5f5477]">
+          <p className="mt-1 text-sm text-ink-muted">
             Add what you did. Tick it when it's done.
           </p>
         </div>
@@ -173,8 +173,8 @@ export const ActivitySection = ({
 
         <div className="space-y-5">
           <div>
-            <h3 className="text-base sm:text-lg font-semibold text-[#1f1b2d]">Recent activities</h3>
-            <p className="mt-1 text-sm text-[#5f5477]">Browse the last few days.</p>
+            <h3 className="text-base sm:text-lg font-semibold text-ink">Recent activities</h3>
+            <p className="mt-1 text-sm text-ink-muted">Browse the last few days.</p>
           </div>
 
           <CategoryFilter
@@ -204,7 +204,7 @@ export const ActivitySection = ({
             >
               Previous
             </button>
-            <span className="text-sm font-medium text-[#5f5477]">
+            <span className="text-sm font-medium text-ink-muted">
               Page {currentPage} of {totalPages}
             </span>
             <button

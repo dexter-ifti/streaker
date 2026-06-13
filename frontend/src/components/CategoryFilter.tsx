@@ -15,14 +15,14 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const totalCount = Object.values(categoryCounts).reduce((sum, count) => sum + count, 0);
 
   const baseChip = 'px-3 py-1.5 rounded-full text-xs font-medium tracking-tight transition-colors border-2';
-  const activeBorder = 'border-[#ebbcfc]';
+  const activeBorder = 'border-brand-orchid';
   const inactiveBorder = 'border-transparent';
 
   return (
     <div className="flex flex-wrap gap-2" role="group" aria-label="Filter activities by category">
       <button
         onClick={() => onCategorySelect(null)}
-        className={`${baseChip} bg-[#f9eafe] text-[#1f1b2d] ${
+        className={`${baseChip} bg-brand-lilac text-ink ${
           selectedCategory === null ? activeBorder : inactiveBorder
         }`}
         aria-pressed={selectedCategory === null}

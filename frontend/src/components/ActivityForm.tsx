@@ -21,12 +21,12 @@ export const getCategoryColor = (category: string): string => {
 
 export const getCategoryBgClass = (category: string): string => {
   const colorMap: { [key: string]: string } = {
-    neutral: 'bg-white text-[#1f1b2d]',
-    ice: 'bg-[#cadbfc] text-[#1f1b2d]',
-    blush: 'bg-[#feecf5] text-[#1f1b2d]',
-    orchid: 'bg-[#ebbcfc] text-[#1f1b2d]',
-    punch: 'bg-[#ff0061]/15 text-[#ff0061]',
-    lilac: 'bg-[#f9eafe] text-[#1f1b2d]',
+    neutral: 'bg-surface text-ink',
+    ice: 'bg-brand-ice text-ink',
+    blush: 'bg-brand-blush text-ink',
+    orchid: 'bg-brand-orchid text-ink',
+    punch: 'bg-brand-punch/15 text-brand-punch',
+    lilac: 'bg-brand-lilac text-ink',
   };
   const color = getCategoryColor(category);
   return colorMap[color] || colorMap.neutral;
@@ -34,12 +34,12 @@ export const getCategoryBgClass = (category: string): string => {
 
 const dotClass = (color: string) => {
   switch (color) {
-    case 'punch': return 'bg-[#ff0061]';
-    case 'orchid': return 'bg-[#ebbcfc]';
-    case 'lilac': return 'bg-[#f9eafe] border border-[#ebbcfc]';
-    case 'ice': return 'bg-[#cadbfc]';
-    case 'blush': return 'bg-[#feecf5] border border-[#ebbcfc]';
-    default: return 'bg-white border border-[#ebbcfc]';
+    case 'punch': return 'bg-brand-punch';
+    case 'orchid': return 'bg-brand-orchid';
+    case 'lilac': return 'bg-brand-lilac border border-brand-orchid';
+    case 'ice': return 'bg-brand-ice';
+    case 'blush': return 'bg-brand-blush border border-brand-orchid';
+    default: return 'bg-surface border border-brand-orchid';
   }
 };
 
@@ -80,7 +80,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onSubmit }) => {
           <button
             type="button"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className={`inline-flex items-center justify-between gap-2 min-w-[160px] px-4 py-3 rounded-xl font-medium text-sm tracking-tight border border-[#ebbcfc] ${getCategoryBgClass(category)}`}
+            className={`inline-flex items-center justify-between gap-2 min-w-[160px] px-4 py-3 rounded-xl font-medium text-sm tracking-tight border border-brand-orchid ${getCategoryBgClass(category)}`}
             aria-haspopup="listbox"
             aria-expanded={isDropdownOpen}
           >
@@ -89,7 +89,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onSubmit }) => {
           </button>
           {isDropdownOpen && (
             <div
-              className="absolute top-full mt-2 left-0 right-0 bg-white border border-[#ebbcfc] rounded-xl z-10 overflow-hidden"
+              className="absolute top-full mt-2 left-0 right-0 bg-surface border border-brand-orchid rounded-xl z-10 overflow-hidden"
               style={{ boxShadow: 'var(--shadow-panel-lift)' }}
               role="listbox"
             >
@@ -98,14 +98,14 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onSubmit }) => {
                   key={cat.name}
                   type="button"
                   onClick={() => handleCategorySelect(cat.name)}
-                  className={`w-full px-4 py-2.5 text-left flex items-center gap-2 hover:bg-[#f9eafe] transition-colors ${
-                    category === cat.name ? 'bg-[#f9eafe]' : ''
+                  className={`w-full px-4 py-2.5 text-left flex items-center gap-2 hover:bg-brand-lilac transition-colors ${
+                    category === cat.name ? 'bg-brand-lilac' : ''
                   }`}
                   role="option"
                   aria-selected={category === cat.name}
                 >
                   <span className={`inline-block w-3 h-3 rounded-full ${dotClass(cat.color)}`} aria-hidden="true" />
-                  <span className="text-[#1f1b2d] text-sm font-medium">{cat.name}</span>
+                  <span className="text-ink text-sm font-medium">{cat.name}</span>
                 </button>
               ))}
             </div>
