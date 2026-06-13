@@ -82,7 +82,7 @@ function App() {
       return [];
     }
 
-    const countsByDate = allActivities.reduce<Record<string, number>>((acc, activity) => {
+    const byDate = allActivities.reduce<Record<string, { count: number; loggedCount: number }>>((acc, activity) => {
       if (!activity) return acc;
 
       try {
@@ -96,11 +96,19 @@ function App() {
           : new Date(activityDate).toISOString().split('T')[0];
 
         const completedArray = activity.completed || [];
+        const descriptionArray = activity.description || [];
         const completedCount = completedArray.filter((c: boolean) => c === true).length;
+        const loggedCount = Math.max(descriptionArray.length, completedArray.length);
 
-        if (completedCount > 0) {
-          acc[date] = (acc[date] || 0) + completedCount;
+        if (loggedCount === 0 && completedCount === 0) {
+          return acc;
         }
+
+        const existing = acc[date] || { count: 0, loggedCount: 0 };
+        acc[date] = {
+          count: existing.count + completedCount,
+          loggedCount: existing.loggedCount + loggedCount,
+        };
         return acc;
       } catch (error) {
         console.error('Error processing activity for heatmap:', error, activity);
@@ -108,9 +116,10 @@ function App() {
       }
     }, {});
 
-    return Object.keys(countsByDate).map(date => ({
+    return Object.keys(byDate).map(date => ({
       date,
-      count: countsByDate[date]
+      count: byDate[date].count,
+      loggedCount: byDate[date].loggedCount,
     }));
   }, [allActivities]);
 
